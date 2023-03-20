@@ -19,18 +19,18 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
       )(data);
     },
 
-    findOne(include_deleted = false) {
+    findOne(product_id: string) {
       return pipeAsync(
         // validate input
         (id: string) => typia.assert(id),
         // find active user by id
         (id) =>
           user().findFirst({
-            where: { id, is_deleted: include_deleted ? undefined : false },
+            where: { id, is_deleted: false },
           }),
         // if user exist, transform to aggregate
         map(UserMapper.toAggregate),
-      );
+      )(product_id);
     },
 
     findOneByOauth(filter) {

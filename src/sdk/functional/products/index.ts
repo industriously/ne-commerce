@@ -9,7 +9,7 @@ import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
 import type { PaginatedResponse } from "./../../interface/common/pagination.interface";
-import type { IProduct } from "./../../interface/product/product.interface";
+import type { IProduct } from "../../interface/product/schema.interface";
 
 /**
  * 상품 목록 조회 API

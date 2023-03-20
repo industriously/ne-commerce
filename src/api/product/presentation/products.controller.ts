@@ -1,12 +1,14 @@
 import { TypedQuery } from '@COMMON/decorator/http';
 import { Page, PaginatedResponse } from '@INTERFACE/common';
-import { IProduct } from '@INTERFACE/product';
+import { IProduct, IProductUsecase } from '@INTERFACE/product';
 import { TypedParam } from '@nestia/core';
 import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import typia from 'typia';
 
 @Controller('products')
 export class ProductsController {
+  constructor(private readonly usecase: IProductUsecase) {}
+
   /**
    * 상품 목록 조회 API
    *
@@ -23,7 +25,7 @@ export class ProductsController {
     @TypedQuery('page', typia.createIs<Page>(), { type: 'number' })
     page?: number,
   ): Promise<PaginatedResponse<IProduct.Summary>> {
-    throw Error();
+    return this.usecase.findMany(page ?? 1);
   }
 
   /**
@@ -34,8 +36,8 @@ export class ProductsController {
   @Get(':product_id')
   findOne(
     @TypedParam('product_id', 'string') product_id: string,
-  ): Promise<IProduct> {
-    throw Error();
+  ): Promise<IProduct.Detail> {
+    return this.usecase.findOne(product_id);
   }
 
   /**
@@ -47,7 +49,7 @@ export class ProductsController {
   @Post()
   create(@Body() body: IProduct.CreateInput): Promise<void> {
     const input = typia.assertPrune(body);
-    throw Error();
+    return this.usecase.create(input);
   }
 
   /**
@@ -63,7 +65,7 @@ export class ProductsController {
     @Body() body: IProduct.UpdateInput,
   ): Promise<void> {
     const input = typia.assertPrune(body);
-    throw Error();
+    return this.usecase.update(product_id, input);
   }
 
   /**
@@ -76,6 +78,6 @@ export class ProductsController {
   inActivate(
     @TypedParam('product_id', 'uuid') product_id: string,
   ): Promise<void> {
-    throw Error();
+    return this.usecase.inActivate(product_id);
   }
 }

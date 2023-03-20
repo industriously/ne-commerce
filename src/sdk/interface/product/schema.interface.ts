@@ -23,9 +23,9 @@ export interface IProduct {
    */
   readonly description: string;
   /**
-   * 판매점 간단 정보
+   * 판매점 고유 번호
    */
-  readonly store: IProduct.Store;
+  readonly store_id: string;
   /**
    * 구매 가능 상태
    */
@@ -43,20 +43,23 @@ export interface IProduct {
 }
 
 export namespace IProduct {
-  export type Summary = Pick<
-    IProduct,
-    'id' | 'name' | 'price' | 'description' | 'store' | 'created_at'
-  >;
-
-  export interface CreateInput
-    extends Pick<IProduct, 'name' | 'price' | 'description'> {
-    readonly store_id: string;
+  export interface Summary
+    extends Pick<
+      IProduct,
+      'id' | 'name' | 'price' | 'description' | 'created_at'
+    > {
+    readonly store: Store;
   }
 
+  export type Detail = Summary & Pick<IProduct, 'is_deleted' | 'updated_at'>;
+
+  export type CreateInput = Pick<
+    IProduct,
+    'name' | 'price' | 'description' | 'store_id'
+  >;
+
   export interface UpdateInput
-    extends Partial<
-      Pick<IProduct, 'name' | 'price' | 'description' | 'is_deleted'>
-    > {}
+    extends Partial<Pick<IProduct, 'name' | 'price' | 'description'>> {}
 
   export interface Store {
     readonly id: string;

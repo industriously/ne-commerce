@@ -157,7 +157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IProduct"
+                  "$ref": "#/components/schemas/IProduct.Detail"
                 }
               }
             },
@@ -901,10 +901,8 @@
       "IProduct.Summary": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": false,
-            "description": "상품 고유 번호",
+          "store": {
+            "$ref": "#/components/schemas/IProduct.Store",
             "x-typia-required": true
           },
           "name": {
@@ -956,9 +954,10 @@
             "description": "상품 설명",
             "x-typia-required": true
           },
-          "store": {
-            "$ref": "#/components/schemas/IProduct.Store",
-            "description": "판매점 간단 정보",
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "description": "상품 고유 번호",
             "x-typia-required": true
           },
           "created_at": {
@@ -988,11 +987,11 @@
         },
         "nullable": false,
         "required": [
-          "id",
+          "store",
           "name",
           "price",
           "description",
-          "store",
+          "id",
           "created_at"
         ],
         "x-typia-jsDocTags": []
@@ -1018,13 +1017,11 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IProduct": {
+      "IProduct.Detail": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": false,
-            "description": "상품 고유 번호",
+          "store": {
+            "$ref": "#/components/schemas/IProduct.Store",
             "x-typia-required": true
           },
           "name": {
@@ -1076,15 +1073,10 @@
             "description": "상품 설명",
             "x-typia-required": true
           },
-          "store": {
-            "$ref": "#/components/schemas/IProduct.Store",
-            "description": "판매점 간단 정보",
-            "x-typia-required": true
-          },
-          "is_deleted": {
-            "type": "boolean",
+          "id": {
+            "type": "string",
             "nullable": false,
-            "description": "구매 가능 상태",
+            "description": "상품 고유 번호",
             "x-typia-required": true
           },
           "created_at": {
@@ -1110,6 +1102,12 @@
             ],
             "x-typia-required": true,
             "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "nullable": false,
+            "description": "구매 가능 상태",
+            "x-typia-required": true
           },
           "updated_at": {
             "type": "string",
@@ -1138,26 +1136,20 @@
         },
         "nullable": false,
         "required": [
-          "id",
+          "store",
           "name",
           "price",
           "description",
-          "store",
-          "is_deleted",
+          "id",
           "created_at",
+          "is_deleted",
           "updated_at"
         ],
-        "description": "상품 애그리거트\n\n상품 도메인의 트랜잭션 단위",
         "x-typia-jsDocTags": []
       },
       "IProduct.CreateInput": {
         "type": "object",
         "properties": {
-          "store_id": {
-            "type": "string",
-            "nullable": false,
-            "x-typia-required": true
-          },
           "name": {
             "type": "string",
             "nullable": false,
@@ -1206,20 +1198,32 @@
             "nullable": false,
             "description": "상품 설명",
             "x-typia-required": true
+          },
+          "store_id": {
+            "type": "string",
+            "nullable": false,
+            "description": "판매점 고유 번호",
+            "x-typia-required": true
           }
         },
         "nullable": false,
         "required": [
-          "store_id",
           "name",
           "price",
-          "description"
+          "description",
+          "store_id"
         ],
         "x-typia-jsDocTags": []
       },
       "IProduct.UpdateInput": {
         "type": "object",
         "properties": {
+          "is_deleted": {
+            "type": "boolean",
+            "nullable": false,
+            "description": "구매 가능 상태",
+            "x-typia-required": false
+          },
           "name": {
             "type": "string",
             "nullable": false,
@@ -1267,12 +1271,6 @@
             "type": "string",
             "nullable": false,
             "description": "상품 설명",
-            "x-typia-required": false
-          },
-          "is_deleted": {
-            "type": "boolean",
-            "nullable": false,
-            "description": "구매 가능 상태",
             "x-typia-required": false
           }
         },

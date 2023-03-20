@@ -17,7 +17,7 @@ export const UserUsecaseFactory = (
   return ProviderBuilder<IUserUsecase>({
     getPublic(id) {
       return pipeAsync(
-        repository.findOne(),
+        repository.findOne,
 
         Nullish.throwIf(HttpExceptionFactory('NotFound')),
 
@@ -29,7 +29,7 @@ export const UserUsecaseFactory = (
       return pipeAsync(
         ...get_id_from_token(),
 
-        repository.findOne(),
+        repository.findOne,
 
         Nullish.throwIf(HttpExceptionFactory('NotFound')),
 
