@@ -138,7 +138,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/rojiwon/industriously/nestddd/db",
+      "value": "/Users/rojiwon/industriously/ne-commerce/db",
       "fromEnvVar": null
     },
     "config": {
@@ -149,8 +149,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../.env",
-    "schemaEnvPath": "../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../prisma",
   "clientVersion": "4.11.0",
