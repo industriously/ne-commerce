@@ -1,0 +1,851 @@
+{
+  "openapi": "3.0.1",
+  "servers": [
+    {
+      "url": "http://localhost:4000",
+      "description": "NestJS DDD template using nestia + prisma"
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "NestDDD - NestJS DDD template"
+  },
+  "paths": {
+    "/sign-in/google": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "description": "token 요청 권한을 가진 code를 포함한다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IAuthUsecase.SignInBody"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "access_token, refresh_token, id_token을 포함한 객체를 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IAuthUsecase.SignInResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "401": {
+            "description": "사용자 인증에 실패했습니다."
+          }
+        },
+        "description": "로그인 API\n\n새로운 사용자가 로그인을 진행하면 google oauth 서버에서 제공한 사용자 정보를 토대로\n사용자 계정을 생성합니다.\n\n비활성화된 사용자의 경우, 다시 활성화됩니다.",
+        "x-nestia-namespace": "sign-in.google.signInGoogle",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "authentication",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "token 요청 권한을 가진 code를 포함한다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "access_token, refresh_token, id_token을 포함한 객체를 응답",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "401 사용자 인증에 실패했습니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/sign-in/github": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "description": "token 요청 권한을 가진 code를 포함한다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IAuthUsecase.SignInBody"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "access_token, refresh_token, id_token을 포함한 객체를 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IAuthUsecase.SignInResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "401": {
+            "description": "사용자 인증에 실패했습니다."
+          }
+        },
+        "description": "로그인 API\n\n새로운 사용자가 로그인을 진행하면 github oauth 서버에서 제공한 사용자 정보를 토대로\n사용자 계정을 생성합니다.\n\n비활성화된 사용자의 경우, 다시 활성화됩니다.",
+        "x-nestia-namespace": "sign-in.github.signInGithub",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "authentication",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "token 요청 권한을 가진 code를 포함한다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "access_token, refresh_token, id_token을 포함한 객체를 응답",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "401 사용자 인증에 실패했습니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/token/refresh": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "재발행된 access_token을 응답합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IAuthUsecase.RefreshResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "400": {
+            "description": "잘못된 토큰입니다."
+          },
+          "404": {
+            "description": "일치하는 대상을 찾지 못했습니다."
+          }
+        },
+        "description": "인증 토큰 재발행 API\n\nAuthorization header로 refresh_token을 전달헤야 합니다.",
+        "x-nestia-namespace": "token.refresh.refreshToken",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "authentication",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "재발행된 access_token을 응답합니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "400 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "404 일치하는 대상을 찾지 못했습니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "사용자 상세 정보 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema.Detail"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "400": {
+            "description": "잘못된 토큰입니다."
+          },
+          "404": {
+            "description": "일치하는 대상을 찾지 못했습니다."
+          }
+        },
+        "description": "내 프로필 보기 API",
+        "x-nestia-namespace": "user.getProfile",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "사용자 상세 정보 응답",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "400 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "404 일치하는 대상을 찾지 못했습니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "description": "수정할 정보를 포함합니다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IUserUsecase.UpdateData"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          },
+          "400": {
+            "description": "잘못된 토큰입니다."
+          }
+        },
+        "description": "내 정보 수정 API",
+        "x-nestia-namespace": "user.updateProfile",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "수정할 정보를 포함합니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "400 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "x-nestia-encrypted": false
+          },
+          "400": {
+            "description": "잘못된 토큰입니다."
+          }
+        },
+        "description": "내 계정 비활성화 API\n\n사용자는 로그인을 통해 계정을 활성화할 수 있습니다.\n\n비활성화된 계정은 조회되지 않습니다.",
+        "x-nestia-namespace": "user.inActivate",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "400 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "nullable": false
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회한 사용자의 공개 정보를 응답합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSchema.Public"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "400": {
+            "description": "Value of the URL parameter \"user_id\" is not a valid UUID."
+          },
+          "404": {
+            "description": "일치하는 대상을 찾지 못했습니다."
+          }
+        },
+        "description": "사용자 프로필 조회 API\n\n활성화된 사용자의 정보만 조회합니다.",
+        "x-nestia-namespace": "users.getPulicProfile",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "user_id",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "조회 대상의 id 입니다. uuid 타입만 허용합니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "조회한 사용자의 공개 정보를 응답합니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "400 Value of the URL parameter \"user_id\" is not a valid UUID.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "404 일치하는 대상을 찾지 못했습니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IAuthUsecase.SignInBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IAuthUsecase.SignInResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "refresh_token": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "id_token": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "access_token",
+          "refresh_token",
+          "id_token"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IAuthUsecase.RefreshResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "access_token"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "UserSchema.Detail": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
+          },
+          "username": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "oauth_type": {
+            "type": "string",
+            "enum": [
+              "google",
+              "github"
+            ],
+            "nullable": false,
+            "description": "oauth server type",
+            "x-typia-required": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-required": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^010-[0-9]{4}-[0-9]{4}$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^010-[0-9]{4}-[0-9]{4}$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^010-[0-9]{4}-[0-9]{4}$"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "email",
+          "username",
+          "oauth_type",
+          "address",
+          "phone"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IUserUsecase.UpdateData": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": false
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-required": false
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^010-[0-9]{4}-[0-9]{4}$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^010-[0-9]{4}-[0-9]{4}$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "pattern": "^010-[0-9]{4}-[0-9]{4}$"
+          }
+        },
+        "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "UserSchema.Public": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
+          },
+          "username": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "email",
+          "username"
+        ],
+        "x-typia-jsDocTags": []
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
+}
