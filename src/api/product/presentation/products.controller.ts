@@ -2,12 +2,23 @@ import { TypedQuery } from '@COMMON/decorator/http';
 import { Page, PaginatedResponse } from '@INTERFACE/common';
 import { IProduct, IProductUsecase } from '@INTERFACE/product';
 import { TypedParam } from '@nestia/core';
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ProductUsecaseToken } from '@PRODUCT/constants';
 import typia from 'typia';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly usecase: IProductUsecase) {}
+  constructor(
+    @Inject(ProductUsecaseToken) private readonly usecase: IProductUsecase,
+  ) {}
 
   /**
    * 상품 목록 조회 API

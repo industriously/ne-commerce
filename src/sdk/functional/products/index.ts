@@ -9,7 +9,7 @@ import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
 import type { PaginatedResponse } from "./../../interface/common/pagination.interface";
-import type { IProduct } from "../../interface/product/schema.interface";
+import type { IProduct } from "./../../interface/product/schema.interface";
 
 /**
  * 상품 목록 조회 API
@@ -91,7 +91,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = IProduct;
+    export type Output = IProduct.Detail;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/products/:product_id";

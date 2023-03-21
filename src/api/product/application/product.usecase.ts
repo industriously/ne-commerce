@@ -1,3 +1,4 @@
+import { TransactionMarker } from '@COMMON/decorator/lazy';
 import { HttpExceptionFactory } from '@COMMON/exception';
 import {
   IProduct,
@@ -51,6 +52,7 @@ export const ProductUsecaseFactory = (
       return { data, page, total_count };
     },
     async create(input) {
+      // store 상태 확인 로직 추가
       await repository.create(input);
     },
     async update(product_id, input) {
@@ -63,5 +65,7 @@ export const ProductUsecaseFactory = (
       await repository.save(Product.inActivate(product));
       return;
     },
-  }).build();
+  })
+    .mark('create', TransactionMarker())
+    .build();
 };

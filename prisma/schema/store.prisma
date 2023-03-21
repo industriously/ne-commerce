@@ -1,0 +1,24 @@
+model Store {
+  id          String         @id @default(uuid())
+  name        String
+  description String
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @default(now())
+  is_deleted  Boolean        @default(false)
+  managers    StoreManager[]
+  products    Product[]
+
+  @@map("stores")
+}
+
+model StoreManager {
+  id       String @id @default(uuid())
+  store_id String
+  user_id  String
+
+  store Store @relation(fields: [store_id], references: [id])
+  user  User  @relation(fields: [user_id], references: [id])
+
+  @@unique([store_id, user_id])
+  @@map("store_managers")
+}

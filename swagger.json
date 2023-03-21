@@ -1218,12 +1218,6 @@
       "IProduct.UpdateInput": {
         "type": "object",
         "properties": {
-          "is_deleted": {
-            "type": "boolean",
-            "nullable": false,
-            "description": "구매 가능 상태",
-            "x-typia-required": false
-          },
           "name": {
             "type": "string",
             "nullable": false,
