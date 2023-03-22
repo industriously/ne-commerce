@@ -54,7 +54,10 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
         typia.createAssert<string>(),
         // update active user, and return none
         async (id) => {
-          await user().updateMany({ where: { id, is_deleted: false }, data });
+          await user().updateMany({
+            where: { id, is_deleted: false },
+            data: { ...data, updated_at: new Date() },
+          });
         },
       );
     },
@@ -69,7 +72,14 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
           const { id, address, email, is_deleted, phone, username } = aggregate;
           await user().updateMany({
             where: { id },
-            data: { address, email, is_deleted, phone, username },
+            data: {
+              address,
+              email,
+              is_deleted,
+              phone,
+              username,
+              updated_at: new Date(),
+            },
           });
           return aggregate;
         },

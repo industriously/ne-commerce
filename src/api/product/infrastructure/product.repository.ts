@@ -20,24 +20,6 @@ export const ProductRepositoryFactory = (
       ]);
       return [list.map(ProductMapper.toDomain), cnt];
     },
-    async create(input) {
-      const store = await client.get().store.findUnique({
-        select: { id: true, is_deleted: true },
-        where: { id: input.store_id },
-      });
-      if (store == null || store.is_deleted) {
-        throw Error('store 없음');
-      }
-      const data = typia.assertPrune(input);
-      const model = await product().create({ data });
-      return ProductMapper.toDomain(model);
-    },
-    async update(product_id, input) {
-      const id = typia.assert(product_id);
-      const data = typia.assertPrune(input);
-      await product().updateMany({ where: { id }, data });
-      return;
-    },
     async findOne(product_id) {
       const id = typia.assert(product_id);
       const model = await product().findUnique({
@@ -46,15 +28,34 @@ export const ProductRepositoryFactory = (
       return map(ProductMapper.toDomain)(model);
     },
     async save(aggregate) {
-      const { id, name, description, price, is_deleted } =
-        typia.assert(aggregate);
-      await product().updateMany({
+      const {
+        id,
+        name,
+        description,
+        price,
+        store_id,
+        is_deleted,
+        created_at,
+        updated_at,
+      } = aggregate;
+      product().upsert({
         where: { id },
-        data: {
+        create: {
+          id,
           name,
-          price,
           description,
+          price,
+          store_id,
           is_deleted,
+          created_at,
+          updated_at,
+        },
+        update: {
+          name,
+          description,
+          price,
+          is_deleted,
+          updated_at,
         },
       });
       return aggregate;

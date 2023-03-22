@@ -53,7 +53,13 @@ export const ProductUsecaseFactory = (
     },
     async create(input) {
       // store 상태 확인 로직 추가
-      await repository.create(input);
+      const exist = await repository.findOne(input.id);
+      if (exist) {
+        // id 중복
+        throw HttpExceptionFactory('BadRequest', '이미 존재하는 상품입니다.');
+      }
+      const product = Product.create(input);
+      await repository.save(product);
     },
     async update(product_id, input) {
       const product = await _findOne(product_id);
