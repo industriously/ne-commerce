@@ -120,7 +120,7 @@ export namespace findOne
 export function create
     (
         connection: IConnection,
-        body: IProduct.CreateInput
+        body: IProduct.CreateBody
     ): Promise<void>
 {
     return Fetcher.fetch
@@ -135,7 +135,7 @@ export function create
 }
 export namespace create
 {
-    export type Input = IProduct.CreateInput;
+    export type Input = IProduct.CreateBody;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/products";

@@ -91,7 +91,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IProduct.CreateInput"
+                "$ref": "#/components/schemas/IProduct.CreateBody"
               }
             }
           },
@@ -901,9 +901,33 @@
       "IProduct.Summary": {
         "type": "object",
         "properties": {
-          "store": {
-            "$ref": "#/components/schemas/IProduct.Store",
+          "vender": {
+            "$ref": "#/components/schemas/IProduct.Vender",
             "x-typia-required": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "description": "상품 고유 id",
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
           },
           "name": {
             "type": "string",
@@ -952,12 +976,6 @@
             "type": "string",
             "nullable": false,
             "description": "상품 설명",
-            "x-typia-required": true
-          },
-          "id": {
-            "type": "string",
-            "nullable": false,
-            "description": "상품 고유 번호",
             "x-typia-required": true
           },
           "created_at": {
@@ -987,16 +1005,16 @@
         },
         "nullable": false,
         "required": [
-          "store",
+          "vender",
+          "id",
           "name",
           "price",
           "description",
-          "id",
           "created_at"
         ],
         "x-typia-jsDocTags": []
       },
-      "IProduct.Store": {
+      "IProduct.Vender": {
         "type": "object",
         "properties": {
           "id": {
@@ -1020,9 +1038,33 @@
       "IProduct.Detail": {
         "type": "object",
         "properties": {
-          "store": {
-            "$ref": "#/components/schemas/IProduct.Store",
+          "vender": {
+            "$ref": "#/components/schemas/IProduct.Vender",
             "x-typia-required": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "description": "상품 고유 id",
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
           },
           "name": {
             "type": "string",
@@ -1071,12 +1113,6 @@
             "type": "string",
             "nullable": false,
             "description": "상품 설명",
-            "x-typia-required": true
-          },
-          "id": {
-            "type": "string",
-            "nullable": false,
-            "description": "상품 고유 번호",
             "x-typia-required": true
           },
           "created_at": {
@@ -1136,18 +1172,18 @@
         },
         "nullable": false,
         "required": [
-          "store",
+          "vender",
+          "id",
           "name",
           "price",
           "description",
-          "id",
           "created_at",
           "is_deleted",
           "updated_at"
         ],
         "x-typia-jsDocTags": []
       },
-      "IProduct.CreateInput": {
+      "IProduct.CreateBody": {
         "type": "object",
         "properties": {
           "name": {
@@ -1199,10 +1235,10 @@
             "description": "상품 설명",
             "x-typia-required": true
           },
-          "store_id": {
+          "code": {
             "type": "string",
             "nullable": false,
-            "description": "판매점 고유 번호",
+            "description": "상품 식별 코드",
             "x-typia-required": true
           }
         },
@@ -1211,7 +1247,7 @@
           "name",
           "price",
           "description",
-          "store_id"
+          "code"
         ],
         "x-typia-jsDocTags": []
       },

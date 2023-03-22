@@ -91,33 +91,19 @@ function makeEnum(x) { return x; }
 
 exports.Prisma.ProductScalarFieldEnum = makeEnum({
   id: 'id',
+  code: 'code',
   name: 'name',
   description: 'description',
   price: 'price',
   created_at: 'created_at',
   updated_at: 'updated_at',
   is_deleted: 'is_deleted',
-  store_id: 'store_id'
+  vender_id: 'vender_id'
 });
 
 exports.Prisma.SortOrder = makeEnum({
   asc: 'asc',
   desc: 'desc'
-});
-
-exports.Prisma.StoreManagerScalarFieldEnum = makeEnum({
-  id: 'id',
-  store_id: 'store_id',
-  user_id: 'user_id'
-});
-
-exports.Prisma.StoreScalarFieldEnum = makeEnum({
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
 });
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
@@ -137,14 +123,13 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   phone: 'phone',
   created_at: 'created_at',
   updated_at: 'updated_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  role: 'role'
 });
 
 
 exports.Prisma.ModelName = makeEnum({
   Product: 'Product',
-  Store: 'Store',
-  StoreManager: 'StoreManager',
   User: 'User'
 });
 

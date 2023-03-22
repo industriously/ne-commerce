@@ -6,10 +6,11 @@ export interface IProductUsecase {
   readonly findMany: (
     page: number,
   ) => Promise<PaginatedResponse<IProduct.Summary>>;
-  readonly create: (input: IProduct.CreateInput) => Promise<void>;
+  readonly create: (token: string, input: IProduct.CreateBody) => Promise<void>;
   readonly update: (
+    token: string,
     product_id: string,
     input: IProduct.UpdateInput,
   ) => Promise<void>;
-  readonly inActivate: (product_id: string) => Promise<void>;
+  readonly inActivate: (token: string, product_id: string) => Promise<void>;
 }

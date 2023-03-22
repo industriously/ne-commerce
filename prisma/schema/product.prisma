@@ -1,13 +1,15 @@
 model Product {
-  id          String   @id
+  id          String   @id @default(uuid())
+  code        String
   name        String
   description String
   price       Int
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
   is_deleted  Boolean  @default(false)
-  store_id    String
-  store       Store    @relation(fields: [store_id], references: [id])
+  vender_id   String
+  vender      User     @relation(fields: [vender_id], references: [id])
 
+  @@index([vender_id, code])
   @@map("products")
 }

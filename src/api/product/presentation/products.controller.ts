@@ -1,4 +1,4 @@
-import { TypedQuery } from '@COMMON/decorator/http';
+import { Authorization, TypedQuery } from '@COMMON/decorator/http';
 import { Page, PaginatedResponse } from '@INTERFACE/common';
 import { IProduct, IProductUsecase } from '@INTERFACE/product';
 import { TypedParam } from '@nestia/core';
@@ -58,9 +58,12 @@ export class ProductsController {
    * @param body 상품 생성 정보
    */
   @Post()
-  create(@Body() body: IProduct.CreateInput): Promise<void> {
+  create(
+    @Authorization('bearer') token: string,
+    @Body() body: IProduct.CreateBody,
+  ): Promise<void> {
     const input = typia.assertPrune(body);
-    return this.usecase.create(input);
+    return this.usecase.create(token, input);
   }
 
   /**
@@ -72,11 +75,12 @@ export class ProductsController {
    */
   @Patch(':product_id')
   update(
+    @Authorization('bearer') token: string,
     @TypedParam('product_id', 'string') product_id: string,
     @Body() body: IProduct.UpdateInput,
   ): Promise<void> {
     const input = typia.assertPrune(body);
-    return this.usecase.update(product_id, input);
+    return this.usecase.update(token, product_id, input);
   }
 
   /**
@@ -87,8 +91,9 @@ export class ProductsController {
    */
   @Delete(':product_id')
   inActivate(
+    @Authorization('bearer') token: string,
     @TypedParam('product_id', 'uuid') product_id: string,
   ): Promise<void> {
-    return this.usecase.inActivate(product_id);
+    return this.usecase.inActivate(token, product_id);
   }
 }

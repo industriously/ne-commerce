@@ -5,12 +5,21 @@ import {
   IProductRepository,
   IProductUsecase,
 } from '@INTERFACE/product';
+import { ITokenService } from '@INTERFACE/token';
 import { Product, ProductMapper } from '@PRODUCT/domain';
 import { Nullish, ProviderBuilder } from '@UTIL';
 
 export const ProductUsecaseFactory = (
   repository: IProductRepository,
+  tokenService: ITokenService,
 ): IProductUsecase => {
+  const _getVenderId = (token: string): string => {
+    const payload = tokenService.getAccessTokenPayload(token);
+    if (payload.role !== 'vender') {
+      throw HttpExceptionFactory('Forbidden');
+    }
+    return payload.id;
+  };
   const _findOne = async (product_id: string): Promise<IProduct> => {
     const product = await repository.findOne(product_id);
     if (Nullish.is(product)) {
@@ -19,55 +28,61 @@ export const ProductUsecaseFactory = (
     return product;
   };
 
+  const _checkUpdatePermission = (token: string, product: IProduct): void => {
+    const vender_id = _getVenderId(token);
+    if (product.vender_id !== vender_id) {
+      throw HttpExceptionFactory('Forbidden');
+    }
+  };
+
   return ProviderBuilder<IProductUsecase>({
     async findOne(product_id) {
       const product = await _findOne(product_id);
       return ProductMapper.toDetail(product, {
-        id: product.store_id,
-        name: '가게 정보를 불러오지 못했습니다.',
+        id: product.vender_id,
+        name: '',
       });
     },
     async findMany(page) {
       const [list, total_count] = await repository.findMany(page);
-      const getStoreList = (_products: IProduct[]) =>
+      const getVenderList = (_products: IProduct[]) =>
         Array.from(
-          new Set(_products.map((_product) => _product.store_id)),
-        ).map<IProduct.Store>((id) => ({ id, name: '' }));
+          new Set(_products.map((_product) => _product.vender_id)),
+        ).map<IProduct.Vender>((id) => ({ id, name: '' }));
 
-      const store_list = await Promise.all(getStoreList(list));
+      const vender_list = await Promise.all(getVenderList(list));
 
       const data: IProduct.Summary[] = list
         .map((product) => {
-          const store = store_list.find((str) => str.id === product.store_id);
+          const vender = vender_list.find(
+            (str) => str.id === product.vender_id,
+          );
           return ProductMapper.toSummary(
             product,
-            store ?? {
-              id: product.store_id,
-              name: '가게 정보를 불러오지 못했습니다.',
+            vender ?? {
+              id: product.vender_id,
+              name: '',
             },
           );
         })
-        .filter((summary) => summary.store.id !== 'null');
+        .filter((summary) => summary.vender.id !== 'null');
 
       return { data, page, total_count };
     },
-    async create(input) {
-      // store 상태 확인 로직 추가
-      const exist = await repository.findOne(input.id);
-      if (exist) {
-        // id 중복
-        throw HttpExceptionFactory('BadRequest', '이미 존재하는 상품입니다.');
-      }
-      const product = Product.create(input);
+    async create(token, input) {
+      const vender_id = _getVenderId(token);
+      const product = Product.create({ ...input, vender_id });
       await repository.save(product);
     },
-    async update(product_id, input) {
+    async update(token, product_id, input) {
       const product = await _findOne(product_id);
+      _checkUpdatePermission(token, product);
       await repository.save(Product.update(product, input));
       return;
     },
-    async inActivate(product_id) {
+    async inActivate(token, product_id) {
       const product = await _findOne(product_id);
+      _checkUpdatePermission(token, product);
       await repository.save(Product.inActivate(product));
       return;
     },

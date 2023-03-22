@@ -5,9 +5,14 @@
  */
 export interface IProduct {
   /**
-   * 상품 고유 번호
+   * 상품 고유 id
+   * @format uuid
    */
   readonly id: string;
+  /**
+   * 상품 식별 코드
+   */
+  readonly code: string;
   /**
    * 상품명
    */
@@ -23,9 +28,9 @@ export interface IProduct {
    */
   readonly description: string;
   /**
-   * 판매점 고유 번호
+   * 판매자 id
    */
-  readonly store_id: string;
+  readonly vender_id: string;
   /**
    * 구매 가능 상태
    */
@@ -48,20 +53,22 @@ export namespace IProduct {
       IProduct,
       'id' | 'name' | 'price' | 'description' | 'created_at'
     > {
-    readonly store: Store;
+    readonly vender: Vender;
   }
 
   export type Detail = Summary & Pick<IProduct, 'is_deleted' | 'updated_at'>;
 
   export type CreateInput = Pick<
     IProduct,
-    'name' | 'price' | 'description' | 'store_id'
+    'code' | 'name' | 'price' | 'description' | 'vender_id'
   >;
+
+  export interface CreateBody extends Omit<CreateInput, 'vender_id'> {}
 
   export interface UpdateInput
     extends Partial<Pick<IProduct, 'name' | 'price' | 'description'>> {}
 
-  export interface Store {
+  export interface Vender {
     readonly id: string;
     readonly name: string;
   }

@@ -1,39 +1,46 @@
+import { randomUUID } from 'crypto';
 import { IProduct } from '@INTERFACE/product';
 import { Predicate } from '@UTIL';
 import typia from 'typia';
+import { Mutable } from '@INTERFACE/common';
 
 export namespace Product {
   export const create = (input: IProduct.CreateInput): IProduct => {
-    const { id, store_id, name, description, price } = typia.assert(input);
+    const { code, vender_id, name, description, price } = typia.assert(input);
     const now = new Date().toISOString();
     return {
-      id,
+      id: randomUUID(),
+      code,
       name,
       description,
       price,
-      store_id,
+      vender_id,
       is_deleted: false,
       created_at: now,
       updated_at: now,
     };
   };
-  export const update = (target: IProduct, input: IProduct.UpdateInput) => {
-    (target.name as string) = input.name ?? target.name;
-    (target.description as string) = input.description ?? target.description;
-    (target.price as number) = input.price ?? target.price;
-    (target.updated_at as string) = new Date().toISOString();
+
+  export const update = (
+    target: Mutable<IProduct>,
+    input: IProduct.UpdateInput,
+  ) => {
+    target.name = input.name ?? target.name;
+    target.description = input.description ?? target.description;
+    target.price = input.price ?? target.price;
+    target.updated_at = new Date().toISOString();
     return target;
   };
 
-  export const activate = (target: IProduct) => {
-    (target.is_deleted as boolean) = false;
-    (target.updated_at as string) = new Date().toISOString();
+  export const activate = (target: Mutable<IProduct>) => {
+    target.is_deleted = false;
+    target.updated_at = new Date().toISOString();
     return target;
   };
 
-  export const inActivate = (target: IProduct) => {
-    (target.is_deleted as boolean) = true;
-    (target.updated_at as string) = new Date().toISOString();
+  export const inActivate = (target: Mutable<IProduct>) => {
+    target.is_deleted = true;
+    target.updated_at = new Date().toISOString();
     return target;
   };
 

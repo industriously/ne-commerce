@@ -30,10 +30,11 @@ export const ProductRepositoryFactory = (
     async save(aggregate) {
       const {
         id,
+        code,
         name,
         description,
         price,
-        store_id,
+        vender_id,
         is_deleted,
         created_at,
         updated_at,
@@ -42,10 +43,11 @@ export const ProductRepositoryFactory = (
         where: { id },
         create: {
           id,
+          code,
           name,
           description,
           price,
-          store_id,
+          vender_id,
           is_deleted,
           created_at,
           updated_at,

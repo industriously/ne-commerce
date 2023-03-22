@@ -5,20 +5,22 @@ export namespace ProductMapper {
   export const toDomain = (model: Product): IProduct => {
     const {
       id,
+      code,
       name,
       price,
       description,
-      store_id,
+      vender_id,
       is_deleted,
       created_at,
       updated_at,
     } = model;
     return {
       id,
+      code,
       name,
       price,
       description,
-      store_id,
+      vender_id,
       created_at: created_at.toISOString(),
       updated_at: updated_at.toISOString(),
       is_deleted,
@@ -27,21 +29,21 @@ export namespace ProductMapper {
 
   export const toSummary = (
     product: IProduct,
-    store: IProduct.Store,
+    vender: IProduct.Vender,
   ): IProduct.Summary => {
     const { id, name, price, description, created_at } = product;
     return {
       id,
       name,
       price,
+      vender,
       description,
-      store,
       created_at,
     };
   };
   export const toDetail = (
     product: IProduct,
-    store: IProduct.Store,
+    vender: IProduct.Vender,
   ): IProduct.Detail => {
     const { id, name, price, description, is_deleted, created_at, updated_at } =
       product;
@@ -49,11 +51,11 @@ export namespace ProductMapper {
       id,
       name,
       price,
+      vender,
       description,
       is_deleted,
       created_at,
       updated_at,
-      store,
     };
   };
 }
