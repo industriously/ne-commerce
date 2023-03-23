@@ -911,23 +911,23 @@
             "description": "상품 고유 id",
             "x-typia-metaTags": [
               {
-                "kind": "format",
-                "value": "uuid"
+                "kind": "pattern",
+                "value": "^[\\w|\\d]{10}$"
               }
             ],
             "x-typia-jsDocTags": [
               {
-                "name": "format",
+                "name": "pattern",
                 "text": [
                   {
-                    "text": "uuid",
+                    "text": "^[\\w|\\d]{10}$",
                     "kind": "text"
                   }
                 ]
               }
             ],
             "x-typia-required": true,
-            "format": "uuid"
+            "pattern": "^[\\w|\\d]{10}$"
           },
           "name": {
             "type": "string",
@@ -1048,23 +1048,23 @@
             "description": "상품 고유 id",
             "x-typia-metaTags": [
               {
-                "kind": "format",
-                "value": "uuid"
+                "kind": "pattern",
+                "value": "^[\\w|\\d]{10}$"
               }
             ],
             "x-typia-jsDocTags": [
               {
-                "name": "format",
+                "name": "pattern",
                 "text": [
                   {
-                    "text": "uuid",
+                    "text": "^[\\w|\\d]{10}$",
                     "kind": "text"
                   }
                 ]
               }
             ],
             "x-typia-required": true,
-            "format": "uuid"
+            "pattern": "^[\\w|\\d]{10}$"
           },
           "name": {
             "type": "string",
@@ -1234,20 +1234,13 @@
             "nullable": false,
             "description": "상품 설명",
             "x-typia-required": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": false,
-            "description": "상품 식별 코드",
-            "x-typia-required": true
           }
         },
         "nullable": false,
         "required": [
           "name",
           "price",
-          "description",
-          "code"
+          "description"
         ],
         "x-typia-jsDocTags": []
       },

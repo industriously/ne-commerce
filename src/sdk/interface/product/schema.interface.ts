@@ -28,7 +28,7 @@ export interface IProduct {
   /**
    * 판매자 id
    *
-   * @type uuid
+   * @format uuid
    */
   readonly vender_id: string;
   /**

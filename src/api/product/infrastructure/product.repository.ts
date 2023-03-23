@@ -38,7 +38,7 @@ export const ProductRepositoryFactory = (
         created_at,
         updated_at,
       } = aggregate;
-      product().upsert({
+      await product().upsert({
         where: { id },
         create: {
           id,
