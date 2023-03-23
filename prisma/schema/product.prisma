@@ -1,6 +1,5 @@
 model Product {
-  id          String   @id @default(uuid())
-  code        String
+  id          String   @id
   name        String
   description String
   price       Int
@@ -10,6 +9,5 @@ model Product {
   vender_id   String
   vender      User     @relation(fields: [vender_id], references: [id])
 
-  @@index([vender_id, code])
   @@map("products")
 }

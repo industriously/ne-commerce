@@ -91,7 +91,6 @@ function makeEnum(x) { return x; }
 
 exports.Prisma.ProductScalarFieldEnum = makeEnum({
   id: 'id',
-  code: 'code',
   name: 'name',
   description: 'description',
   price: 'price',

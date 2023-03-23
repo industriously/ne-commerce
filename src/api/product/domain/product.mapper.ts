@@ -5,7 +5,6 @@ export namespace ProductMapper {
   export const toDomain = (model: Product): IProduct => {
     const {
       id,
-      code,
       name,
       price,
       description,
@@ -16,7 +15,6 @@ export namespace ProductMapper {
     } = model;
     return {
       id,
-      code,
       name,
       price,
       description,

@@ -6,19 +6,17 @@
 export interface IProduct {
   /**
    * 상품 고유 id
-   * @format uuid
+   *
+   * @pattern ^[\w|\d]{10}$
    */
   readonly id: string;
-  /**
-   * 상품 식별 코드
-   */
-  readonly code: string;
   /**
    * 상품명
    */
   readonly name: string;
   /**
    * 상품 가격(원)
+   *
    * @type uint
    * @minimum 0
    */
@@ -29,6 +27,8 @@ export interface IProduct {
   readonly description: string;
   /**
    * 판매자 id
+   *
+   * @type uuid
    */
   readonly vender_id: string;
   /**
@@ -60,7 +60,7 @@ export namespace IProduct {
 
   export type CreateInput = Pick<
     IProduct,
-    'code' | 'name' | 'price' | 'description' | 'vender_id'
+    'name' | 'price' | 'description' | 'vender_id'
   >;
 
   export interface CreateBody extends Omit<CreateInput, 'vender_id'> {}

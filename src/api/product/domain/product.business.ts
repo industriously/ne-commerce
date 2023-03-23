@@ -1,16 +1,14 @@
-import { randomUUID } from 'crypto';
 import { IProduct } from '@INTERFACE/product';
-import { Predicate } from '@UTIL';
+import { Predicate, generateCode } from '@UTIL';
 import typia from 'typia';
 import { Mutable } from '@INTERFACE/common';
 
 export namespace Product {
   export const create = (input: IProduct.CreateInput): IProduct => {
-    const { code, vender_id, name, description, price } = typia.assert(input);
+    const { vender_id, name, description, price } = typia.assert(input);
     const now = new Date().toISOString();
     return {
-      id: randomUUID(),
-      code,
+      id: generateCode(),
       name,
       description,
       price,

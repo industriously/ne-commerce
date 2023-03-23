@@ -16,7 +16,6 @@ type UnwrapTuple<Tuple extends readonly unknown[]> = {
  */
 export type Product = {
   id: string
-  code: string
   name: string
   description: string
   price: number
@@ -894,7 +893,6 @@ export namespace Prisma {
 
   export type ProductMinAggregateOutputType = {
     id: string | null
-    code: string | null
     name: string | null
     description: string | null
     price: number | null
@@ -906,7 +904,6 @@ export namespace Prisma {
 
   export type ProductMaxAggregateOutputType = {
     id: string | null
-    code: string | null
     name: string | null
     description: string | null
     price: number | null
@@ -918,7 +915,6 @@ export namespace Prisma {
 
   export type ProductCountAggregateOutputType = {
     id: number
-    code: number
     name: number
     description: number
     price: number
@@ -940,7 +936,6 @@ export namespace Prisma {
 
   export type ProductMinAggregateInputType = {
     id?: true
-    code?: true
     name?: true
     description?: true
     price?: true
@@ -952,7 +947,6 @@ export namespace Prisma {
 
   export type ProductMaxAggregateInputType = {
     id?: true
-    code?: true
     name?: true
     description?: true
     price?: true
@@ -964,7 +958,6 @@ export namespace Prisma {
 
   export type ProductCountAggregateInputType = {
     id?: true
-    code?: true
     name?: true
     description?: true
     price?: true
@@ -1064,7 +1057,6 @@ export namespace Prisma {
 
   export type ProductGroupByOutputType = {
     id: string
-    code: string
     name: string
     description: string
     price: number
@@ -1095,7 +1087,6 @@ export namespace Prisma {
 
   export type ProductSelect = {
     id?: boolean
-    code?: boolean
     name?: boolean
     description?: boolean
     price?: boolean
@@ -2881,7 +2872,6 @@ export namespace Prisma {
 
   export const ProductScalarFieldEnum: {
     id: 'id',
-    code: 'code',
     name: 'name',
     description: 'description',
     price: 'price',
@@ -2939,7 +2929,6 @@ export namespace Prisma {
     OR?: Enumerable<ProductWhereInput>
     NOT?: Enumerable<ProductWhereInput>
     id?: StringFilter | string
-    code?: StringFilter | string
     name?: StringFilter | string
     description?: StringFilter | string
     price?: IntFilter | number
@@ -2952,7 +2941,6 @@ export namespace Prisma {
 
   export type ProductOrderByWithRelationInput = {
     id?: SortOrder
-    code?: SortOrder
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -2969,7 +2957,6 @@ export namespace Prisma {
 
   export type ProductOrderByWithAggregationInput = {
     id?: SortOrder
-    code?: SortOrder
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -2989,7 +2976,6 @@ export namespace Prisma {
     OR?: Enumerable<ProductScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ProductScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
-    code?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
     description?: StringWithAggregatesFilter | string
     price?: IntWithAggregatesFilter | number
@@ -3073,8 +3059,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3085,8 +3070,7 @@ export namespace Prisma {
   }
 
   export type ProductUncheckedCreateInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3098,7 +3082,6 @@ export namespace Prisma {
 
   export type ProductUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3110,7 +3093,6 @@ export namespace Prisma {
 
   export type ProductUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3121,8 +3103,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateManyInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3134,7 +3115,6 @@ export namespace Prisma {
 
   export type ProductUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3145,7 +3125,6 @@ export namespace Prisma {
 
   export type ProductUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3305,7 +3284,6 @@ export namespace Prisma {
 
   export type ProductCountOrderByAggregateInput = {
     id?: SortOrder
-    code?: SortOrder
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -3321,7 +3299,6 @@ export namespace Prisma {
 
   export type ProductMaxOrderByAggregateInput = {
     id?: SortOrder
-    code?: SortOrder
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -3333,7 +3310,6 @@ export namespace Prisma {
 
   export type ProductMinOrderByAggregateInput = {
     id?: SortOrder
-    code?: SortOrder
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -3786,8 +3762,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateWithoutVenderInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3797,8 +3772,7 @@ export namespace Prisma {
   }
 
   export type ProductUncheckedCreateWithoutVenderInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3838,7 +3812,6 @@ export namespace Prisma {
     OR?: Enumerable<ProductScalarWhereInput>
     NOT?: Enumerable<ProductScalarWhereInput>
     id?: StringFilter | string
-    code?: StringFilter | string
     name?: StringFilter | string
     description?: StringFilter | string
     price?: IntFilter | number
@@ -3849,8 +3822,7 @@ export namespace Prisma {
   }
 
   export type ProductCreateManyVenderInput = {
-    id?: string
-    code: string
+    id: string
     name: string
     description: string
     price: number
@@ -3861,7 +3833,6 @@ export namespace Prisma {
 
   export type ProductUpdateWithoutVenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3872,7 +3843,6 @@ export namespace Prisma {
 
   export type ProductUncheckedUpdateWithoutVenderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
@@ -3883,7 +3853,6 @@ export namespace Prisma {
 
   export type ProductUncheckedUpdateManyWithoutProductInput = {
     id?: StringFieldUpdateOperationsInput | string
-    code?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
