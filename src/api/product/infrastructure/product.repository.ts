@@ -11,14 +11,14 @@ export const ProductRepositoryFactory = (
   return ProviderBuilder<IProductRepository>({
     async findMany(page) {
       const take = 30;
-      const [list, cnt] = await Promise.all([
-        product().findMany({
-          take,
-          skip: (page - 1) * take,
-        }),
-        product().count(),
-      ]);
-      return [list.map(ProductMapper.toDomain), cnt];
+      const list = await product().findMany({
+        take,
+        skip: (page - 1) * take,
+      });
+      return list.map(ProductMapper.toDomain);
+    },
+    async count() {
+      return product().count();
     },
     async findOne(product_id) {
       const id = typia.assert(product_id);

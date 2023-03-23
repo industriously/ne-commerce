@@ -8,6 +8,10 @@ import { pipe } from 'rxjs';
 export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
   const user = () => client.get().user;
   return {
+    async findManyByIds(ids) {
+      const list = await user().findMany({ where: { id: { in: ids } } });
+      return list.map(UserMapper.toAggregate);
+    },
     create(data) {
       return pipeAsync(
         // validate input

@@ -14,7 +14,7 @@
   },
   "main": "dist/main",
   "scripts": {
-    "prebuild":"npm run nestia",
+    "prebuild": "npm run nestia",
     "build": "rimraf dist && ttsc -p ./tsconfig.build.json",
     "dev": "npm run build && node dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -44,6 +44,7 @@
     "@nestjs/common": "^9.3.10",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.3.10",
+    "@nestjs/cqrs": "^9.0.3",
     "@nestjs/jwt": "^10.0.2",
     "@nestjs/platform-express": "^9.3.10",
     "cls-hooked": "^4.2.2",

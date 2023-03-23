@@ -21,6 +21,7 @@ export namespace IUserRepository {
 
 export interface IUserRepository
   extends IRepository<UserSchema.Aggregate, string> {
+  readonly findManyByIds: (ids: string[]) => Promise<UserSchema.Aggregate[]>;
   readonly create: (
     data: IUserRepository.CreateData,
   ) => Promise<UserSchema.Aggregate>;

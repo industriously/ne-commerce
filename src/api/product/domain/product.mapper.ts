@@ -1,4 +1,5 @@
 import { IProduct } from '@INTERFACE/product';
+import { UserSchema } from '@INTERFACE/user';
 import { Product } from '@PRISMA';
 
 export namespace ProductMapper {
@@ -55,5 +56,10 @@ export namespace ProductMapper {
       created_at,
       updated_at,
     };
+  };
+
+  export const toVender = (user: UserSchema.Aggregate): IProduct.Vender => {
+    const { id, username: name } = user;
+    return { id, name };
   };
 }
