@@ -16,8 +16,8 @@ const init = () => {
       break;
   }
   return process.env.NODE_ENV === 'test'
-    ? (process.env as IEnv)
-    : typia.assert<IEnv>(process.env);
+    ? ({ ...process.env } as IEnv)
+    : { ...typia.assert<IEnv>(process.env) };
 };
 
 export const Configuration = init();

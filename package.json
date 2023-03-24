@@ -34,7 +34,7 @@
     "nestia": "npm run swagger && npm run sdk",
     "schema": "ls ./prisma/schema/*.prisma | xargs cat > ./prisma/schema.prisma",
     "db:update": "rimraf db && npm run schema && prisma migrate dev",
-    "db:deploy": "rimraf db && npm run schema && prisma migrate deploy",
+    "db:deploy": "prisma migrate deploy",
     "db:dashboard": "prisma studio"
   },
   "dependencies": {

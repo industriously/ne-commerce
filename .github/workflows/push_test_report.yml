@@ -2,16 +2,14 @@ name: 'Test'
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, product ]
 
 env:
+  PORT: 4000
   ACCESS_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
   ACCESS_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
   REFRESH_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
   REFRESH_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
-  MYSQL_USER: test
-  MYSQL_PASSWORD: test
-  MYSQL_DATABASE: test
   DATABASE_URL: mysql://test:test@localhost:3306/test
 
 permissions:
@@ -22,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: myslq:8
+        image: mysql:8
         ports:
          - 3306:3306
         options:
@@ -30,6 +28,11 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+        env:
+          MYSQL_USER: test
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_PASSWORD: test
+          MYSQL_DATABASE: test
 
     strategy:
       matrix:
@@ -40,9 +43,6 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-
-      - name: Wait for MySQL to be Ready 🕒
-        run: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - name: Install
         run: npm ci
@@ -63,6 +63,7 @@ jobs:
       - name: Create Comment
         id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
+        if:  matrix.test-type == 'test:cov -- --coverage --coverageReporters json-summary'
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
       

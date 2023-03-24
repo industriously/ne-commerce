@@ -52,7 +52,11 @@ export namespace TestUser {
   };
 
   export const test_update_profile = (connection: IConnection) => () => {
-    const test_bodys = typia.random<IUserUsecase.UpdateData[]>();
+    const test_bodys = [
+      typia.random<IUserUsecase.UpdateData>(),
+      typia.random<IUserUsecase.UpdateData>(),
+      typia.random<IUserUsecase.UpdateData>(),
+    ];
     const _token = getToken({ id: SeedUser.normal_id, role: 'normal' });
     it.each(invalid_tokens)('If token invalid', (token) =>
       updateProfile.test_invalid_token(connection)(token)(test_bodys[0]),
