@@ -2,7 +2,7 @@ name: 'Test'
 
 on:
   push:
-    branches: [ main, product ]
+    branches: [ main ]
 
 env:
   PORT: 4000
@@ -39,7 +39,8 @@ jobs:
         node-version: [18.x]
         test-type:
           - test:cov
-          - test:cov -- --coverage --coverageReporters json-summary
+          - test:cov -- --coverageReporters json-summary
+  
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -60,15 +61,15 @@ jobs:
           branch: gh-pages
           folder: coverage/lcov-report
       
-      - name: Create Comment
+      - name: Create Badge Data
         id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
-        if:  matrix.test-type == 'test:cov -- --coverage --coverageReporters json-summary'
+        if:  matrix.test-type == 'test:cov -- --coverageReporters json-summary'
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
       
       - name: Update Badge 📌
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' && matrix.test-type == 'test:cov -- --coverageReporters json-summary' }}
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
