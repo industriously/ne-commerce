@@ -90,7 +90,7 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
         async (id) => {
           await user().updateMany({
             where: { id },
-            data: { is_deleted: false },
+            data: { is_deleted: true },
           });
         },
       )(id);

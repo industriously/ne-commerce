@@ -15,6 +15,7 @@ const config: Config = {
       },
     ],
   },
+  bail: true,
   restoreMocks: true,
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',

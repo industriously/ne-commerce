@@ -1,10 +1,10 @@
 import { DBClient } from '@INTERFACE/common';
 import { ProviderBuilder } from '@UTIL';
 import { getNamespace } from 'cls-hooked';
-import { PrismaService } from './prisma.service';
+import { prisma } from './prisma.service';
 import { TRANSACTION_CLIENT, TRANSACTION_NS_KEY } from './transaction';
 
-export const ClientFactory = (prisma: PrismaService): DBClient => {
+export const ClientFactory = async (): Promise<DBClient> => {
   return ProviderBuilder<DBClient>({
     get() {
       const namespace = getNamespace(TRANSACTION_NS_KEY);
