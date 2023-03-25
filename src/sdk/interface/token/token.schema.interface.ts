@@ -2,7 +2,7 @@ import { Primitive } from 'typia';
 import { UserSchema } from '@INTERFACE/user';
 
 export namespace TokenSchema {
-  export type AccessTokenPayload = Pick<UserSchema.Aggregate, 'id'>;
+  export type AccessTokenPayload = Pick<UserSchema.Aggregate, 'id' | 'role'>;
   export type RefreshTokenPayload = Pick<UserSchema.Aggregate, 'id'>;
   export type IdTokenPayload = Primitive<UserSchema.Detail>;
 

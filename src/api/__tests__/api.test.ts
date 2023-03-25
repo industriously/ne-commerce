@@ -1,58 +1,42 @@
 import { IConnection } from '@nestia/fetcher';
-import { Test } from '@nestjs/testing';
-import { ApiModule } from 'src/api/api.module';
-import { FilterModule } from '@INFRA/filter/filter.module';
-import { ConfigModule } from '@INFRA/config/config.module';
 import { INestApplication } from '@nestjs/common';
-import { UserRepositoryToken } from '@USER/_constants_';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { AopModule } from '@toss/nestjs-aop';
-import { UserRepository } from './mock/repository';
-import { config, jwtService } from './mock/provider';
 import { TestUsers } from '@USER/__tests__/users';
 import { TestUser } from '@USER/__tests__/user';
 import { TestAuth } from '@USER/__tests__/auth';
-import { listen } from 'src/application';
+import { bootstrap, close, listen } from 'src/application';
+import { Configuration } from '@INFRA/config';
+import { prisma } from '@INFRA/DB';
+import { SeedProduct, SeedUser } from './seed';
+import { TestProducts } from '@PRODUCT/__tests__/products';
 
 describe('API Test', () => {
   const connection = {
-    host: `http://localhost:${config.get<string>('PORT')}`,
+    host: `http://localhost:${Configuration.PORT}`,
   } satisfies IConnection;
 
-  let app: INestApplication | null = null;
+  let app: INestApplication;
 
   beforeAll(async () => {
-    const TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule, FilterModule, AopModule, ApiModule],
-    })
-      .overrideProvider(UserRepositoryToken)
-      .useValue(UserRepository)
-      .overrideProvider(JwtService)
-      .useValue(jwtService)
-      .overrideProvider(ConfigService)
-      .useValue(config)
-      .compile();
-
-    app = TestingModule.createNestApplication();
-
-    await app.init();
-    await listen(app, config.get<string>('PORT'));
+    app = await bootstrap({ logger: false });
+    await SeedUser.seed();
+    await SeedProduct.seed();
+    await listen(app);
   });
 
   afterAll(async () => {
-    if (app) await app.close();
+    await prisma.product.deleteMany();
+    await prisma.user.deleteMany();
+    if (app) await close(app);
   });
 
   describe('AuthUsecase', () => {
-    describe('sign_in.google.signInGoogle', TestAuth.test_sign_in_google);
     describe(
       'token.refresh.refreshToken - get access_token by refresh_token',
       TestAuth.test_refresh(connection),
     );
   });
 
-  describe('UserUsecase', () => {
+  describe('User API', () => {
     describe(
       "users.getPublicProfile - get activate user's public profile by user_id",
       TestUsers.test_get_public_profile(connection),
@@ -71,6 +55,33 @@ describe('API Test', () => {
     describe(
       'user.inActivate - remove user by access_token',
       TestUser.test_user_inactivate(connection),
+    );
+  });
+
+  describe('Product API', () => {
+    describe(
+      'products.create - create new product',
+      TestProducts.test_create(connection),
+    );
+
+    describe(
+      'products.findMany - get product summary list',
+      TestProducts.test_findMany(connection),
+    );
+
+    describe(
+      'products.findOne - get product detail by product_id',
+      TestProducts.test_findOne(connection),
+    );
+
+    describe(
+      'products.update - update product',
+      TestProducts.test_update(connection),
+    );
+
+    describe(
+      'products.inActivate - inActivate product',
+      TestProducts.test_inActivate(connection),
     );
   });
 });

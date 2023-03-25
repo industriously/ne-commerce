@@ -10,7 +10,8 @@ export namespace UserMapper {
     model,
   ) => {
     const oauth_type = typia.assert<UserSchema.OauthType>(model.oauth_type);
-    return { ...model, oauth_type } satisfies UserSchema.Aggregate;
+    const role = typia.assert<UserSchema.Role>(model.role);
+    return { ...model, oauth_type, role } satisfies UserSchema.Aggregate;
   };
 
   export const toPublic: UnaryFunction<

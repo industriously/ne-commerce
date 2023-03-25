@@ -2,22 +2,21 @@ import { OAUTH_PROFILE } from '@USER/_constants_';
 import { Github, Request, StrategyException } from '@devts/nestjs-auth';
 import { UserSchema } from '@INTERFACE/user';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import typia from 'typia';
-import { IEnv } from '@INTERFACE/common';
 import { HttpExceptionFactory } from '@COMMON/exception';
+import { Configuration } from '@INFRA/config';
+import typia from 'typia';
 
 @Injectable()
 export class GithubStrategy extends Github.AbstractStrategy<
   typeof OAUTH_PROFILE,
   UserSchema.OauthProfile
 > {
-  constructor(config: ConfigService<IEnv, true>) {
+  constructor() {
     super({
       key: 'profile',
-      client_id: config.get('GITHUB_CLIENT_ID'),
-      client_secret: config.get('GITHUB_CLIENT_SECRET'),
-      redirect_uri: config.get('GITHUB_OAUTH_CALLBACK'),
+      client_id: Configuration.GITHUB_CLIENT_ID,
+      client_secret: Configuration.GITHUB_CLIENT_SECRET,
+      redirect_uri: Configuration.GITHUB_OAUTH_CALLBACK,
       scope: ['read:user', 'user:email'],
     });
   }

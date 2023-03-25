@@ -1,8 +1,13 @@
 import { DBClientToken } from '@INFRA/DB';
 import { IAuthUsecase, IUserRepository, IUserUsecase } from '@INTERFACE/user';
-import { ModuleMetadata, Provider } from '@nestjs/common';
+import { Provider } from '@nestjs/common';
 import { TokenServiceToken } from '../token/constants';
-import { AuthUsecaseFactory, UserUsecaseFactory } from './application';
+import {
+  AuthUsecaseFactory,
+  FindManyVenderHandler,
+  FindVenderHandler,
+  UserUsecaseFactory,
+} from './application';
 import { UserRepositoryFactory } from './infrastructure/user.repository';
 import {
   GithubStrategy,
@@ -40,10 +45,12 @@ const AuthUsecase: Provider<IAuthUsecase> = {
   provide: AuthUsecaseToken,
 };
 
-export const providers: ModuleMetadata['providers'] = [
+export const providers: Provider[] = [
   GoogleStrategyProvider,
   GithubStrategyProvider,
   UserRepository,
   UserUsecase,
   AuthUsecase,
+  FindVenderHandler,
+  FindManyVenderHandler,
 ];

@@ -15,6 +15,7 @@ const config: Config = {
       },
     ],
   },
+  bail: true,
   restoreMocks: true,
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
@@ -27,6 +28,8 @@ const config: Config = {
     '@ACCOUNT/(.*)$': '<rootDir>/src/api/account/$1',
     '@TOKEN': '<rootDir>/src/api/token',
     '@USER/(.*)$': '<rootDir>/src/api/user/$1',
+    '@PRODUCT/(.*)$': '<rootDir>/src/api/product/$1',
+    '@STORE/(.*)$': '<rootDir>/src/api/store/$1',
   },
   collectCoverageFrom: ['src/**/*.ts'],
   coveragePathIgnorePatterns: [

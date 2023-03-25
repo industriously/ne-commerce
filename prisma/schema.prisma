@@ -7,21 +7,36 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+model Product {
+  id          String   @id
+  name        String
+  description String
+  price       Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  is_deleted  Boolean  @default(false)
+  vender_id   String
+  vender      User     @relation(fields: [vender_id], references: [id])
+
+  @@map("products")
+}
 model User {
   /// @format uuid
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   sub        String
   oauth_type String
   /// @format email
-  email      String   @unique
+  email      String    @unique
   /// @pattern ^[\w\d]{8,16}$
   username   String
   address    String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
   phone      String?
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  is_deleted Boolean  @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  is_deleted Boolean   @default(false)
+  role       String    @default("normal")
+  product    Product[]
 
   @@unique([sub, oauth_type])
   @@map("users")

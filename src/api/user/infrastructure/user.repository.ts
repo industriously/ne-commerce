@@ -1,6 +1,6 @@
 import { UserMapper } from '@USER/domain';
 import { map, pipeAsync } from '@UTIL';
-import { IUserRepository, UserSchema } from '@INTERFACE/user';
+import { IUserRepository } from '@INTERFACE/user';
 import typia from 'typia';
 import { DBClient } from '@INTERFACE/common';
 import { pipe } from 'rxjs';
@@ -8,6 +8,10 @@ import { pipe } from 'rxjs';
 export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
   const user = () => client.get().user;
   return {
+    async findManyByIds(ids) {
+      const list = await user().findMany({ where: { id: { in: ids } } });
+      return list.map(UserMapper.toAggregate);
+    },
     create(data) {
       return pipeAsync(
         // validate input
@@ -19,24 +23,24 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
       )(data);
     },
 
-    findOne(include_deleted = false) {
+    findOne(product_id: string) {
       return pipeAsync(
         // validate input
         (id: string) => typia.assert(id),
         // find active user by id
         (id) =>
           user().findFirst({
-            where: { id, is_deleted: include_deleted ? undefined : false },
+            where: { id, is_deleted: false },
           }),
         // if user exist, transform to aggregate
         map(UserMapper.toAggregate),
-      );
+      )(product_id);
     },
 
     findOneByOauth(filter) {
       return pipeAsync(
         // validate input
-        typia.createAssertPrune<IUserRepository.FindOneByOauthFilter>(),
+        typia.createAssert<IUserRepository.FindOneByOauthFilter>(),
         // find user by oauth data or email
         ({ sub, oauth_type, email }) =>
           user().findFirst({ where: { OR: [{ email }, { sub, oauth_type }] } }),
@@ -54,26 +58,28 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
         typia.createAssert<string>(),
         // update active user, and return none
         async (id) => {
-          await user().updateMany({ where: { id, is_deleted: false }, data });
+          await user().updateMany({
+            where: { id, is_deleted: false },
+            data: { ...data, updated_at: new Date() },
+          });
         },
       );
     },
 
-    save(aggregate) {
-      return pipe(
-        // valiate input
-        typia.createAssertPrune<UserSchema.Aggregate>(),
-        // extract id & updatable data, and save input(user)
-        // return input(user)
-        async (aggregate) => {
-          const { id, address, email, is_deleted, phone, username } = aggregate;
-          await user().updateMany({
-            where: { id },
-            data: { address, email, is_deleted, phone, username },
-          });
-          return aggregate;
+    async save(aggregate) {
+      const { id, address, email, is_deleted, phone, username } = aggregate;
+      await user().updateMany({
+        where: { id },
+        data: {
+          address,
+          email,
+          is_deleted,
+          phone,
+          username,
+          updated_at: new Date(),
         },
-      )(aggregate);
+      });
+      return aggregate;
     },
 
     remove(id) {
@@ -84,7 +90,7 @@ export const UserRepositoryFactory = (client: DBClient): IUserRepository => {
         async (id) => {
           await user().updateMany({
             where: { id },
-            data: { is_deleted: false },
+            data: { is_deleted: true },
           });
         },
       )(id);

@@ -1,0 +1,13 @@
+model Product {
+  id          String   @id
+  name        String
+  description String
+  price       Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  is_deleted  Boolean  @default(false)
+  vender_id   String
+  vender      User     @relation(fields: [vender_id], references: [id])
+
+  @@map("products")
+}

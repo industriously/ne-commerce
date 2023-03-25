@@ -1,5 +1,6 @@
 export namespace UserSchema {
   export type OauthType = 'google' | 'github';
+  export type Role = 'normal' | 'vender' | 'admin';
   export interface Aggregate {
     /**
      * @format uuid
@@ -23,6 +24,7 @@ export namespace UserSchema {
      * @pattern ^010-[0-9]{4}-[0-9]{4}$
      */
     readonly phone: string | null;
+    readonly role: Role;
     readonly is_deleted: boolean;
     readonly created_at: Date;
     readonly updated_at: Date;

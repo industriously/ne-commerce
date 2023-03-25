@@ -1,35 +1,36 @@
 import { ThrowThenMarker } from '@COMMON/decorator/lazy';
 import { HttpExceptionFactory } from '@COMMON/exception';
-import { IEnv } from '@INTERFACE/common';
+import { Configuration } from '@INFRA/config';
 import { ITokenService, TokenSchema } from '@INTERFACE/token';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ProviderBuilder } from '@UTIL';
 import { pipe } from 'rxjs';
 import typia from 'typia';
 import { TokenMapper } from '../domain/token.mapper';
 
-export const TokenServiceFactory = (
-  jwtService: JwtService,
-  config: ConfigService<IEnv, true>,
-): ITokenService => {
+export const TokenServiceFactory = (jwtService: JwtService): ITokenService => {
   const throwthen = ThrowThenMarker(() => {
     throw HttpExceptionFactory('BadRequest', '잘못된 토큰입니다.');
   });
-
+  const {
+    ACCESS_TOKEN_PRIVATE_KEY,
+    ACCESS_TOKEN_PUBLIC_KEY,
+    REFRESH_TOKEN_PRIVATE_KEY,
+    REFRESH_TOKEN_PUBLIC_KEY,
+  } = Configuration;
   return ProviderBuilder<ITokenService>({
     getAccessToken(aggregate) {
       return pipe(TokenMapper.toAccessTokenPayload, (payload) =>
         jwtService.sign(payload, {
           expiresIn: '8h',
-          privateKey: config.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
+          privateKey: ACCESS_TOKEN_PRIVATE_KEY,
         }),
       )(aggregate);
     },
 
     getAccessTokenPayload(token) {
       const payload = jwtService.verify(token, {
-        publicKey: config.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
+        publicKey: ACCESS_TOKEN_PUBLIC_KEY,
       });
       return typia.assertPrune<TokenSchema.AccessTokenPayload>(payload);
     },
@@ -41,14 +42,14 @@ export const TokenServiceFactory = (
         (payload) =>
           jwtService.sign(payload, {
             expiresIn: '30w',
-            privateKey: config.get<string>('REFRESH_TOKEN_PRIVATE_KEY'),
+            privateKey: REFRESH_TOKEN_PRIVATE_KEY,
           }),
       )(aggregate);
     },
 
     getRefreshTokenPayload(token) {
       const payload = jwtService.verify(token, {
-        publicKey: config.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),
+        publicKey: REFRESH_TOKEN_PUBLIC_KEY,
       });
 
       return typia.assertPrune<TokenSchema.RefreshTokenPayload>(payload);
@@ -61,14 +62,14 @@ export const TokenServiceFactory = (
         (payload) =>
           jwtService.sign(payload, {
             expiresIn: '1d',
-            privateKey: config.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
+            privateKey: ACCESS_TOKEN_PRIVATE_KEY,
           }),
       )(aggregate);
     },
 
     getIdTokenPayload(token) {
       const payload = jwtService.verify(token, {
-        publicKey: config.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
+        publicKey: ACCESS_TOKEN_PUBLIC_KEY,
       });
 
       return typia.assertPrune<TokenSchema.IdTokenPayload>(payload);

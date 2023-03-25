@@ -35,7 +35,7 @@ export const AuthUsecaseFactory = (
 
         ({ id }) => id,
 
-        repository.findOne(),
+        repository.findOne,
 
         Nullish.throwIf(HttpExceptionFactory('NotFound')),
 

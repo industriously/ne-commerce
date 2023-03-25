@@ -1,9 +1,8 @@
 import { HttpExceptionFactory } from '@COMMON/exception';
 import { Google, Request, StrategyException } from '@devts/nestjs-auth';
-import { IEnv } from '@INTERFACE/common';
+import { Configuration } from '@INFRA/config';
 import { UserSchema } from '@INTERFACE/user';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { OAUTH_PROFILE } from '@USER/_constants_';
 import typia from 'typia';
 
@@ -13,12 +12,12 @@ export class GoogleStrategy extends Google.AbstractStrategy<
   'email' | 'profile',
   UserSchema.OauthProfile
 > {
-  constructor(config: ConfigService<IEnv, true>) {
+  constructor() {
     super({
       key: 'profile',
-      client_id: config.get('GOOGLE_CLIENT_ID'),
-      client_secret: config.get('GOOGLE_CLIENT_SECRET'),
-      redirect_uri: config.get('GOOGLE_OAUTH_CALLBACK'),
+      client_id: Configuration.GOOGLE_CLIENT_ID,
+      client_secret: Configuration.GOOGLE_CLIENT_SECRET,
+      redirect_uri: Configuration.GOOGLE_OAUTH_CALLBACK,
       access_type: 'offline',
       prompt: 'select_account',
       scope: ['email', 'profile'],

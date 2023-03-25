@@ -5,20 +5,42 @@ on:
     branches: [ main ]
 
 env:
+  PORT: 4000
   ACCESS_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
   ACCESS_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
+  REFRESH_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
+  REFRESH_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
+  DATABASE_URL: mysql://test:test@localhost:3306/test
 
 permissions:
   contents: write
     
 jobs:            
-  deploy_report:
+  test_report:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        ports:
+         - 3306:3306
+        options:
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        env:
+          MYSQL_USER: test
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_PASSWORD: test
+          MYSQL_DATABASE: test
 
     strategy:
       matrix:
         node-version: [18.x]
-
+        test-type:
+          - test:cov
+          - test:cov -- --coverageReporters json-summary
+  
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -26,40 +48,28 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Build  
-        run: npm run test:cov
+      - name: Setup database schema
+        run: npm run db:deploy
 
-      - name: Deploy 🚀
+      - name: Test 🧪
+        run: npm run ${{ matrix.test-type }}
+
+      - name: Deploy Report 📊
         uses: JamesIves/github-pages-deploy-action@v4
+        if: matrix.test-type == 'test:cov'
         with:
           branch: gh-pages
           folder: coverage/lcov-report
       
-  update_badge:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-    
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
-
-      - name: Install
-        run: npm ci
-
-      - name: Build  
-        run:  npm run test:cov -- --coverage --coverageReporters json-summary     
-
-      - name: Create Comment
+      - name: Create Badge Data
         id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
+        if:  matrix.test-type == 'test:cov -- --coverageReporters json-summary'
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
       
-      - name: Update Badge
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Update Badge 📌
+        if: ${{ github.ref == 'refs/heads/main' && matrix.test-type == 'test:cov -- --coverageReporters json-summary' }}
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
