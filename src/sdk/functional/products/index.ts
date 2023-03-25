@@ -16,12 +16,11 @@ import type { IProduct } from "./../../interface/product/schema.interface";
  * 
  * 전체 상품 목록 조회
  * 
- * 나중에 필터링 기준, 정렬 기준 추가할 것
- * 
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
- * @param page 페이지 정보, default 1
+ * @param page 페이지 정보 1이상의 정수, default 1
  * @returns 페이지 정보와 함께 요청한 상품 목록
+ * @throw 400 Value of the URL query 'page' is invalid.
  * 
  * @controller ProductsController.findMany()
  * @path GET /products
@@ -68,8 +67,11 @@ export namespace findMany
 /**
  * 상품 상세 조회 API
  * 
+ * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
+ * @returns 상품 상세 정보
+ * @throw 404 일치하는 대상을 찾지 못했습니다.
  * 
  * @controller ProductsController.findOne()
  * @path GET /products/:product_id
@@ -112,6 +114,10 @@ export namespace findOne
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 상품 생성 정보
+ * @returns 생성한 상품 상세 정보
+ * @throw 400 잘못된 토큰입니다.
+ * @throw 400 {property} type is invalid.
+ * @throw 403 권한이 없습니다.
  * 
  * @controller ProductsController.create()
  * @path POST /products
@@ -121,7 +127,7 @@ export function create
     (
         connection: IConnection,
         body: IProduct.CreateBody
-    ): Promise<void>
+    ): Promise<create.Output>
 {
     return Fetcher.fetch
     (
@@ -136,6 +142,7 @@ export function create
 export namespace create
 {
     export type Input = IProduct.CreateBody;
+    export type Output = IProduct.Detail;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/products";
@@ -158,6 +165,10 @@ export namespace create
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
  * @param body 변경할 상품 정보
+ * @throw 400 잘못된 토큰입니다.
+ * @throw 400 {property} type is invalid.
+ * @throw 403 권한이 없습니다.
+ * @throw 404 일치하는 대상을 찾지 못했습니다.
  * 
  * @controller ProductsController.update()
  * @path PATCH /products/:product_id
@@ -204,6 +215,9 @@ export namespace update
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
+ * @throw 400 잘못된 토큰입니다.
+ * @throw 403 권한이 없습니다.
+ * @throw 404 일치하는 대상을 찾지 못했습니다.
  * 
  * @controller ProductsController.inActivate()
  * @path DELETE /products/:product_id

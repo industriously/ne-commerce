@@ -3,7 +3,6 @@ export * from './nullish';
 export * from './async_unary';
 export * from './predicate';
 export * from './edge';
-export * from './generate_code';
 export * from './list';
 export * from './pipe';
 export * from './is';

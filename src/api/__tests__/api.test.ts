@@ -6,7 +6,8 @@ import { TestAuth } from '@USER/__tests__/auth';
 import { bootstrap, close, listen } from 'src/application';
 import { Configuration } from '@INFRA/config';
 import { prisma } from '@INFRA/DB';
-import { SeedUser } from './seed';
+import { SeedProduct, SeedUser } from './seed';
+import { TestProducts } from '@PRODUCT/__tests__/products';
 
 describe('API Test', () => {
   const connection = {
@@ -18,6 +19,7 @@ describe('API Test', () => {
   beforeAll(async () => {
     app = await bootstrap({ logger: false });
     await SeedUser.seed();
+    await SeedProduct.seed();
     await listen(app);
   });
 
@@ -34,7 +36,7 @@ describe('API Test', () => {
     );
   });
 
-  describe('UserUsecase', () => {
+  describe('User API', () => {
     describe(
       "users.getPublicProfile - get activate user's public profile by user_id",
       TestUsers.test_get_public_profile(connection),
@@ -53,6 +55,33 @@ describe('API Test', () => {
     describe(
       'user.inActivate - remove user by access_token',
       TestUser.test_user_inactivate(connection),
+    );
+  });
+
+  describe('Product API', () => {
+    describe(
+      'products.create - create new product',
+      TestProducts.test_create(connection),
+    );
+
+    describe(
+      'products.findMany - get product summary list',
+      TestProducts.test_findMany(connection),
+    );
+
+    describe(
+      'products.findOne - get product detail by product_id',
+      TestProducts.test_findOne(connection),
+    );
+
+    describe(
+      'products.update - update product',
+      TestProducts.test_update(connection),
+    );
+
+    describe(
+      'products.inActivate - inActivate product',
+      TestProducts.test_inActivate(connection),
     );
   });
 });

@@ -1,14 +1,25 @@
 import { IProduct } from '@INTERFACE/product';
-import { Predicate, generateCode } from '@UTIL';
+import { Predicate } from '@UTIL';
 import typia from 'typia';
 import { Mutable } from '@INTERFACE/common';
 
 export namespace Product {
+  const ABC = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const integer = (end: number) => {
+    const temp = Math.floor(Math.random() * end);
+    return temp === end ? temp - 1 : temp;
+  };
+  export const randomId = (len: number) => {
+    return new Array<number>(len)
+      .fill(ABC.length)
+      .map((end) => ABC[integer(end)])
+      .join('');
+  };
   export const create = (input: IProduct.CreateInput): IProduct => {
     const { vender_id, name, description, price } = typia.assert(input);
     const now = new Date().toISOString();
     return {
-      id: generateCode(),
+      id: randomId(10),
       name,
       description,
       price,

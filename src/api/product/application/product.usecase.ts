@@ -66,27 +66,27 @@ export const ProductUsecaseFactory = (
 
       const vender_list = await getVenderList(list);
 
-      const data: IProduct.Summary[] = list
-        .map((product) => {
-          const vender = vender_list.find(
-            (str) => str.id === product.vender_id,
-          );
-          return ProductMapper.toSummary(
-            product,
-            vender ?? {
-              id: product.vender_id,
-              name: '',
-            },
-          );
-        })
-        .filter((summary) => summary.vender.id !== 'null');
+      const data: IProduct.Summary[] = list.map((product) => {
+        const vender = vender_list.find((str) => str.id === product.vender_id);
+        return ProductMapper.toSummary(
+          product,
+          vender ?? {
+            id: product.vender_id,
+            name: '',
+          },
+        );
+      });
 
       return { data, page, total_count };
     },
     async create(token, input) {
       const vender_id = _getVenderId(token);
-      const product = Product.create({ ...input, vender_id });
-      await repository.save(product);
+      const vender = await _findVender(vender_id);
+
+      const product = await repository.save(
+        Product.create({ ...input, vender_id }),
+      );
+      return ProductMapper.toDetail(product, vender);
     },
     async update(token, product_id, input) {
       const product = await _findOne(product_id);

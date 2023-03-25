@@ -25,11 +25,10 @@ export class ProductsController {
    *
    * 전체 상품 목록 조회
    *
-   * 나중에 필터링 기준, 정렬 기준 추가할 것
-   *
    * @tag product
-   * @param page 페이지 정보, default 1
+   * @param page 페이지 정보 1이상의 정수, default 1
    * @returns 페이지 정보와 함께 요청한 상품 목록
+   * @throw 400 Value of the URL query 'page' is invalid.
    */
   @Get()
   findMany(
@@ -42,7 +41,10 @@ export class ProductsController {
   /**
    * 상품 상세 조회 API
    *
+   * @tag product
    * @param product_id 대상 상품 고유 번호
+   * @returns 상품 상세 정보
+   * @throw 404 일치하는 대상을 찾지 못했습니다.
    */
   @Get(':product_id')
   findOne(
@@ -56,12 +58,16 @@ export class ProductsController {
    *
    * @tag product
    * @param body 상품 생성 정보
+   * @returns 생성한 상품 상세 정보
+   * @throw 400 잘못된 토큰입니다.
+   * @throw 400 {property} type is invalid.
+   * @throw 403 권한이 없습니다.
    */
   @Post()
   create(
     @Authorization('bearer') token: string,
     @Body() body: IProduct.CreateBody,
-  ): Promise<void> {
+  ): Promise<IProduct.Detail> {
     const input = typia.assertPrune(body);
     return this.usecase.create(token, input);
   }
@@ -72,6 +78,10 @@ export class ProductsController {
    * @tag product
    * @param product_id 대상 상품 고유 번호
    * @param body 변경할 상품 정보
+   * @throw 400 잘못된 토큰입니다.
+   * @throw 400 {property} type is invalid.
+   * @throw 403 권한이 없습니다.
+   * @throw 404 일치하는 대상을 찾지 못했습니다.
    */
   @Patch(':product_id')
   update(
@@ -88,11 +98,14 @@ export class ProductsController {
    *
    * @tag product
    * @param product_id 대상 상품 고유 번호
+   * @throw 400 잘못된 토큰입니다.
+   * @throw 403 권한이 없습니다.
+   * @throw 404 일치하는 대상을 찾지 못했습니다.
    */
   @Delete(':product_id')
   inActivate(
     @Authorization('bearer') token: string,
-    @TypedParam('product_id', 'uuid') product_id: string,
+    @TypedParam('product_id', 'string') product_id: string,
   ): Promise<void> {
     return this.usecase.inActivate(token, product_id);
   }
