@@ -11,6 +11,9 @@ env:
   REFRESH_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
   DATABASE_URL: mysql://test:test@localhost:3306/test
 
+permissions: 
+  pull-requests: write
+  
 jobs:
   coverage_comment:
     runs-on: ubuntu-latest
@@ -52,5 +55,5 @@ jobs:
         id: coverageComment
         uses: MishaKav/jest-coverage-comment@main
         with:
-          titie: Test Coverage Report
+          title: Test Coverage Report
           badge-title: coverage
