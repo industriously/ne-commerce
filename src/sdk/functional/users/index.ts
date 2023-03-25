@@ -10,10 +10,9 @@ import type { IConnection } from "@nestia/fetcher";
 import type { UserSchema } from "./../../interface/user/user.schema.interface";
 
 /**
- * 사용자 프로필 조회 API
- * 
  * 활성화된 사용자의 정보만 조회합니다.
  * 
+ * @summary 사용자 프로필 조회 API
  * @tag user
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param user_id 조회 대상의 id 입니다. uuid 타입만 허용합니다.

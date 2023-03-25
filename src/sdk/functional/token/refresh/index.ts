@@ -10,10 +10,9 @@ import type { IConnection } from "@nestia/fetcher";
 import type { IAuthUsecase } from "./../../../interface/user/auth.usecase.interface";
 
 /**
- * 인증 토큰 재발행 API
- * 
  * Authorization header로 refresh_token을 전달헤야 합니다.
  * 
+ * @summary 인증 토큰 재발행 API
  * @tag authentication
  * @returns 재발행된 access_token을 응답합니다.
  * @throw 400 잘못된 토큰입니다.

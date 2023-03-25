@@ -21,10 +21,9 @@ export class ProductsController {
   ) {}
 
   /**
-   * 상품 목록 조회 API
-   *
    * 전체 상품 목록 조회
    *
+   * @summary 상품 목록 조회 API
    * @tag product
    * @param page 페이지 정보 1이상의 정수, default 1
    * @returns 페이지 정보와 함께 요청한 상품 목록
@@ -39,8 +38,7 @@ export class ProductsController {
   }
 
   /**
-   * 상품 상세 조회 API
-   *
+   * @summary 상품 상세 조회 API
    * @tag product
    * @param product_id 대상 상품 고유 번호
    * @returns 상품 상세 정보
@@ -54,8 +52,7 @@ export class ProductsController {
   }
 
   /**
-   * 상품 생성 요청 API
-   *
+   * @summary 상품 생성 요청 API
    * @tag product
    * @param body 상품 생성 정보
    * @returns 생성한 상품 상세 정보
@@ -73,8 +70,7 @@ export class ProductsController {
   }
 
   /**
-   * 상품 수정 요청 API
-   *
+   * @summary 상품 수정 요청 API
    * @tag product
    * @param product_id 대상 상품 고유 번호
    * @param body 변경할 상품 정보
@@ -94,8 +90,7 @@ export class ProductsController {
   }
 
   /**
-   * 상품 삭제(비활성화) 요청 API
-   *
+   * @summary 상품 삭제(비활성화) 요청 API
    * @tag product
    * @param product_id 대상 상품 고유 번호
    * @throw 400 잘못된 토큰입니다.

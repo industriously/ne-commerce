@@ -56,13 +56,12 @@ export namespace signInTestCb
 }
 
 /**
- * 로그인 API
- * 
  * 새로운 사용자가 로그인을 진행하면 google oauth 서버에서 제공한 사용자 정보를 토대로
  * 사용자 계정을 생성합니다.
  * 
  * 비활성화된 사용자의 경우, 다시 활성화됩니다.
  * 
+ * @summary 로그인 API
  * @tag authentication
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body token 요청 권한을 가진 code를 포함한다.

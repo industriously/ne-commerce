@@ -12,10 +12,9 @@ import type { PaginatedResponse } from "./../../interface/common/pagination.inte
 import type { IProduct } from "./../../interface/product/schema.interface";
 
 /**
- * 상품 목록 조회 API
- * 
  * 전체 상품 목록 조회
  * 
+ * @summary 상품 목록 조회 API
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param page 페이지 정보 1이상의 정수, default 1
@@ -65,8 +64,7 @@ export namespace findMany
 }
 
 /**
- * 상품 상세 조회 API
- * 
+ * @summary 상품 상세 조회 API
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
@@ -109,8 +107,7 @@ export namespace findOne
 }
 
 /**
- * 상품 생성 요청 API
- * 
+ * @summary 상품 생성 요청 API
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 상품 생성 정보
@@ -159,8 +156,7 @@ export namespace create
 }
 
 /**
- * 상품 수정 요청 API
- * 
+ * @summary 상품 수정 요청 API
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
@@ -210,8 +206,7 @@ export namespace update
 }
 
 /**
- * 상품 삭제(비활성화) 요청 API
- * 
+ * @summary 상품 삭제(비활성화) 요청 API
  * @tag product
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
