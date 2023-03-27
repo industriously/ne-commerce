@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
-import { TokenModule } from '@TOKEN';
-
 import {
-  AuthController,
-  UserController,
-  UsersController,
-} from './presentation';
-import { providers } from './providers';
+  GithubStrategy,
+  GithubStrategyToken,
+  GoogleStrategy,
+  GoogleStrategyToken,
+} from './_auth_';
 
 @Module({
-  imports: [TokenModule],
-  providers,
-  controllers: [AuthController, UserController, UsersController],
+  providers: [
+    {
+      useClass: GoogleStrategy,
+      provide: GoogleStrategyToken,
+    },
+    {
+      useClass: GithubStrategy,
+      provide: GithubStrategyToken,
+    },
+  ],
 })
 export class UserModule {}

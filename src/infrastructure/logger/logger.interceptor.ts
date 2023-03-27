@@ -1,4 +1,3 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
 import { AuthException } from '@devts/nestjs-auth';
 import { LoggerService, HttpException } from '@nestjs/common';
 import {
@@ -27,11 +26,10 @@ export class LoggerInterceptor implements NestInterceptor {
           err instanceof TypeGuardError ||
           err instanceof AuthException
         ) {
-          return throwError(() => err);
         } else {
           this.logger.error(err, context.getClass().name);
-          return throwError(() => HttpExceptionFactory('ISE'));
         }
+        return throwError(() => err);
       }),
     );
   }

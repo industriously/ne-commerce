@@ -15,7 +15,9 @@ export namespace Product {
       .map((end) => ABC[integer(end)])
       .join('');
   };
-  export const create = (input: IProduct.CreateInput): IProduct => {
+  export const create = (
+    input: IProduct.CreateInput & Pick<IProduct, 'vender_id'>,
+  ): IProduct => {
     const { vender_id, name, description, price } = typia.assert(input);
     const now = new Date().toISOString();
     return {

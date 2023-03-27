@@ -1,6 +1,6 @@
 import { OAUTH_PROFILE } from '@USER/_constants_';
 import { Github, Request, StrategyException } from '@devts/nestjs-auth';
-import { UserSchema } from '@INTERFACE/user';
+import { IAuthentication } from '@INTERFACE/user';
 import { Injectable } from '@nestjs/common';
 import { HttpExceptionFactory } from '@COMMON/exception';
 import { Configuration } from '@INFRA/config';
@@ -9,7 +9,7 @@ import typia from 'typia';
 @Injectable()
 export class GithubStrategy extends Github.AbstractStrategy<
   typeof OAUTH_PROFILE,
-  UserSchema.OauthProfile
+  IAuthentication.OauthProfile
 > {
   constructor() {
     super({
@@ -44,13 +44,13 @@ export class GithubStrategy extends Github.AbstractStrategy<
 
   transform(
     identity: Github.User & { email: string },
-  ): UserSchema.OauthProfile {
-    const { login: username, email, id } = identity;
+  ): IAuthentication.OauthProfile {
+    const { login: name, email, id } = identity;
     return {
-      username,
+      name,
       email,
       sub: id + '',
       oauth_type: 'github',
-    } satisfies UserSchema.OauthProfile;
+    } satisfies IAuthentication.OauthProfile;
   }
 }

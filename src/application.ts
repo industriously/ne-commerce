@@ -6,12 +6,17 @@ import { LoggerServiceToken } from '@INFRA/logger';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { Configuration } from '@INFRA/config';
+import { DynamicModule } from '@nestia/core';
 
 export const bootstrap = async (
   options: NestApplicationOptions,
 ): Promise<INestApplication> => {
-  const app = await NestFactory.create(AppModule, options);
-
+  const app = await NestFactory.create(
+    await DynamicModule.mount(`${__dirname}/api/controller`, {
+      imports: [AppModule],
+    }),
+    options,
+  );
   if (options.logger !== false) app.useLogger(app.get(LoggerServiceToken));
 
   await prisma.$connect();

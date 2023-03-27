@@ -117,7 +117,7 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   sub: 'sub',
   oauth_type: 'oauth_type',
   email: 'email',
-  username: 'username',
+  name: 'name',
   address: 'address',
   phone: 'phone',
   created_at: 'created_at',

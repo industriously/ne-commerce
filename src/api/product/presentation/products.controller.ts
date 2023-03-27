@@ -63,7 +63,7 @@ export class ProductsController {
   @Post()
   create(
     @Authorization('bearer') token: string,
-    @Body() body: IProduct.CreateBody,
+    @Body() body: IProduct.CreateInput,
   ): Promise<IProduct.Detail> {
     const input = typia.assertPrune(body);
     return this.usecase.create(token, input);
