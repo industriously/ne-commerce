@@ -1,9 +1,9 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
-import { IAuthentication } from '@INTERFACE/user';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
 import { TryCatch } from '@INTERFACE/common';
-import { IUser } from '@INTERFACE/user';
-import { AuthenticationService } from '../service';
-import { User, UserRepository } from '../core';
+import { IAuthentication, IUser } from '@INTERFACE/user';
+import { User, UserRepository } from '@USER/core';
+import { AuthenticationService } from '@USER/service';
+import { ifSuccess, pipeAsync } from '@UTIL';
 
 export namespace AuthenticationUsecase {
   const _getCredentials = (user: IUser): IAuthentication.Credentials => {
@@ -13,42 +13,46 @@ export namespace AuthenticationUsecase {
       id_token: AuthenticationService.getIdToken(user),
     };
   };
-  const _getCredentialsOrThrow = (
-    input: TryCatch<IUser>,
-  ): IAuthentication.Credentials => {
-    const { is_success, result } = input;
-    if (!is_success) {
-      throw HttpExceptionFactory('UnAuthorized', '로그인에 실패했습니다.');
-    }
-    return _getCredentials(result);
-  };
+
   export const signIn = async (
-    profile: IAuthentication.OauthProfile,
-  ): Promise<IAuthentication.Credentials> => {
-    const user = await UserRepository.findOneByOauthProfile(profile);
+    body: IAuthentication.SignInBody,
+  ): Promise<
+    TryCatch<IAuthentication.Credentials, typeof Exception.LOGIN_FAIL>
+  > => {
+    const profile = await AuthenticationService.getOauthProfile(body);
+    return pipeAsync(
+      UserRepository.findOneByOauthProfile,
 
-    // 사용자 정보가 없는 경우, 최초 로그인
-    if (!user.is_success) {
-      const input = await UserRepository.add(User.create(profile));
-      return _getCredentialsOrThrow(input);
-    }
+      ifSuccess((user: IUser) =>
+        User.isInActive(user)
+          ? UserRepository.update(User.activate(user))
+          : getSuccessReturn(user),
+      ),
 
-    // 사용자가 기존에 가입했지만 비활성화된 경우
-    if (User.isInActive(user.result)) {
-      const input = await UserRepository.update(User.activate(user.result));
-      return _getCredentialsOrThrow(input);
-    }
-    return _getCredentials(user.result);
+      (result) =>
+        result.code === '4006'
+          ? pipeAsync(
+              User.create,
+
+              ifSuccess(UserRepository.add),
+            )(profile)
+          : result,
+
+      ifSuccess((user: IUser) => getSuccessReturn(_getCredentials(user))),
+
+      (result) => (result.code === '1000' ? result : Exception.LOGIN_FAIL),
+    )(profile);
   };
 
-  export const refresh = async (
-    token: string,
-  ): Promise<IAuthentication.RefreshedCredential> => {
-    const payload = AuthenticationService.getRefreshTokenPayload(token);
-    const { is_success, result } = await UserRepository.findOne(payload.id);
-    if (!is_success) {
-      throw HttpExceptionFactory('Forbidden');
-    }
-    return { access_token: AuthenticationService.getAccessToken(result) };
-  };
+  export const refresh = pipeAsync(
+    AuthenticationService.getRefreshTokenPayload,
+
+    ifSuccess((data: IAuthentication.RefreshTokenPayload) =>
+      UserRepository.findOne(data.id),
+    ),
+    (result) =>
+      result.code === '1000'
+        ? getSuccessReturn(AuthenticationService.getAccessToken(result.data))
+        : result,
+  );
 }

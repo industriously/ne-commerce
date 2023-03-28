@@ -2,13 +2,19 @@ import { getISOString, isUndefined, Predicate } from '@UTIL';
 import { IUser } from '@INTERFACE/user';
 import { randomUUID } from 'crypto';
 import typia from 'typia';
-import { Mutable } from '@INTERFACE/common';
+import { Mutable, TryCatch } from '@INTERFACE/common';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
 
 export namespace User {
-  export const create = (input: IUser.CreateInput): IUser => {
-    const { name, email, oauth_type, sub } = typia.assert(input);
+  export const create = (
+    input: IUser.CreateInput,
+  ): TryCatch<IUser, typeof Exception.INVALID_VALUE> => {
+    if (!typia.is(input)) {
+      return Exception.INVALID_VALUE;
+    }
+    const { name, email, oauth_type, sub } = input;
     const date = getISOString();
-    return {
+    return getSuccessReturn<IUser>({
       id: randomUUID(),
       sub,
       oauth_type,
@@ -20,7 +26,7 @@ export namespace User {
       is_deleted: false,
       created_at: date,
       updated_at: date,
-    };
+    });
   };
 
   export const update = (

@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { IAuthUsecase } from "./../../../interface/user/auth.usecase.interface";
+import type { IAuthentication } from "./../../../interface/user/auth.interface";
 
 /**
  * Authorization header로 refresh_token을 전달헤야 합니다.
@@ -37,7 +37,7 @@ export function refreshToken
 }
 export namespace refreshToken
 {
-    export type Output = IAuthUsecase.RefreshResponse;
+    export type Output = IAuthentication.RefreshedCredential;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/token/refresh";

@@ -10,6 +10,7 @@ export namespace IAuthentication {
   export type IdTokenPayload = IUser.Detail;
 
   export interface SignInBody {
+    readonly oauth_type: IUser.OauthType;
     readonly code: string;
   }
 

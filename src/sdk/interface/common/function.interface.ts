@@ -1,18 +1,27 @@
 export type FunctionType = (...args: any[]) => any;
 
-interface Success<T> {
-  is_success: true;
-  result: T;
-  message: undefined;
+export interface IException {
+  readonly code: ExceptionCode;
+  readonly data: string;
 }
 
-interface Exception {
-  is_success: false;
-  result: undefined;
-  message: string;
+export interface Try<T> {
+  readonly code: '1000';
+  readonly data: T;
 }
 
-/**
- * error를 절대 throw하지 않는 함수의 리턴타입
- */
-export type TryCatch<T> = Success<T> | Exception;
+export type TryCatch<T, E extends IException | null> = Try<T> | E;
+
+export type ExceptionCode =
+  | '4000'
+  | '4001'
+  | '4002'
+  | '4003'
+  | '4004'
+  | '4005'
+  | '4006'
+  | '4007'
+  | '4008'
+  | '4009'
+  | '4010'
+  | '5000';
