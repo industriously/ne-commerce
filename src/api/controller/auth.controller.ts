@@ -51,12 +51,8 @@ export class AuthController {
   ): Promise<
     TryCatch<IAuthentication.Credentials, typeof Exception.LOGIN_FAIL>
   > {
-    try {
-      if (!typia.is(body)) return Exception.LOGIN_FAIL;
-      return await AuthenticationUsecase.signIn(body);
-    } catch (error) {
-      return Exception.LOGIN_FAIL;
-    }
+    if (!typia.is(body)) return Exception.LOGIN_FAIL;
+    return await AuthenticationUsecase.signIn(body);
   }
 
   /**

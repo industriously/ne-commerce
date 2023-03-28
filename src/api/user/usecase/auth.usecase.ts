@@ -38,7 +38,10 @@ export namespace AuthenticationUsecase {
             )(profile)
           : result,
 
-      ifSuccess((user: IUser) => getSuccessReturn(_getCredentials(user))),
+      (result) =>
+        result.code === '1000'
+          ? getSuccessReturn(_getCredentials(result.data))
+          : result,
 
       (result) => (result.code === '1000' ? result : Exception.LOGIN_FAIL),
     )(profile);
