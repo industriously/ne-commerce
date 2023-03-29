@@ -1,5 +1,5 @@
 import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { Mutable, TryCatch } from '@INTERFACE/common';
+import { Mutable, Try, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { Predicate } from '@UTIL';
 import typia from 'typia';
@@ -47,16 +47,16 @@ export namespace Product {
     return getSuccessReturn<IProduct>(target);
   };
 
-  export const activate = (target: Mutable<IProduct>): IProduct => {
+  export const activate = (target: Mutable<IProduct>): Try<IProduct> => {
     target.is_deleted = false;
     target.updated_at = new Date().toISOString();
-    return target;
+    return getSuccessReturn<IProduct>(target);
   };
 
-  export const inActivate = (target: Mutable<IProduct>): IProduct => {
+  export const inActivate = (target: Mutable<IProduct>): Try<IProduct> => {
     target.is_deleted = true;
     target.updated_at = new Date().toISOString();
-    return target;
+    return getSuccessReturn<IProduct>(target);
   };
 
   export const isInActive = (target: IProduct): boolean => {
@@ -68,25 +68,25 @@ export namespace Product {
   export const toSummary = (
     product: IProduct,
     vender: IProduct.Vender,
-  ): IProduct.Summary => {
+  ): Try<IProduct.Summary> => {
     const { id, name, price, description, created_at } = product;
-    return {
+    return getSuccessReturn<IProduct.Summary>({
       id,
       name,
       price,
       vender,
       description,
       created_at,
-    };
+    });
   };
 
   export const toDetail = (
     product: IProduct,
     vender: IProduct.Vender,
-  ): IProduct.Detail => {
+  ): Try<IProduct.Detail> => {
     const { id, name, price, description, is_deleted, created_at, updated_at } =
       product;
-    return {
+    return getSuccessReturn<IProduct.Detail>({
       id,
       name,
       price,
@@ -95,6 +95,6 @@ export namespace Product {
       is_deleted,
       created_at,
       updated_at,
-    };
+    });
   };
 }

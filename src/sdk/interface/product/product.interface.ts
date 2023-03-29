@@ -1,5 +1,3 @@
-import { PaginatedResponse } from '@INTERFACE/common';
-
 export interface IProduct {
   /**
    * 상품 고유 id
@@ -63,8 +61,4 @@ export namespace IProduct {
   export type CreateInput = Pick<IProduct, 'name' | 'price' | 'description'>;
   export interface UpdateInput
     extends Partial<Pick<IProduct, 'name' | 'price' | 'description'>> {}
-
-  export namespace Response {
-    export type SummaryList = PaginatedResponse<Summary>;
-  }
 }

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from './DB/prisma.module';
+import { DBModule } from './DB/db.module';
 import { LoggerModule } from './logger/logger.module';
 import { FilterModule } from './filter/filter.module';
-import { AopModule } from '@toss/nestjs-aop';
 
 @Module({
-  imports: [LoggerModule, PrismaModule, FilterModule, AopModule],
+  imports: [LoggerModule, DBModule, FilterModule],
 })
 export class InfrastructureModule {}

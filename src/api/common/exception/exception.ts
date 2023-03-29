@@ -28,7 +28,19 @@ export const Exception = {
   FORBIDDEN_VENDER: { code: '4008', data: '판매자 권한이 없습니다.' } as const,
   PRODUCT_NOT_FOUND: {
     code: '4009',
-    data: '상품을 찾을 수  없습니다.',
+    data: '상품을 찾을 수 없습니다.',
+  } as const,
+  FORBIDDEN_PRODUCT_UPDATE: {
+    code: '4010',
+    data: '해당 상품의 수정 권한이 없습니다.',
+  } as const,
+  PRODUCT_CREATE_FAIL: {
+    code: '4011',
+    data: '상품 생성에 실패했습니다.',
+  } as const,
+  PRODUCT_UPDATE_FAIL: {
+    code: '4012',
+    data: '상품 수정에 실패했습니다.',
   } as const,
   UNKNOWN_ERROR: {
     code: '5000',

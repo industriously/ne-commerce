@@ -15,6 +15,8 @@ export namespace VenderService {
   export const getVenderByToken = pipeAsync(
     UserService.findOneByToken,
 
+    (result) => (result.code === '4006' ? Exception.FORBIDDEN_VENDER : result),
+
     ifSuccess<IUser, IUser, typeof Exception.FORBIDDEN_VENDER>((user) =>
       user.role === 'vender'
         ? getSuccessReturn(user)
@@ -44,5 +46,9 @@ export namespace VenderService {
     List.filter((user) => user.role === 'vender'),
 
     List.map(_toVender),
+
+    List.map(flatten),
+
+    getSuccessReturn,
   );
 }

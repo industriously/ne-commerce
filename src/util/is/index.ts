@@ -4,3 +4,4 @@ export * from './null';
 export * from './undefined';
 export * from './success';
 export * from './string_array';
+export * from './number';

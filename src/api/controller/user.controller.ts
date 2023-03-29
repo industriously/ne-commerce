@@ -59,7 +59,7 @@ export class UserController {
    *
    * @summary 내 계정 비활성화 API
    * @tag user
-   * @returns null
+   * @returns true
    * @throw 4006 사용자를 찾을 수 없습니다.
    * @throw 4007 잘못된 토큰입니다.
    */

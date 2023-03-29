@@ -15,5 +15,5 @@ export interface Page {
    * @type uint
    * @minimum 1
    */
-  readonly page?: number;
+  readonly page: number;
 }
