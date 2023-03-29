@@ -1,12 +1,11 @@
-import { GoogleStrategy } from './../_auth_/strategy/google.strategy';
 import { Configuration } from '@INFRA/config';
 import { IAuthentication } from '@INTERFACE/user';
 import { IUser } from '@INTERFACE/user';
 import { User } from '@USER/core';
 import jwt from 'jsonwebtoken';
 import typia from 'typia';
-import { GithubStrategy } from '@USER/_auth_';
-import { TryCatch } from '@INTERFACE/common';
+import { GithubStrategy, GoogleStrategy } from '@USER/_oauth_';
+import { Try, TryCatch } from '@INTERFACE/common';
 import { Exception, getSuccessReturn } from '@COMMON/exception';
 
 export namespace AuthenticationService {
@@ -20,7 +19,7 @@ export namespace AuthenticationService {
   const google = new GoogleStrategy();
   const github = new GithubStrategy();
 
-  const getGoogleProfile = async (code: string) => {
+  const _getGoogleProfile = async (code: string) => {
     const credentials = await google.authorize(code);
     const identity = await google.getIdentity(credentials);
     const { name, email, sub } = identity;
@@ -32,7 +31,7 @@ export namespace AuthenticationService {
     };
   };
 
-  const getGithubProfile = async (code: string) => {
+  const _getGithubProfile = async (code: string) => {
     const credentials = await github.authorize(code);
     const identity = await github.getIdentity(credentials);
     const { login: name, email, id } = identity;
@@ -46,22 +45,34 @@ export namespace AuthenticationService {
 
   export const getOauthProfile = async (
     body: IAuthentication.SignInBody,
-  ): Promise<IAuthentication.OauthProfile> => {
-    const { oauth_type, code } = body;
-    const oauthProfile =
-      oauth_type === 'google' ? getGoogleProfile(code) : getGithubProfile(code);
-    return typia.assertPrune<IAuthentication.OauthProfile>(oauthProfile);
+  ): Promise<
+    TryCatch<IAuthentication.OauthProfile, typeof Exception.LOGIN_FAIL>
+  > => {
+    try {
+      const { oauth_type, code } = body;
+      const oauthProfile =
+        oauth_type === 'google'
+          ? _getGoogleProfile(code)
+          : _getGithubProfile(code);
+      return getSuccessReturn(
+        typia.assertPrune<IAuthentication.OauthProfile>(oauthProfile),
+      );
+    } catch (error) {
+      return Exception.LOGIN_FAIL;
+    }
   };
 
-  export const getAccessToken = (user: IUser): string => {
+  export const getAccessToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
       role: user.role,
     } satisfies IAuthentication.AccessTokenPayload;
-    return jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
-      expiresIn: '8h',
-      algorithm: 'RS256',
-    });
+    return getSuccessReturn(
+      jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
+        expiresIn: '8h',
+        algorithm: 'RS256',
+      }),
+    );
   };
   export const getAccessTokenPayload = (
     token: string,
@@ -73,21 +84,22 @@ export namespace AuthenticationService {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.AccessTokenPayload>(payload)) {
+      if (typia.isPrune<IAuthentication.AccessTokenPayload>(payload))
         return getSuccessReturn(payload);
-      }
     } catch (error) {}
     return Exception.INVALID_TOKEN;
   };
 
-  export const getRefreshToken = (user: IUser): string => {
+  export const getRefreshToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
     } satisfies IAuthentication.RefreshTokenPayload;
-    return jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
-      expiresIn: '30w',
-      algorithm: 'RS256',
-    });
+    return getSuccessReturn(
+      jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
+        expiresIn: '30w',
+        algorithm: 'RS256',
+      }),
+    );
   };
   export const getRefreshTokenPayload = (
     token: string,
@@ -99,19 +111,20 @@ export namespace AuthenticationService {
       const payload = jwt.verify(token, REFRESH_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.RefreshTokenPayload>(payload)) {
+      if (typia.isPrune<IAuthentication.RefreshTokenPayload>(payload))
         return getSuccessReturn(payload);
-      }
     } catch (error) {}
     return Exception.INVALID_TOKEN;
   };
 
-  export const getIdToken = (user: IUser): string => {
+  export const getIdToken = (user: IUser): Try<string> => {
     const payload = User.toDetail(user);
-    return jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
-      expiresIn: '1d',
-      algorithm: 'RS256',
-    });
+    return getSuccessReturn(
+      jwt.sign(payload.data, ACCESS_TOKEN_PRIVATE_KEY, {
+        expiresIn: '1d',
+        algorithm: 'RS256',
+      }),
+    );
   };
   export const getIdTokenPayload = (
     token: string,
@@ -123,9 +136,8 @@ export namespace AuthenticationService {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.IdTokenPayload>(payload)) {
+      if (typia.isPrune<IAuthentication.IdTokenPayload>(payload))
         return getSuccessReturn(payload);
-      }
     } catch (error) {}
     return Exception.INVALID_TOKEN;
   };

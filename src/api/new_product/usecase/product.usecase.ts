@@ -1,8 +1,8 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
-import { _findOne } from '@COMMON/service';
+import { Exception, HttpExceptionFactory } from '@COMMON/exception';
 import { TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { VenderService } from '@USER/service';
+import { pipeAsync } from '@UTIL';
 import { Product } from '../core';
 import { ProductRepository } from '../core';
 import { ProductService } from '../service';
@@ -10,7 +10,8 @@ import { ProductService } from '../service';
 export namespace ProductUsecase {
   export const findOne = async (
     product_id: string,
-  ): Promise<IProduct.Detail> => {
+  ): Promise<TryCatch<IProduct.Detail, typeof Exception.PRODUCT_NOT_FOUND>> => {
+    pipeAsync;
     const product = await _findOne(ProductRepository.findOne)(product_id);
     const vender = await VenderService.findVender(product.vender_id);
     return Product.toDetail(product, vender);

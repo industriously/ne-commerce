@@ -1,4 +1,4 @@
-import { GoogleStrategy } from './../user/_auth_/strategy/google.strategy';
+import { GoogleStrategy } from '../user/_oauth_/google.strategy';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Authorization, TypedQuery } from '@COMMON/decorator/http';
 import typia from 'typia';

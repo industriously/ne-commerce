@@ -1,12 +1,15 @@
-import { _add, _findMany, _findOne, _update } from '@COMMON/repository';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
 import { prisma } from '@INFRA/DB';
+import { TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { Prisma, Product } from '@PRISMA';
-import { tryCatch } from '@UTIL';
+import { getISOString } from '@UTIL';
 import typia from 'typia';
 
 export namespace ProductRepository {
-  export const toProduct = (model: Product): IProduct => {
+  export const toProduct = (
+    model: Product,
+  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
     const {
       id,
       name,
@@ -17,16 +20,18 @@ export namespace ProductRepository {
       created_at,
       updated_at,
     } = model;
-    return {
+    const product = {
       id,
       name,
       price,
       description,
       vender_id,
-      created_at: created_at.toISOString(),
-      updated_at: updated_at.toISOString(),
+      created_at: getISOString(created_at),
+      updated_at: getISOString(updated_at),
       is_deleted,
     };
+    if (!typia.is<IProduct>(product)) return Exception.INVALID_VALUE;
+    return getSuccessReturn(product);
   };
 
   export const findOne = _findOne(

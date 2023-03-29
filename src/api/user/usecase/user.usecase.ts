@@ -9,10 +9,7 @@ export namespace UserUsecase {
   export const findOne = pipeAsync(
     UserService.findOneByToken,
 
-    (result) =>
-      result.code === '1000'
-        ? getSuccessReturn(User.toDetail(result.data))
-        : result,
+    (result) => (result.code === '1000' ? User.toDetail(result.data) : result),
   );
 
   export const update = (
@@ -29,22 +26,22 @@ export namespace UserUsecase {
 
       ifSuccess((user: IUser) => User.update(user, input)),
 
-      (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
-
       ifSuccess(UserRepository.update),
 
       (result) =>
-        result.code === '1000'
-          ? getSuccessReturn(User.toDetail(result.data))
-          : result,
+        result.code === '1000' ? User.toDetail(result.data) : result,
+
+      (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
     )(token);
   };
 
   export const inActivate = pipeAsync(
     UserService.findOneByToken,
 
-    ifSuccess((user: IUser) => UserRepository.update(User.inActivate(user))),
+    ifSuccess((user: IUser) =>
+      UserRepository.update(User.inActivate(user).data),
+    ),
 
-    (result) => (result.code === '1000' ? getSuccessReturn(null) : result),
+    ifSuccess(() => getSuccessReturn(true as const)),
   );
 }

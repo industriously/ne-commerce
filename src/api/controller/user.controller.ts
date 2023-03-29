@@ -68,7 +68,7 @@ export class UserController {
     @Authorization('bearer') token: string,
   ): Promise<
     TryCatch<
-      null,
+      true,
       typeof Exception.USER_NOT_FOUND | typeof Exception.INVALID_TOKEN
     >
   > {

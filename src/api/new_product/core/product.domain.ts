@@ -1,4 +1,5 @@
-import { Mutable } from '@INTERFACE/common';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { Mutable, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { Predicate } from '@UTIL';
 import typia from 'typia';
@@ -18,10 +19,11 @@ export namespace Product {
 
   export const create = (
     input: IProduct.CreateInput & Pick<IProduct, 'vender_id'>,
-  ): IProduct => {
-    const { vender_id, name, description, price } = typia.assert(input);
+  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
+    if (!typia.is(input)) return Exception.INVALID_VALUE;
+    const { vender_id, name, description, price } = input;
     const now = new Date().toISOString();
-    return {
+    return getSuccessReturn<IProduct>({
       id: randomId(10),
       name,
       description,
@@ -30,18 +32,19 @@ export namespace Product {
       is_deleted: false,
       created_at: now,
       updated_at: now,
-    };
+    });
   };
 
   export const update = (
     target: Mutable<IProduct>,
     input: IProduct.UpdateInput,
-  ): IProduct => {
+  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
+    if (!typia.is(input)) return Exception.INVALID_VALUE;
     target.name = input.name ?? target.name;
     target.description = input.description ?? target.description;
     target.price = input.price ?? target.price;
     target.updated_at = new Date().toISOString();
-    return target;
+    return getSuccessReturn<IProduct>(target);
   };
 
   export const activate = (target: Mutable<IProduct>): IProduct => {
@@ -49,18 +52,18 @@ export namespace Product {
     target.updated_at = new Date().toISOString();
     return target;
   };
+
   export const inActivate = (target: Mutable<IProduct>): IProduct => {
     target.is_deleted = true;
     target.updated_at = new Date().toISOString();
     return target;
   };
-  export const isActive = (target: IProduct): boolean => {
-    return !target.is_deleted;
-  };
 
   export const isInActive = (target: IProduct): boolean => {
-    return Predicate.negate(isActive)(target);
+    return target.is_deleted;
   };
+
+  export const isActive = Predicate.negate(isInActive);
 
   export const toSummary = (
     product: IProduct,

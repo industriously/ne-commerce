@@ -1,17 +1,17 @@
 import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { TryCatch } from '@INTERFACE/common';
+import { Try, TryCatch } from '@INTERFACE/common';
 import { IAuthentication, IUser } from '@INTERFACE/user';
 import { User, UserRepository } from '@USER/core';
 import { AuthenticationService } from '@USER/service';
-import { ifSuccess, pipeAsync } from '@UTIL';
+import { ifSuccess, pipeAsync, flatten } from '@UTIL';
 
 export namespace AuthenticationUsecase {
-  const _getCredentials = (user: IUser): IAuthentication.Credentials => {
-    return {
-      access_token: AuthenticationService.getAccessToken(user),
-      refresh_token: AuthenticationService.getRefreshToken(user),
-      id_token: AuthenticationService.getIdToken(user),
-    };
+  const _getCredentials = (user: IUser): Try<IAuthentication.Credentials> => {
+    return getSuccessReturn({
+      access_token: flatten(AuthenticationService.getAccessToken(user)),
+      refresh_token: flatten(AuthenticationService.getRefreshToken(user)),
+      id_token: flatten(AuthenticationService.getIdToken(user)),
+    });
   };
 
   export const signIn = async (
@@ -20,12 +20,13 @@ export namespace AuthenticationUsecase {
     TryCatch<IAuthentication.Credentials, typeof Exception.LOGIN_FAIL>
   > => {
     const profile = await AuthenticationService.getOauthProfile(body);
+    if (profile.code === '4004') return profile;
     return pipeAsync(
       UserRepository.findOneByOauthProfile,
 
       ifSuccess((user: IUser) =>
         User.isInActive(user)
-          ? UserRepository.update(User.activate(user))
+          ? UserRepository.update(User.activate(user).data)
           : getSuccessReturn(user),
       ),
 
@@ -35,16 +36,14 @@ export namespace AuthenticationUsecase {
               User.create,
 
               ifSuccess(UserRepository.add),
-            )(profile)
+            )(profile.data)
           : result,
 
       (result) =>
-        result.code === '1000'
-          ? getSuccessReturn(_getCredentials(result.data))
-          : result,
+        result.code === '1000' ? _getCredentials(result.data) : result,
 
       (result) => (result.code === '1000' ? result : Exception.LOGIN_FAIL),
-    )(profile);
+    )(profile.data);
   };
 
   export const refresh = pipeAsync(
@@ -54,11 +53,9 @@ export namespace AuthenticationUsecase {
       UserRepository.findOne(data.id),
     ),
 
-    (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
-
     (result) =>
       result.code === '1000'
-        ? getSuccessReturn(AuthenticationService.getAccessToken(result.data))
+        ? AuthenticationService.getAccessToken(result.data)
         : result,
   );
 }

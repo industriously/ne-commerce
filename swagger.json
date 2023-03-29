@@ -448,7 +448,7 @@
                       "$ref": "#/components/schemas/__object.o3"
                     },
                     {
-                      "$ref": "#/components/schemas/Try_lt_null_gt_"
+                      "$ref": "#/components/schemas/Try_lt_true_gt_"
                     }
                   ]
                 }
@@ -1063,7 +1063,7 @@
         "nullable": false,
         "x-typia-jsDocTags": []
       },
-      "Try_lt_null_gt_": {
+      "Try_lt_true_gt_": {
         "type": "object",
         "properties": {
           "code": {
@@ -1075,7 +1075,11 @@
             "x-typia-required": true
           },
           "data": {
-            "type": "null",
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false,
             "x-typia-required": true
           }
         },

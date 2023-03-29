@@ -131,7 +131,7 @@ export function inActivate
 }
 export namespace inActivate
 {
-    export type Output = TryCatch<null, { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
+    export type Output = TryCatch<true, { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
 
     export const METHOD = "DELETE" as const;
     export const PATH: string = "/user";
