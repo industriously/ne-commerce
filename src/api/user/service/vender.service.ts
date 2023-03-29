@@ -1,6 +1,7 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
 import { IProduct } from '@INTERFACE/product';
 import { IUser } from '@INTERFACE/user';
+import { List, pipeAsync } from '@UTIL';
 import { UserRepository } from '../core';
 import { UserService } from './user.service';
 
@@ -11,34 +12,45 @@ export namespace VenderService {
       name: user.name,
     };
   };
-  export const getVenderByToken = async (
-    token: string,
-  ): Promise<IProduct.Vender> => {
-    const user = await UserService.findOne(token);
+  export const getVenderByToken = pipeAsync(
+    UserService.findOneByToken,
 
-    if (user.role !== 'vender') {
-      throw HttpExceptionFactory('Forbidden');
-    }
-    return _toVender(user);
-  };
+    (result) =>
+      result.code === '1000'
+        ? result.data.role !== 'vender'
+          ? Exception.FORBIDDEN_VENDER
+          : result
+        : result,
 
-  export const findVender = async (
-    user_id: string,
-  ): Promise<IProduct.Vender> => {
-    const { is_success, result } = await UserRepository.findOne(user_id);
-    if (!is_success || result.role !== 'vender') {
-      throw HttpExceptionFactory('NotFound');
-    }
-    return _toVender(result);
-  };
+    (result) =>
+      result.code === '1000'
+        ? getSuccessReturn(_toVender(result.data))
+        : result,
+  );
 
-  export const findVendersByIds = async (
-    ids: string[],
-  ): Promise<IProduct.Vender[]> => {
-    const { is_success, result } = await UserRepository.findManyByIds(ids);
-    if (!is_success) {
-      throw HttpExceptionFactory('ISE');
-    }
-    return result.filter((user) => user.role === 'vender').map(_toVender);
-  };
+  export const findVender = pipeAsync(
+    UserRepository.findOne,
+
+    (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
+
+    (result) =>
+      result.code === '1000'
+        ? result.data.role !== 'vender'
+          ? Exception.USER_NOT_FOUND
+          : result
+        : result,
+
+    (result) =>
+      result.code === '1000'
+        ? getSuccessReturn(_toVender(result.data))
+        : result,
+  );
+
+  export const findVendersByIds = pipeAsync(
+    UserRepository.findManyByIds,
+
+    List.filter((user) => user.role === 'vender'),
+
+    List.map(_toVender),
+  );
 }

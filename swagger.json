@@ -31,13 +31,16 @@
         },
         "responses": {
           "201": {
-            "description": "1000 사용자 인증 토큰",
+            "description": "사용자 인증 토큰",
             "content": {
               "application/json": {
                 "schema": {
                   "oneOf": [
                     {
                       "$ref": "#/components/schemas/__object"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o1"
                     },
                     {
                       "$ref": "#/components/schemas/Try_lt_IAuthentication.Credentials_gt_"
@@ -47,6 +50,9 @@
               }
             },
             "x-nestia-encrypted": false
+          },
+          "4001": {
+            "description": "유효하지 않은 body입니다."
           },
           "4004": {
             "description": "로그인에 실패했습니다."
@@ -95,7 +101,16 @@
             "name": "returns",
             "text": [
               {
-                "text": "1000 사용자 인증 토큰",
+                "text": "사용자 인증 토큰",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4001 유효하지 않은 body입니다.",
                 "kind": "text"
               }
             ]
@@ -124,17 +139,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IAuthentication.RefreshedCredential"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/__object.o2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o3"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Try_lt_string_gt_"
+                    }
+                  ]
                 }
               }
             },
             "x-nestia-encrypted": false
           },
-          "400": {
-            "description": "잘못된 토큰입니다."
+          "4006": {
+            "description": "사용자를 찾을 수 없습니다."
           },
-          "404": {
-            "description": "일치하는 대상을 찾지 못했습니다."
+          "4007": {
+            "description": "잘못된 토큰입니다."
           }
         },
         "summary": "인증 토큰 재발행 API",
@@ -172,7 +197,7 @@
             "name": "throw",
             "text": [
               {
-                "text": "400 잘못된 토큰입니다.",
+                "text": "4006 사용자를 찾을 수 없습니다.",
                 "kind": "text"
               }
             ]
@@ -181,7 +206,423 @@
             "name": "throw",
             "text": [
               {
-                "text": "404 일치하는 대상을 찾지 못했습니다.",
+                "text": "4007 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "사용자 상세 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/__object.o2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o3"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Try_lt_IUser.Detail_gt_"
+                    }
+                  ]
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "4006": {
+            "description": "사용자를 찾을 수 없습니다."
+          },
+          "4007": {
+            "description": "잘못된 토큰입니다."
+          }
+        },
+        "summary": "내 상세 정보 보기 API",
+        "description": "",
+        "x-nestia-namespace": "user.getDetail",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "내 상세 정보 보기 API",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "사용자 상세 정보",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4006 사용자를 찾을 수 없습니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4007 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "description": "수정할 정보를 포함합니다.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IUser.UpdateInput"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "수정된 상세 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/__object"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o3"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Try_lt_IUser.Detail_gt_"
+                    }
+                  ]
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "4001": {
+            "description": "유효하지 않은 body입니다."
+          },
+          "4006": {
+            "description": "사용자를 찾을 수 없습니다."
+          },
+          "4007": {
+            "description": "잘못된 토큰입니다."
+          }
+        },
+        "summary": "내 정보 수정 API",
+        "description": "",
+        "x-nestia-namespace": "user.update",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "내 정보 수정 API",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "수정할 정보를 포함합니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "수정된 상세 정보",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4001 유효하지 않은 body입니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4006 사용자를 찾을 수 없습니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4007 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/__object.o2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o3"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Try_lt_null_gt_"
+                    }
+                  ]
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "4006": {
+            "description": "사용자를 찾을 수 없습니다."
+          },
+          "4007": {
+            "description": "잘못된 토큰입니다."
+          }
+        },
+        "summary": "내 계정 비활성화 API",
+        "description": "사용자는 로그인을 통해 계정을 활성화할 수 있습니다.\n\n비활성화된 계정은 조회되지 않습니다.",
+        "x-nestia-namespace": "user.inActivate",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "내 계정 비활성화 API",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "null",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4006 사용자를 찾을 수 없습니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4007 잘못된 토큰입니다.",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "nullable": false
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "사용자 공개 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/__object.o4"
+                    },
+                    {
+                      "$ref": "#/components/schemas/__object.o2"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Try_lt_IUser.Public_gt_"
+                    }
+                  ]
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          },
+          "4003": {
+            "description": "유효하지 않은 param입니다."
+          },
+          "4006": {
+            "description": "사용자를 찾을 수 없습니다."
+          }
+        },
+        "summary": "사용자 프로필 조회 API",
+        "description": "활성화된 사용자의 정보만 조회합니다.",
+        "x-nestia-namespace": "users.findOne",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "사용자 프로필 조회 API",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "tag",
+            "text": [
+              {
+                "text": "user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "user_id",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "조회 대상의 id 입니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "사용자 공개 정보",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4003 유효하지 않은 param입니다.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "throw",
+            "text": [
+              {
+                "text": "4006 사용자를 찾을 수 없습니다.",
                 "kind": "text"
               }
             ]
@@ -218,6 +659,33 @@
         "x-typia-jsDocTags": []
       },
       "__object": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "4001"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "type": "string",
+            "enum": [
+              "유효하지 않은 body입니다."
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "__object.o1": {
         "type": "object",
         "properties": {
           "code": {
@@ -294,10 +762,72 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IAuthentication.RefreshedCredential": {
+      "__object.o2": {
         "type": "object",
         "properties": {
-          "access_token": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "4006"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "type": "string",
+            "enum": [
+              "사용자를 찾을 수 없습니다."
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "__object.o3": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "4007"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "type": "string",
+            "enum": [
+              "잘못된 토큰입니다."
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Try_lt_string_gt_": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "1000"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
             "type": "string",
             "nullable": false,
             "x-typia-required": true
@@ -305,7 +835,367 @@
         },
         "nullable": false,
         "required": [
-          "access_token"
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Try_lt_IUser.Detail_gt_": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "1000"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/IUser.Detail",
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IUser.Detail": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-required": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^010-[0-9]{4}-[0-9]{4}$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^010-[0-9]{4}-[0-9]{4}$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^010-[0-9]{4}-[0-9]{4}$"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "vender",
+              "admin"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "created_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "email",
+          "name",
+          "id",
+          "address",
+          "phone",
+          "role",
+          "is_deleted",
+          "created_at",
+          "updated_at"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IUser.UpdateInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": false
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-required": false
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^010-[0-9]{4}-[0-9]{4}$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^010-[0-9]{4}-[0-9]{4}$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "pattern": "^010-[0-9]{4}-[0-9]{4}$"
+          }
+        },
+        "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "Try_lt_null_gt_": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "1000"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "type": "null",
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "__object.o4": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "4003"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "type": "string",
+            "enum": [
+              "유효하지 않은 param입니다."
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Try_lt_IUser.Public_gt_": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "1000"
+            ],
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/IUser.Public",
+            "x-typia-required": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "code",
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IUser.Public": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "email",
+          "name",
+          "id"
         ],
         "x-typia-jsDocTags": []
       }

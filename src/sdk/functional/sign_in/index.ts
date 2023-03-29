@@ -10,7 +10,6 @@ import typia from "typia";
 
 import type { IAuthentication } from "./../../interface/user/auth.interface";
 import type { TryCatch } from "./../../interface/common/function.interface";
-import type { __object } from "./../../../api/common/exception/exception";
 
 export * as google from "./google";
 
@@ -24,7 +23,7 @@ export * as google from "./google";
 export function signInTest
     (
         connection: IConnection
-    ): Promise<void>
+    ): Promise<signInTest.Output>
 {
     return Fetcher.fetch
     (
@@ -36,6 +35,7 @@ export function signInTest
 }
 export namespace signInTest
 {
+    export type Output = string;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/sign-in";
@@ -60,9 +60,9 @@ export namespace signInTest
  * @tag authentication
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body token 요청 권한을 가진 code를 포함한다.
- * @returns success Credentials
- * @throw "login fail"
- * @throw 4000
+ * @returns 사용자 인증 토큰
+ * @throw 4001 유효하지 않은 body입니다.
+ * @throw 4004 로그인에 실패했습니다.
  * 
  * @controller AuthController.signIn()
  * @path POST /sign-in
@@ -87,7 +87,7 @@ export function signIn
 export namespace signIn
 {
     export type Input = IAuthentication.SignInBody;
-    export type Output = TryCatch<IAuthentication.Credentials, __object>;
+    export type Output = TryCatch<IAuthentication.Credentials, { readonly code: "4001"; readonly data: "유효하지 않은 body입니다."; } | { readonly code: "4004"; readonly data: "로그인에 실패했습니다."; }>;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/sign-in";

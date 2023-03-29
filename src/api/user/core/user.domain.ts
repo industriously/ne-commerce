@@ -32,12 +32,15 @@ export namespace User {
   export const update = (
     user: Mutable<IUser>,
     input: IUser.UpdateInput,
-  ): IUser => {
-    const { name, address, phone } = typia.assert(input);
+  ): TryCatch<IUser, typeof Exception.INVALID_VALUE> => {
+    if (!typia.is(input)) {
+      return Exception.INVALID_VALUE;
+    }
+    const { name, address, phone } = input;
     user.name = !isUndefined(name) ? name : user.name;
     user.address = !isUndefined(address) ? address : user.address;
     user.phone = !isUndefined(phone) ? phone : user.phone;
-    return user;
+    return getSuccessReturn(user);
   };
 
   export const isInActive = (user: IUser): boolean => {

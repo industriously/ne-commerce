@@ -1,10 +1,9 @@
 import { IAuthentication } from '@INTERFACE/user';
 import { IUser } from '@INTERFACE/user';
 import { prisma } from '@INFRA/DB';
-import { Prisma, User } from '@PRISMA';
+import { User } from '@PRISMA';
 import typia from 'typia';
-import { getISOString, isNull } from '@UTIL';
-import { _add, _findMany, _findOne, _update } from '@COMMON/repository';
+import { getISOString, isNull, is_success, List, pipeAsync } from '@UTIL';
 import { TryCatch } from '@INTERFACE/common';
 import { Exception, getSuccessReturn } from '@COMMON/exception';
 
@@ -32,13 +31,21 @@ export namespace UserRepository {
 
   export const findOne = async (
     id: string,
-  ): Promise<TryCatch<IUser, typeof Exception.INVALID_VALUE>> => {
+  ): Promise<
+    TryCatch<
+      IUser,
+      typeof Exception.INVALID_VALUE | typeof Exception.USER_NOT_FOUND
+    >
+  > => {
     if (typeof id !== 'string') {
       return Exception.INVALID_VALUE;
     }
-    const model = await prisma.user.findFirstOrThrow({
+    const model = await prisma.user.findFirst({
       where: { id, is_deleted: false },
     });
+    if (isNull(model)) {
+      return Exception.USER_NOT_FOUND;
+    }
     return toUser(model);
   };
 
@@ -60,13 +67,15 @@ export namespace UserRepository {
     return toUser(user);
   };
 
-  export const findManyByIds = _findMany(
+  export const findManyByIds = pipeAsync(
     (ids: string[]) =>
-      ({
-        where: { id: { in: ids }, is_deleted: false },
-      } satisfies Prisma.UserFindManyArgs),
-    (args) => prisma.user.findMany(args),
-    toUser,
+      prisma.user.findMany({ where: { id: { in: ids }, is_deleted: false } }),
+
+    List.map(toUser),
+
+    (result) => result.filter(is_success),
+
+    List.map((result) => result.data),
   );
 
   export const update = async (
@@ -89,20 +98,4 @@ export namespace UserRepository {
     }
     return getSuccessReturn(user);
   };
-
-  _update(
-    (user: IUser) =>
-      ({ id: user.id, is_deleted: false } satisfies Prisma.UserWhereInput),
-    (user: IUser) =>
-      ({
-        email: user.email,
-        name: user.name,
-        address: user.address,
-        phone: user.phone,
-        is_deleted: user.is_deleted,
-        updated_at: user.updated_at,
-        role: user.role,
-      } satisfies Prisma.UserWhereInput),
-    (where, data) => prisma.user.updateMany({ where, data }),
-  );
 }

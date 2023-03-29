@@ -67,19 +67,17 @@ export namespace AuthenticationService {
     token: string,
   ): TryCatch<
     IAuthentication.AccessTokenPayload,
-    typeof Exception.INVALID_VALUE | typeof Exception.INVALID_TOKEN
+    typeof Exception.INVALID_TOKEN
   > => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (!typia.isPrune<IAuthentication.AccessTokenPayload>(payload)) {
-        return Exception.INVALID_VALUE;
+      if (typia.isPrune<IAuthentication.AccessTokenPayload>(payload)) {
+        return getSuccessReturn(payload);
       }
-      return getSuccessReturn(payload);
-    } catch (error) {
-      return Exception.INVALID_TOKEN;
-    }
+    } catch (error) {}
+    return Exception.INVALID_TOKEN;
   };
 
   export const getRefreshToken = (user: IUser): string => {
@@ -95,19 +93,17 @@ export namespace AuthenticationService {
     token: string,
   ): TryCatch<
     IAuthentication.RefreshTokenPayload,
-    typeof Exception.INVALID_VALUE | typeof Exception.INVALID_TOKEN
+    typeof Exception.INVALID_TOKEN
   > => {
     try {
       const payload = jwt.verify(token, REFRESH_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (!typia.isPrune<IAuthentication.RefreshTokenPayload>(payload)) {
-        return Exception.INVALID_VALUE;
+      if (typia.isPrune<IAuthentication.RefreshTokenPayload>(payload)) {
+        return getSuccessReturn(payload);
       }
-      return getSuccessReturn(payload);
-    } catch (error) {
-      return Exception.INVALID_TOKEN;
-    }
+    } catch (error) {}
+    return Exception.INVALID_TOKEN;
   };
 
   export const getIdToken = (user: IUser): string => {
@@ -121,18 +117,16 @@ export namespace AuthenticationService {
     token: string,
   ): TryCatch<
     IAuthentication.IdTokenPayload,
-    typeof Exception.INVALID_TOKEN | typeof Exception.INVALID_VALUE
+    typeof Exception.INVALID_TOKEN
   > => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (!typia.isPrune<IAuthentication.IdTokenPayload>(payload)) {
-        return Exception.INVALID_VALUE;
+      if (typia.isPrune<IAuthentication.IdTokenPayload>(payload)) {
+        return getSuccessReturn(payload);
       }
-      return getSuccessReturn(payload);
-    } catch (error) {
-      return Exception.INVALID_TOKEN;
-    }
+    } catch (error) {}
+    return Exception.INVALID_TOKEN;
   };
 }

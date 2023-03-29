@@ -43,16 +43,20 @@ export class AuthController {
    * @tag authentication
    * @param body token 요청 권한을 가진 code를 포함한다.
    * @returns 사용자 인증 토큰
+   * @throw 4001 유효하지 않은 body입니다.
    * @throw 4004 로그인에 실패했습니다.
    */
   @Post('sign-in')
   async signIn(
     @Body() body: IAuthentication.SignInBody,
   ): Promise<
-    TryCatch<IAuthentication.Credentials, typeof Exception.LOGIN_FAIL>
+    TryCatch<
+      IAuthentication.Credentials,
+      typeof Exception.LOGIN_FAIL | typeof Exception.INVALID_BODY
+    >
   > {
-    if (!typia.is(body)) return Exception.LOGIN_FAIL;
-    return await AuthenticationUsecase.signIn(body);
+    if (!typia.isPrune(body)) return Exception.INVALID_BODY;
+    return AuthenticationUsecase.signIn(body);
   }
 
   /**
@@ -61,7 +65,7 @@ export class AuthController {
    * @summary 인증 토큰 재발행 API
    * @tag authentication
    * @returns 재발행된 access_token을 응답합니다.
-   * @throw 4000 유효하지 않은 값이 포함되었습니다.
+   * @throw 4006 사용자를 찾을 수 없습니다.
    * @throw 4007 잘못된 토큰입니다.
    */
   @Get('token/refresh')
@@ -70,7 +74,7 @@ export class AuthController {
   ): Promise<
     TryCatch<
       string,
-      typeof Exception.INVALID_VALUE | typeof Exception.INVALID_TOKEN
+      typeof Exception.USER_NOT_FOUND | typeof Exception.INVALID_TOKEN
     >
   > {
     return AuthenticationUsecase.refresh(token);

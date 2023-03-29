@@ -53,6 +53,9 @@ export namespace AuthenticationUsecase {
     ifSuccess((data: IAuthentication.RefreshTokenPayload) =>
       UserRepository.findOne(data.id),
     ),
+
+    (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
+
     (result) =>
       result.code === '1000'
         ? getSuccessReturn(AuthenticationService.getAccessToken(result.data))

@@ -1,35 +1,50 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { TryCatch } from '@INTERFACE/common';
 import { IUser } from '@INTERFACE/user';
+import { pipeAsync, ifSuccess } from '@UTIL';
 import { User, UserRepository } from '../core';
 import { UserService } from '../service';
 
 export namespace UserUsecase {
-  export const findOne = async (token: string): Promise<IUser.Detail> => {
-    const user = await UserService.findOne(token);
-    return User.toDetail(user);
-  };
-  export const update = async (
+  export const findOne = pipeAsync(
+    UserService.findOneByToken,
+
+    (result) =>
+      result.code === '1000'
+        ? getSuccessReturn(User.toDetail(result.data))
+        : result,
+  );
+
+  export const update = (
     token: string,
     input: IUser.UpdateInput,
-  ): Promise<IUser.Detail> => {
-    const user = await UserService.findOne(token);
-    const { is_success, result, message } = await UserRepository.update(
-      User.update(user, input),
-    );
-    if (!is_success) {
-      throw HttpExceptionFactory('BadRequest', message);
-    }
-    return User.toDetail(result);
-  };
-  export const inActivate = async (token: string): Promise<void> => {
-    const user = await UserService.findOne(token);
+  ): Promise<
+    TryCatch<
+      IUser.Detail,
+      typeof Exception.USER_NOT_FOUND | typeof Exception.INVALID_TOKEN
+    >
+  > => {
+    return pipeAsync(
+      UserService.findOneByToken,
 
-    const { is_success, message } = await UserRepository.update(
-      User.inActivate(user),
-    );
-    if (!is_success) {
-      throw HttpExceptionFactory('BadRequest', message);
-    }
-    return;
+      ifSuccess((user: IUser) => User.update(user, input)),
+
+      (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
+
+      ifSuccess(UserRepository.update),
+
+      (result) =>
+        result.code === '1000'
+          ? getSuccessReturn(User.toDetail(result.data))
+          : result,
+    )(token);
   };
+
+  export const inActivate = pipeAsync(
+    UserService.findOneByToken,
+
+    ifSuccess((user: IUser) => UserRepository.update(User.inActivate(user))),
+
+    (result) => (result.code === '1000' ? getSuccessReturn(null) : result),
+  );
 }

@@ -1,13 +1,16 @@
-import { HttpExceptionFactory } from '@COMMON/exception';
-import { IUser } from '@INTERFACE/user';
+import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { pipeAsync } from '@UTIL';
 import { User, UserRepository } from '../core';
 
 export namespace UsersUsecase {
-  export const findOne = async (user_id: string): Promise<IUser.Public> => {
-    const { is_success, result } = await UserRepository.findOne(user_id);
-    if (!is_success) {
-      throw HttpExceptionFactory('NotFound');
-    }
-    return User.toPublic(result);
-  };
+  export const findOne = pipeAsync(
+    UserRepository.findOne,
+
+    (result) => (result.code === '4000' ? Exception.USER_NOT_FOUND : result),
+
+    (result) =>
+      result.code === '1000'
+        ? getSuccessReturn(User.toPublic(result.data))
+        : result,
+  );
 }

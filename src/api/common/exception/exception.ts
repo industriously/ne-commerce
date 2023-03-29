@@ -25,6 +25,7 @@ export const Exception = {
   UNAUTHORIZED: { code: '4005', data: '인증이 필요합니다.' } as const,
   FORBIDDEN: { code: '4006', data: '권한이 없습니다.' } as const,
   INVALID_TOKEN: { code: '4007', data: '잘못된 토큰입니다.' } as const,
+  FORBIDDEN_VENDER: { code: '4008', data: '판매자 권한이 없습니다.' } as const,
   UNKNOWN_ERROR: {
     code: '5000',
     data: '알 수 없는 오류가 발생했습니다.',
