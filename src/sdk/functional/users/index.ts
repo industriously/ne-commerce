@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { TryCatch } from "./../../interface/common/function.interface";
+import type { TryCatch } from "./../../interface/common/exception.interface";
 import type { IUser } from "./../../interface/user/user.interface";
 
 /**
@@ -18,8 +18,6 @@ import type { IUser } from "./../../interface/user/user.interface";
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param user_id 조회 대상의 id 입니다.
  * @returns 사용자 공개 정보
- * @throw 4003 유효하지 않은 param입니다.
- * @throw 4006 사용자를 찾을 수 없습니다.
  * 
  * @controller UsersController.findOne()
  * @path GET /users/:user_id
@@ -41,7 +39,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = TryCatch<IUser.Public, { readonly code: "4003"; readonly data: "유효하지 않은 param입니다."; } | { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; }>;
+    export type Output = TryCatch<IUser.Public, Invalid | Fail | NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/users/:user_id";

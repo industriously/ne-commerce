@@ -1,12 +1,13 @@
 import { Configuration } from '@INFRA/config';
 import { IAuthentication } from '@INTERFACE/user';
 import { IUser } from '@INTERFACE/user';
-import { User } from '@USER/core';
+import { FailLogin, User } from '@USER/core';
 import jwt from 'jsonwebtoken';
 import typia from 'typia';
 import { GithubStrategy, GoogleStrategy } from '@USER/_oauth_';
-import { Try, TryCatch } from '@INTERFACE/common';
-import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { IFailure, Try, TryCatch } from '@INTERFACE/common';
+import { Failure, getTry } from '@COMMON/exception';
+import { ifSuccess, pipeAsync, tryCatch } from '@UTIL';
 
 export namespace AuthenticationService {
   const {
@@ -43,102 +44,108 @@ export namespace AuthenticationService {
     };
   };
 
-  export const getOauthProfile = async (
+  export const getOauthProfile: (
     body: IAuthentication.SignInBody,
-  ): Promise<
-    TryCatch<IAuthentication.OauthProfile, typeof Exception.LOGIN_FAIL>
-  > => {
-    try {
-      const { oauth_type, code } = body;
-      const oauthProfile =
-        oauth_type === 'google'
-          ? _getGoogleProfile(code)
-          : _getGithubProfile(code);
-      return getSuccessReturn(
-        typia.assertPrune<IAuthentication.OauthProfile>(oauthProfile),
-      );
-    } catch (error) {
-      return Exception.LOGIN_FAIL;
-    }
-  };
+  ) => Promise<TryCatch<IAuthentication.OauthProfile, IFailure.Business.Fail>> =
+    pipeAsync(
+      tryCatch(
+        (input: IAuthentication.SignInBody) =>
+          input.oauth_type === 'google'
+            ? _getGoogleProfile(input.code)
+            : _getGithubProfile(input.code),
+        FailLogin,
+      ),
+
+      ifSuccess(
+        (data: {
+          sub: string;
+          oauth_type: string;
+          email: string | null;
+          name: string;
+        }) =>
+          typia.isPrune<IAuthentication.OauthProfile>(data)
+            ? getTry(data)
+            : FailLogin,
+      ),
+    );
 
   export const getAccessToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
       role: user.role,
     } satisfies IAuthentication.AccessTokenPayload;
-    return getSuccessReturn(
+    return getTry(
       jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: '8h',
         algorithm: 'RS256',
       }),
     );
   };
+
   export const getAccessTokenPayload = (
     token: string,
   ): TryCatch<
     IAuthentication.AccessTokenPayload,
-    typeof Exception.INVALID_TOKEN
+    IFailure.Business.Invalid
   > => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
       if (typia.isPrune<IAuthentication.AccessTokenPayload>(payload))
-        return getSuccessReturn(payload);
+        return getTry(payload);
     } catch (error) {}
-    return Exception.INVALID_TOKEN;
+    return Failure.Business.InvalidToken;
   };
 
   export const getRefreshToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
     } satisfies IAuthentication.RefreshTokenPayload;
-    return getSuccessReturn(
+    return getTry(
       jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
         expiresIn: '30w',
         algorithm: 'RS256',
       }),
     );
   };
+
   export const getRefreshTokenPayload = (
     token: string,
   ): TryCatch<
     IAuthentication.RefreshTokenPayload,
-    typeof Exception.INVALID_TOKEN
+    IFailure.Business.Invalid
   > => {
     try {
       const payload = jwt.verify(token, REFRESH_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
       if (typia.isPrune<IAuthentication.RefreshTokenPayload>(payload))
-        return getSuccessReturn(payload);
+        return getTry(payload);
     } catch (error) {}
-    return Exception.INVALID_TOKEN;
+    return Failure.Business.InvalidToken;
   };
 
   export const getIdToken = (user: IUser): Try<string> => {
     const payload = User.toDetail(user);
-    return getSuccessReturn(
+    return getTry(
       jwt.sign(payload.data, ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: '1d',
         algorithm: 'RS256',
       }),
     );
   };
+
   export const getIdTokenPayload = (
     token: string,
-  ): TryCatch<
-    IAuthentication.IdTokenPayload,
-    typeof Exception.INVALID_TOKEN
-  > => {
+  ): TryCatch<IAuthentication.IdTokenPayload, IFailure.Business.Invalid> => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
       if (typia.isPrune<IAuthentication.IdTokenPayload>(payload))
-        return getSuccessReturn(payload);
+        return getTry(payload);
     } catch (error) {}
-    return Exception.INVALID_TOKEN;
+    return Failure.Business.InvalidToken;
   };
 }

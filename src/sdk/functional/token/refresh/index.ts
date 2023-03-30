@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { TryCatch } from "./../../../interface/common/function.interface";
+import type { TryCatch } from "./../../../interface/common/exception.interface";
 
 /**
  * Authorization header로 refresh_token을 전달헤야 합니다.
@@ -15,8 +15,6 @@ import type { TryCatch } from "./../../../interface/common/function.interface";
  * @summary 인증 토큰 재발행 API
  * @tag authentication
  * @returns 재발행된 access_token을 응답합니다.
- * @throw 4006 사용자를 찾을 수 없습니다.
- * @throw 4007 잘못된 토큰입니다.
  * 
  * @controller AuthController.refreshToken()
  * @path GET /token/refresh
@@ -37,7 +35,7 @@ export function refreshToken
 }
 export namespace refreshToken
 {
-    export type Output = TryCatch<string, { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
+    export type Output = TryCatch<string, Invalid | Fail>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/token/refresh";

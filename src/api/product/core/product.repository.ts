@@ -1,7 +1,7 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { Failure, getTry } from '@COMMON/exception';
 import { _findMany, _findOne, _update } from '@COMMON/repository';
 import { prisma } from '@INFRA/DB';
-import { Try, TryCatch } from '@INTERFACE/common';
+import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { Product } from '@PRISMA';
 import { getISOString, isNumber, isString } from '@UTIL';
@@ -10,7 +10,7 @@ import typia from 'typia';
 export namespace ProductRepository {
   export const toProduct = (
     model: Product,
-  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
+  ): TryCatch<IProduct, IFailure.Internal.Invalid> => {
     const {
       id,
       name,
@@ -31,8 +31,8 @@ export namespace ProductRepository {
       updated_at: getISOString(updated_at),
       is_deleted,
     };
-    if (!typia.is<IProduct>(product)) return Exception.INVALID_VALUE;
-    return getSuccessReturn(product);
+    if (!typia.is<IProduct>(product)) return Failure.Internal.InvalidValue;
+    return getTry(product);
   };
 
   export const findOne = _findOne(

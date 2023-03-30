@@ -2,17 +2,17 @@ import { getISOString, isUndefined, Predicate } from '@UTIL';
 import { IUser } from '@INTERFACE/user';
 import { randomUUID } from 'crypto';
 import typia from 'typia';
-import { Mutable, Try, TryCatch } from '@INTERFACE/common';
-import { Exception, getSuccessReturn } from '@COMMON/exception';
+import { IFailure, Mutable, Try, TryCatch } from '@INTERFACE/common';
+import { Failure, getTry } from '@COMMON/exception';
 
 export namespace User {
   export const create = (
     input: IUser.CreateInput,
-  ): TryCatch<IUser, typeof Exception.INVALID_VALUE> => {
-    if (!typia.is(input)) return Exception.INVALID_VALUE;
+  ): TryCatch<IUser, IFailure.Internal.Invalid> => {
+    if (!typia.is(input)) return Failure.Internal.InvalidValue;
     const { name, email, oauth_type, sub } = input;
     const date = getISOString();
-    return getSuccessReturn<IUser>({
+    return getTry<IUser>({
       id: randomUUID(),
       sub,
       oauth_type,
@@ -30,13 +30,13 @@ export namespace User {
   export const update = (
     user: Mutable<IUser>,
     input: IUser.UpdateInput,
-  ): TryCatch<IUser, typeof Exception.INVALID_VALUE> => {
-    if (!typia.is(input)) return Exception.INVALID_VALUE;
+  ): TryCatch<IUser, IFailure.Internal.Invalid> => {
+    if (!typia.is(input)) return Failure.Internal.InvalidValue;
     const { name, address, phone } = input;
     user.name = !isUndefined(name) ? name : user.name;
     user.address = !isUndefined(address) ? address : user.address;
     user.phone = !isUndefined(phone) ? phone : user.phone;
-    return getSuccessReturn<IUser>(user);
+    return getTry<IUser>(user);
   };
 
   export const isInActive = (user: IUser): boolean => {
@@ -48,20 +48,22 @@ export namespace User {
   export const activate = (user: Mutable<IUser>): Try<IUser> => {
     user.is_deleted = false;
     user.updated_at = getISOString();
-    return getSuccessReturn<IUser>(user);
+    return getTry<IUser>(user);
   };
 
   export const inActivate = (user: Mutable<IUser>): Try<IUser> => {
     user.is_deleted = true;
     user.updated_at = getISOString();
-    return getSuccessReturn<IUser>(user);
+    return getTry<IUser>(user);
   };
 
   export const toDetail = (user: IUser): Try<IUser.Detail> => {
-    return getSuccessReturn<IUser.Detail>(user);
+    return getTry<IUser.Detail>(user);
   };
   export const toPublic = (user: IUser): Try<IUser.Public> => {
     const { id, name, email } = user;
-    return getSuccessReturn<IUser.Public>({ id, name, email });
+    return getTry<IUser.Public>({ id, name, email });
   };
+
+  export const isVender = (user: IUser): boolean => user.role === 'vender';
 }

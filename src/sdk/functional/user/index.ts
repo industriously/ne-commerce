@@ -8,15 +8,13 @@ import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
-import type { TryCatch } from "./../../interface/common/function.interface";
+import type { TryCatch } from "./../../interface/common/exception.interface";
 import type { IUser } from "./../../interface/user/user.interface";
 
 /**
  * @summary 내 상세 정보 보기 API
  * @tag user
  * @returns 사용자 상세 정보
- * @throw 4006 사용자를 찾을 수 없습니다.
- * @throw 4007 잘못된 토큰입니다.
  * 
  * @controller UserController.getDetail()
  * @path GET /user
@@ -37,7 +35,7 @@ export function getDetail
 }
 export namespace getDetail
 {
-    export type Output = TryCatch<IUser.Detail, { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
+    export type Output = TryCatch<IUser.Detail, Invalid | Fail>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/user";
@@ -58,9 +56,6 @@ export namespace getDetail
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 수정할 정보를 포함합니다.
  * @returns 수정된 상세 정보
- * @throw 4001 유효하지 않은 body입니다.
- * @throw 4006 사용자를 찾을 수 없습니다.
- * @throw 4007 잘못된 토큰입니다.
  * 
  * @controller UserController.update()
  * @path PATCH /user
@@ -85,7 +80,7 @@ export function update
 export namespace update
 {
     export type Input = IUser.UpdateInput;
-    export type Output = TryCatch<IUser.Detail, { readonly code: "4001"; readonly data: "유효하지 않은 body입니다."; } | { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
+    export type Output = TryCatch<IUser.Detail, Invalid | Fail | NotFound>;
 
     export const METHOD = "PATCH" as const;
     export const PATH: string = "/user";
@@ -109,8 +104,6 @@ export namespace update
  * @summary 내 계정 비활성화 API
  * @tag user
  * @returns true
- * @throw 4006 사용자를 찾을 수 없습니다.
- * @throw 4007 잘못된 토큰입니다.
  * 
  * @controller UserController.inActivate()
  * @path DELETE /user
@@ -131,7 +124,7 @@ export function inActivate
 }
 export namespace inActivate
 {
-    export type Output = TryCatch<true, { readonly code: "4006"; readonly data: "사용자를 찾을 수 없습니다."; } | { readonly code: "4007"; readonly data: "잘못된 토큰입니다."; }>;
+    export type Output = TryCatch<true, Invalid | Fail>;
 
     export const METHOD = "DELETE" as const;
     export const PATH: string = "/user";

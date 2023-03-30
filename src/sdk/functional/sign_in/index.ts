@@ -9,12 +9,14 @@ import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
 import type { IAuthentication } from "./../../interface/user/auth.interface";
-import type { TryCatch } from "./../../interface/common/function.interface";
+import type { TryCatch } from "./../../interface/common/exception.interface";
 
 export * as google from "./google";
 
 /**
  * 로그인 테스트용 api
+ * 
+ * @internal
  * 
  * @controller AuthController.signInTest()
  * @path GET /sign-in
@@ -61,8 +63,6 @@ export namespace signInTest
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body token 요청 권한을 가진 code를 포함한다.
  * @returns 사용자 인증 토큰
- * @throw 4001 유효하지 않은 body입니다.
- * @throw 4004 로그인에 실패했습니다.
  * 
  * @controller AuthController.signIn()
  * @path POST /sign-in
@@ -87,7 +87,7 @@ export function signIn
 export namespace signIn
 {
     export type Input = IAuthentication.SignInBody;
-    export type Output = TryCatch<IAuthentication.Credentials, { readonly code: "4001"; readonly data: "유효하지 않은 body입니다."; } | { readonly code: "4004"; readonly data: "로그인에 실패했습니다."; }>;
+    export type Output = TryCatch<IAuthentication.Credentials, Invalid | Fail>;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/sign-in";

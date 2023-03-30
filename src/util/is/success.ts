@@ -1,5 +1,5 @@
-import { IException, Try, TryCatch } from '@INTERFACE/common';
+import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 
-export const is_success = <T, E extends IException>(
+export const is_success = <T, E extends IFailure>(
   input: TryCatch<T, E>,
-): input is Try<T> => input.code === '1000';
+): input is Try<T> => input.type === 'success';

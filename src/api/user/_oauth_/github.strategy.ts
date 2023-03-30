@@ -1,8 +1,7 @@
 import { OAUTH_PROFILE } from './oauth-profile.request-key';
 import { Github, Request, StrategyException } from '@devts/nestjs-auth';
 import { IAuthentication } from '@INTERFACE/user';
-import { Injectable } from '@nestjs/common';
-import { HttpExceptionFactory } from '@COMMON/exception';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Configuration } from '@INFRA/config';
 import typia from 'typia';
 
@@ -24,7 +23,7 @@ export class GithubStrategy extends Github.AbstractStrategy<
   protected override throw({
     message = '사용자 인증에 실패했습니다.',
   }: StrategyException): never {
-    throw HttpExceptionFactory('UnAuthorized', message);
+    throw new UnauthorizedException(message);
   }
 
   override getCode(request: Request): string {

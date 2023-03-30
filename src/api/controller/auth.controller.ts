@@ -3,8 +3,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Authorization, TypedQuery } from '@COMMON/decorator/http';
 import typia from 'typia';
 import { IAuthentication } from '@INTERFACE/user';
-import { TryCatch } from '@INTERFACE/common';
-import { Exception } from '@COMMON/exception';
+import { TryCatch, IFailure } from '@INTERFACE/common';
 import { AuthenticationUsecase } from '@USER/usecase';
 
 @Controller()
@@ -43,8 +42,6 @@ export class AuthController {
    * @tag authentication
    * @param body token 요청 권한을 가진 code를 포함한다.
    * @returns 사용자 인증 토큰
-   * @throw 4001 유효하지 않은 body입니다.
-   * @throw 4004 로그인에 실패했습니다.
    */
   @Post('sign-in')
   async signIn(
@@ -52,11 +49,12 @@ export class AuthController {
   ): Promise<
     TryCatch<
       IAuthentication.Credentials,
-      typeof Exception.LOGIN_FAIL | typeof Exception.INVALID_BODY
+      IFailure.Business.Invalid | IFailure.Business.Fail
     >
   > {
-    if (!typia.isPrune(body)) return Exception.INVALID_BODY;
-    return AuthenticationUsecase.signIn(body);
+    // if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    //  return AuthenticationUsecase.signIn(body);
+    throw Error();
   }
 
   /**
@@ -65,17 +63,12 @@ export class AuthController {
    * @summary 인증 토큰 재발행 API
    * @tag authentication
    * @returns 재발행된 access_token을 응답합니다.
-   * @throw 4006 사용자를 찾을 수 없습니다.
-   * @throw 4007 잘못된 토큰입니다.
    */
   @Get('token/refresh')
   refreshToken(
     @Authorization('bearer') token: string,
   ): Promise<
-    TryCatch<
-      string,
-      typeof Exception.USER_NOT_FOUND | typeof Exception.INVALID_TOKEN
-    >
+    TryCatch<string, IFailure.Business.Invalid | IFailure.Business.Fail>
   > {
     return AuthenticationUsecase.refresh(token);
   }

@@ -1,28 +1,18 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { IException, TryCatch } from '@INTERFACE/common';
-import { isNull, pipeAsync } from '@UTIL';
+import { Failure, getTry } from '@COMMON/exception';
+import { IFailure, TryCatch } from '@INTERFACE/common';
+import { isNull, pipeAsync, ifSuccess, tryCatch } from '@UTIL';
 
-export const _findOne = <T, M, A, E extends IException>(
+export const _findOne = <T, M, A>(
   validator: (input: T) => input is T,
   findOne: (input: T) => Promise<M | null>,
-  mapper: (input: M) => TryCatch<A, typeof Exception.INVALID_VALUE>,
-  NOT_FOUND: E,
+  mapper: (input: M) => TryCatch<A, IFailure.Internal.Invalid>,
+  NOT_FOUND: IFailure.Business.NotFound,
 ) =>
   pipeAsync(
     (input: T) =>
-      validator(input) ? getSuccessReturn(input) : Exception.INVALID_VALUE,
+      validator(input) ? getTry(input) : Failure.Internal.InvalidValue,
 
-    async (result) =>
-      result.code === '1000'
-        ? getSuccessReturn(await findOne(result.data))
-        : result,
+    ifSuccess(tryCatch(findOne, Failure.Internal.FailDB)),
 
-    (result) =>
-      result.code === '1000'
-        ? isNull(result.data)
-          ? NOT_FOUND
-          : mapper(result.data)
-        : result,
-
-    (result) => (result.code === '4000' ? NOT_FOUND : result),
+    ifSuccess((data: M | null) => (isNull(data) ? NOT_FOUND : mapper(data))),
   );

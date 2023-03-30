@@ -1,28 +1,35 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { TryCatch } from '@INTERFACE/common';
-import { pipeAsync, is_success, List } from '@UTIL';
+import { Failure, getTry } from '@COMMON/exception';
+import { IFailure, TryCatch } from '@INTERFACE/common';
+import {
+  pipeAsync,
+  is_success,
+  List,
+  ifSuccess,
+  tryCatch,
+  flatten,
+} from '@UTIL';
+import { pipe } from 'rxjs';
 
 export const _findMany = <T, M, A>(
   validator: (input: T) => input is T,
   findMany: (input: T) => Promise<M[]>,
-  mapper: (input: M) => TryCatch<A, typeof Exception.INVALID_VALUE>,
+  mapper: (input: M) => TryCatch<A, IFailure.Internal.Invalid>,
 ) =>
   pipeAsync(
     (input: T) =>
-      validator(input) ? getSuccessReturn(input) : Exception.INVALID_VALUE,
+      validator(input) ? getTry(input) : Failure.Internal.InvalidValue,
 
-    async (result) =>
-      result.code === '1000'
-        ? getSuccessReturn(await findMany(result.data))
-        : result,
+    ifSuccess(tryCatch(findMany, Failure.Internal.FailDB)),
 
-    (result) => (result.code === '4000' ? [] : result.data),
+    ifSuccess(
+      pipe(
+        List.map(mapper),
 
-    List.map(mapper),
+        (result) => result.filter(is_success),
 
-    (result) => result.filter(is_success),
+        List.map(flatten),
 
-    List.map((result) => result.data),
-
-    getSuccessReturn<A[]>,
+        getTry,
+      ),
+    ),
   );

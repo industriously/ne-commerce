@@ -1,5 +1,5 @@
-import { TryCatch } from '@INTERFACE/common';
-import { Exception } from '@COMMON/exception';
+import { Failure } from '@COMMON/exception';
+import { TryCatch, IFailure } from '@INTERFACE/common';
 import { IUser } from '@INTERFACE/user';
 import { Controller, Get, Param } from '@nestjs/common';
 import { UsersUsecase } from '@USER/usecase';
@@ -14,8 +14,6 @@ export class UsersController {
    * @tag users
    * @param user_id 조회 대상의 id 입니다.
    * @returns 사용자 공개 정보
-   * @throw 4003 유효하지 않은 param입니다.
-   * @throw 4006 사용자를 찾을 수 없습니다.
    */
   @Get(':user_id')
   async findOne(
@@ -23,10 +21,12 @@ export class UsersController {
   ): Promise<
     TryCatch<
       IUser.Public,
-      typeof Exception.INVALID_PARAM | typeof Exception.USER_NOT_FOUND
+      | IFailure.Business.NotFound
+      | IFailure.Business.Invalid
+      | IFailure.Business.Fail
     >
   > {
-    if (typia.is(id)) return Exception.INVALID_PARAM;
+    if (typia.is(id)) return Failure.Business.InvalidParam;
     return UsersUsecase.findOne(id);
   }
 }

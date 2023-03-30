@@ -1,7 +1,7 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { Mutable, Try, TryCatch } from '@INTERFACE/common';
+import { IFailure, Mutable, Try, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
-import { Predicate } from '@UTIL';
+import { getTry, Failure } from '@COMMON/exception';
+import { Predicate, getISOString } from '@UTIL';
 import typia from 'typia';
 
 export namespace Product {
@@ -19,11 +19,11 @@ export namespace Product {
 
   export const create = (
     input: IProduct.CreateInput & Pick<IProduct, 'vender_id'>,
-  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
-    if (!typia.is(input)) return Exception.INVALID_VALUE;
+  ): TryCatch<IProduct, IFailure.Internal.Invalid> => {
+    if (!typia.is(input)) return Failure.Internal.InvalidValue;
     const { vender_id, name, description, price } = input;
     const now = new Date().toISOString();
-    return getSuccessReturn<IProduct>({
+    return getTry<IProduct>({
       id: randomId(10),
       name,
       description,
@@ -38,25 +38,25 @@ export namespace Product {
   export const update = (
     target: Mutable<IProduct>,
     input: IProduct.UpdateInput,
-  ): TryCatch<IProduct, typeof Exception.INVALID_VALUE> => {
-    if (!typia.is(input)) return Exception.INVALID_VALUE;
+  ): TryCatch<IProduct, IFailure.Internal.Invalid> => {
+    if (!typia.is(input)) return Failure.Internal.InvalidValue;
     target.name = input.name ?? target.name;
     target.description = input.description ?? target.description;
     target.price = input.price ?? target.price;
-    target.updated_at = new Date().toISOString();
-    return getSuccessReturn<IProduct>(target);
+    target.updated_at = getISOString();
+    return getTry<IProduct>(target);
   };
 
   export const activate = (target: Mutable<IProduct>): Try<IProduct> => {
     target.is_deleted = false;
-    target.updated_at = new Date().toISOString();
-    return getSuccessReturn<IProduct>(target);
+    target.updated_at = getISOString();
+    return getTry<IProduct>(target);
   };
 
   export const inActivate = (target: Mutable<IProduct>): Try<IProduct> => {
     target.is_deleted = true;
-    target.updated_at = new Date().toISOString();
-    return getSuccessReturn<IProduct>(target);
+    target.updated_at = getISOString();
+    return getTry<IProduct>(target);
   };
 
   export const isInActive = (target: IProduct): boolean => {
@@ -70,7 +70,7 @@ export namespace Product {
     vender: IProduct.Vender,
   ): Try<IProduct.Summary> => {
     const { id, name, price, description, created_at } = product;
-    return getSuccessReturn<IProduct.Summary>({
+    return getTry<IProduct.Summary>({
       id,
       name,
       price,
@@ -86,7 +86,7 @@ export namespace Product {
   ): Try<IProduct.Detail> => {
     const { id, name, price, description, is_deleted, created_at, updated_at } =
       product;
-    return getSuccessReturn<IProduct.Detail>({
+    return getTry<IProduct.Detail>({
       id,
       name,
       price,

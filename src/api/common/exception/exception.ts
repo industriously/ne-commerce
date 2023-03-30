@@ -1,49 +1,66 @@
-import { IException } from '@INTERFACE/common';
+import { IFailure } from '@INTERFACE/common';
 
-export const Exception = {
-  INVALID_VALUE: {
-    code: '4000',
-    data: '유효하지 않은 값이 포함되었습니다.',
-  } as const,
-  INVALID_BODY: {
-    code: '4001',
-    data: '유효하지 않은 body입니다.',
-  } as const,
-  INVALID_QUERY: {
-    code: '4002',
-    data: '유효하지 않은 query입니다.',
-  } as const,
-  INVALID_PARAM: {
-    code: '4003',
-    data: '유효하지 않은 param입니다.',
-  } as const,
-  LOGIN_FAIL: { code: '4004', data: '로그인에 실패했습니다.' } as const,
-  USER_NOT_FOUND: {
-    code: '4006',
-    data: '사용자를 찾을 수 없습니다.',
-  } as const,
-  UNAUTHORIZED: { code: '4005', data: '인증이 필요합니다.' } as const,
-  FORBIDDEN: { code: '4006', data: '권한이 없습니다.' } as const,
-  INVALID_TOKEN: { code: '4007', data: '잘못된 토큰입니다.' } as const,
-  FORBIDDEN_VENDER: { code: '4008', data: '판매자 권한이 없습니다.' } as const,
-  PRODUCT_NOT_FOUND: {
-    code: '4009',
-    data: '상품을 찾을 수 없습니다.',
-  } as const,
-  FORBIDDEN_PRODUCT_UPDATE: {
-    code: '4010',
-    data: '해당 상품의 수정 권한이 없습니다.',
-  } as const,
-  PRODUCT_CREATE_FAIL: {
-    code: '4011',
-    data: '상품 생성에 실패했습니다.',
-  } as const,
-  PRODUCT_UPDATE_FAIL: {
-    code: '4012',
-    data: '상품 수정에 실패했습니다.',
-  } as const,
-  UNKNOWN_ERROR: {
-    code: '5000',
-    data: '알 수 없는 오류가 발생했습니다.',
-  } as const,
-} satisfies Record<string, IException>;
+export namespace Failure {
+  export const getInternal =
+    <T extends IFailure.Internal.Type>(event: T) =>
+    (message: string): IFailure.Internal<T> => ({
+      type: 'internal',
+      event,
+      message,
+    });
+
+  export const getInternalInvalid: (
+    message: string,
+  ) => IFailure.Internal.Invalid = getInternal('Invalid');
+
+  export const getInternalFail: (message: string) => IFailure.Internal.Fail =
+    getInternal('Fail');
+
+  export const getBusiness =
+    <T extends IFailure.Business.Type>(event: T) =>
+    (message: string): IFailure.Business<T> => ({
+      type: 'business',
+      event,
+      message,
+    });
+
+  export const getBusinessNotFound: (
+    message: string,
+  ) => IFailure.Business.NotFound = getBusiness('NotFound');
+
+  export const getBusinessInvalid: (
+    message: string,
+  ) => IFailure.Business.Invalid = getBusiness('Invalid');
+
+  export const getBusinessForbidden: (
+    message: string,
+  ) => IFailure.Business.Forbidden = getBusiness('Forbidden');
+
+  export const getBusinessFail: (message: string) => IFailure.Business.Fail =
+    getBusiness('Fail');
+
+  export namespace Internal {
+    export const InvalidValue = getInternalInvalid(
+      '유요하지 않은 값이 포함되었습니다.',
+    );
+    export const FailDB = getInternalFail('데이터베이스 요청이 실패했습니다.');
+    export const UnknownError = getInternalFail(
+      '알 수 없는 이유로 요청을 수행하지 못했습니다.',
+    );
+  }
+
+  export namespace Business {
+    export const InvalidBody = getBusinessInvalid('유효하지 않은 body입니다.');
+    export const InvalidQuery =
+      getBusinessInvalid('유효하지 않은 query입니다.');
+    export const InvalidParam =
+      getBusinessInvalid('유효하지 않은 param입니다.');
+    export const InvalidToken = getBusinessInvalid('유효하지 않은 토큰입니다.');
+
+    export const FailUnknown = getBusinessFail(
+      '알 수 없는 이유로 요청을 수행하지 못했습니다.',
+    );
+
+    export const InvalidRequest = getBusinessInvalid('잘못된 요청입니다.');
+  }
+}

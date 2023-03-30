@@ -1,54 +1,75 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { Try } from '@INTERFACE/common';
+import { Failure, getTry } from '@COMMON/exception';
+import { Try, TryCatch, IFailure } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { IUser } from '@INTERFACE/user';
-import { List, pipeAsync, flatten, ifSuccess } from '@UTIL';
-import { UserRepository } from '../core';
+import { List, pipeAsync, flatten, ifSuccess, isInternal } from '@UTIL';
+import { pipe } from 'rxjs';
+import { ForbiddenVender, NotFoundUser, User, UserRepository } from '../core';
 import { UserService } from './user.service';
 
 export namespace VenderService {
   const _toVender = (user: IUser): Try<IProduct.Vender> =>
-    getSuccessReturn({
+    getTry({
       id: user.id,
       name: user.name,
     });
-  export const getVenderByToken = pipeAsync(
+  export const getVenderByToken: (
+    token: string,
+  ) => Promise<
+    TryCatch<
+      IProduct.Vender,
+      | IFailure.Business.Invalid
+      | IFailure.Business.Forbidden
+      | IFailure.Business.Fail
+    >
+  > = pipeAsync(
     UserService.findOneByToken,
 
-    (result) => (result.code === '4006' ? Exception.FORBIDDEN_VENDER : result),
-
-    ifSuccess<IUser, IUser, typeof Exception.FORBIDDEN_VENDER>((user) =>
-      user.role === 'vender'
-        ? getSuccessReturn(user)
-        : Exception.FORBIDDEN_VENDER,
+    ifSuccess((user: IUser) =>
+      User.isVender(user) ? getTry(user) : ForbiddenVender,
     ),
 
     ifSuccess(_toVender),
   );
 
-  export const findVender = pipeAsync(
+  export const findVender: (
+    id: string,
+  ) => Promise<
+    TryCatch<
+      IProduct.Vender,
+      | IFailure.Business.NotFound
+      | IFailure.Business.Invalid
+      | IFailure.Business.Fail
+    >
+  > = pipeAsync(
     UserRepository.findOne,
 
-    ifSuccess<IUser, IUser, typeof Exception.USER_NOT_FOUND>((user) =>
-      user.role === 'vender'
-        ? getSuccessReturn(user)
-        : Exception.USER_NOT_FOUND,
+    ifSuccess((user: IUser) =>
+      User.isVender(user) ? getTry(user) : NotFoundUser,
     ),
 
     ifSuccess(_toVender),
+
+    (result) => (isInternal(result) ? Failure.Business.FailUnknown : result),
   );
 
-  export const findVendersByIds = pipeAsync(
+  export const findVendersByIds: (
+    ids: string[],
+  ) => Promise<Try<IProduct.Vender[]>> = pipeAsync(
     UserRepository.findManyByIds,
 
-    flatten,
+    ifSuccess(
+      pipe(
+        List.filter(User.isVender),
 
-    List.filter((user) => user.role === 'vender'),
+        List.map(_toVender),
 
-    List.map(_toVender),
+        List.map(flatten),
 
-    List.map(flatten),
+        getTry,
+      ),
+    ),
 
-    getSuccessReturn,
+    (result) => (isInternal(result) ? getTry([]) : result),
   );
 }

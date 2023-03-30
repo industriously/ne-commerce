@@ -10,15 +10,10 @@ export namespace List {
     (input: T[]) =>
       input.forEach(iter);
 
-  interface Filter {
-    <T, S extends T>(predi: (item: T | S) => item is S): (input: T[]) => S[];
-    <T>(predi: (_: T) => boolean): (input: T[]) => T[];
-  }
-
-  export const filter: Filter =
-    <T, S extends T = T>(predicate: (item: T) => boolean) =>
+  export const filter =
+    <T>(predicate: (input: T) => boolean) =>
     (input: T[]) =>
-      input.filter(predicate) as S[];
+      input.filter(predicate);
 
   export const isEmpty = <T>(list: T[]): boolean => list.length === 0;
 

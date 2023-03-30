@@ -1,9 +1,8 @@
 import { OAUTH_PROFILE } from './oauth-profile.request-key';
 import { IAuthentication } from '@INTERFACE/user';
-import { HttpExceptionFactory } from '@COMMON/exception';
 import { Google, Request, StrategyException } from '@devts/nestjs-auth';
 import { Configuration } from '@INFRA/config';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import typia from 'typia';
 
 @Injectable()
@@ -27,7 +26,7 @@ export class GoogleStrategy extends Google.AbstractStrategy<
   protected override throw({
     message = '사용자 인증에 실패했습니다.',
   }: StrategyException): never {
-    throw HttpExceptionFactory('UnAuthorized', message);
+    throw new UnauthorizedException(message);
   }
 
   override getCode(request: Request): string {
