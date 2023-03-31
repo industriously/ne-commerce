@@ -16,9 +16,7 @@ export class UserController {
   @Get()
   getDetail(
     @Authorization('bearer') token: string,
-  ): Promise<
-    TryCatch<IUser.Detail, IFailure.Business.Invalid | IFailure.Business.Fail>
-  > {
+  ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> {
     return UserUsecase.findOne(token);
   }
 
@@ -32,14 +30,7 @@ export class UserController {
   async update(
     @Authorization('bearer') token: string,
     @Body() body: IUser.UpdateInput,
-  ): Promise<
-    TryCatch<
-      IUser.Detail,
-      | IFailure.Business.Invalid
-      | IFailure.Business.NotFound
-      | IFailure.Business.Fail
-    >
-  > {
+  ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> {
     if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
     return UserUsecase.update(token, body);
   }
@@ -56,9 +47,7 @@ export class UserController {
   @Delete()
   inActivate(
     @Authorization('bearer') token: string,
-  ): Promise<
-    TryCatch<true, IFailure.Business.Invalid | IFailure.Business.Fail>
-  > {
+  ): Promise<TryCatch<true, IFailure.Business.Invalid>> {
     return UserUsecase.inActivate(token);
   }
 }

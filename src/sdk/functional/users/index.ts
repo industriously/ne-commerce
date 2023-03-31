@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { TryCatch } from "./../../interface/common/exception.interface";
+import type { TryCatch, IFailure } from "./../../interface/common/exception.interface";
 import type { IUser } from "./../../interface/user/user.interface";
 
 /**
@@ -39,7 +39,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = TryCatch<IUser.Public, Invalid | Fail | NotFound>;
+    export type Output = TryCatch<IUser.Public, IFailure.Business.Invalid | IFailure.Business.NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/users/:user_id";

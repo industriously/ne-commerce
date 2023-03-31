@@ -36,9 +36,6 @@ export namespace Failure {
     message: string,
   ) => IFailure.Business.Forbidden = getBusiness('Forbidden');
 
-  export const getBusinessFail: (message: string) => IFailure.Business.Fail =
-    getBusiness('Fail');
-
   export namespace Internal {
     export const InvalidValue = getInternalInvalid(
       '유요하지 않은 값이 포함되었습니다.',
@@ -56,11 +53,5 @@ export namespace Failure {
     export const InvalidParam =
       getBusinessInvalid('유효하지 않은 param입니다.');
     export const InvalidToken = getBusinessInvalid('유효하지 않은 토큰입니다.');
-
-    export const FailUnknown = getBusinessFail(
-      '알 수 없는 이유로 요청을 수행하지 못했습니다.',
-    );
-
-    export const InvalidRequest = getBusinessInvalid('잘못된 요청입니다.');
   }
 }

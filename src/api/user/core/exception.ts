@@ -9,4 +9,5 @@ export const ForbiddenAccess =
 export const ForbiddenVender =
   Failure.getBusinessForbidden('판매자 권한이 필요합니다.');
 
-export const FailLogin = Failure.getBusinessFail('로그인에 실패했습니다.');
+export const InvalidOauthProfile =
+  Failure.getBusinessInvalid('필수 정보가 누락되었습니다.');

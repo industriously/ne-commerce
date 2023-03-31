@@ -1,19 +1,20 @@
 import { TryCatch, IFailure } from '@INTERFACE/common';
-import { Failure } from '@COMMON/exception';
-import { ifSuccess, isInternal, pipeAsync } from '@UTIL';
+import { getTry, HttpExceptionFactory } from '@COMMON/exception';
+import { ifSuccess, isInternalInvalid, pipeAsync, throwError } from '@UTIL';
 import { User, UserRepository } from '../core';
 import { IUser } from '@INTERFACE/user';
 
 export namespace UsersUsecase {
   export const findOne: (
     id: string,
-  ) => Promise<
-    TryCatch<IUser.Public, IFailure.Business.NotFound | IFailure.Business.Fail>
-  > = pipeAsync(
+  ) => Promise<TryCatch<IUser.Public, IFailure.Business.NotFound>> = pipeAsync(
     UserRepository.findOne,
 
-    ifSuccess(User.toPublic),
+    ifSuccess((user: IUser) => getTry(User.toPublic(user))),
 
-    (result) => (isInternal(result) ? Failure.Business.FailUnknown : result),
+    (result) =>
+      isInternalInvalid(result)
+        ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+        : result,
   );
 }

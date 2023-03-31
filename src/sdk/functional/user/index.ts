@@ -8,7 +8,7 @@ import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
-import type { TryCatch } from "./../../interface/common/exception.interface";
+import type { TryCatch, IFailure } from "./../../interface/common/exception.interface";
 import type { IUser } from "./../../interface/user/user.interface";
 
 /**
@@ -35,7 +35,7 @@ export function getDetail
 }
 export namespace getDetail
 {
-    export type Output = TryCatch<IUser.Detail, Invalid | Fail>;
+    export type Output = TryCatch<IUser.Detail, IFailure.Business.Invalid>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/user";
@@ -80,7 +80,7 @@ export function update
 export namespace update
 {
     export type Input = IUser.UpdateInput;
-    export type Output = TryCatch<IUser.Detail, Invalid | Fail | NotFound>;
+    export type Output = TryCatch<IUser.Detail, IFailure.Business.Invalid>;
 
     export const METHOD = "PATCH" as const;
     export const PATH: string = "/user";
@@ -124,7 +124,7 @@ export function inActivate
 }
 export namespace inActivate
 {
-    export type Output = TryCatch<true, Invalid | Fail>;
+    export type Output = TryCatch<true, IFailure.Business.Invalid>;
 
     export const METHOD = "DELETE" as const;
     export const PATH: string = "/user";

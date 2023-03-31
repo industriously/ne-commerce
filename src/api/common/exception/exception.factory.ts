@@ -5,11 +5,13 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { HttpExceptionMessage } from './exception.message';
 
 export type HttpExceptionStatus =
   | 'BadRequest'
+  | 'Unprocessable Entity'
   | 'UnAuthorized'
   | 'Forbidden'
   | 'NotFound'
@@ -22,6 +24,10 @@ export const HttpExceptionFactory = (
   switch (status) {
     case 'BadRequest':
       return new BadRequestException(message ?? HttpExceptionMessage.BR);
+    case 'Unprocessable Entity':
+      return new UnprocessableEntityException(
+        message ?? HttpExceptionMessage.UPE,
+      );
     case 'UnAuthorized':
       return new UnauthorizedException(message ?? HttpExceptionMessage.UAE);
     case 'Forbidden':

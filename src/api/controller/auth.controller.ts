@@ -5,6 +5,7 @@ import typia from 'typia';
 import { IAuthentication } from '@INTERFACE/user';
 import { TryCatch, IFailure } from '@INTERFACE/common';
 import { AuthenticationUsecase } from '@USER/usecase';
+import { Failure } from '@COMMON/exception';
 
 @Controller()
 export class AuthController {
@@ -46,15 +47,9 @@ export class AuthController {
   @Post('sign-in')
   async signIn(
     @Body() body: IAuthentication.SignInBody,
-  ): Promise<
-    TryCatch<
-      IAuthentication.Credentials,
-      IFailure.Business.Invalid | IFailure.Business.Fail
-    >
-  > {
-    // if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
-    //  return AuthenticationUsecase.signIn(body);
-    throw Error();
+  ): Promise<TryCatch<IAuthentication.Credentials, IFailure.Business.Invalid>> {
+    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    return AuthenticationUsecase.signIn(body);
   }
 
   /**
@@ -67,9 +62,7 @@ export class AuthController {
   @Get('token/refresh')
   refreshToken(
     @Authorization('bearer') token: string,
-  ): Promise<
-    TryCatch<string, IFailure.Business.Invalid | IFailure.Business.Fail>
-  > {
+  ): Promise<TryCatch<string, IFailure.Business.Invalid>> {
     return AuthenticationUsecase.refresh(token);
   }
 }

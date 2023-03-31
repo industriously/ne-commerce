@@ -1,4 +1,4 @@
-import { Exception } from '@COMMON/exception';
+import { HttpExceptionMessage } from '@COMMON/exception';
 import {
   ExceptionFilter,
   Catch,
@@ -16,7 +16,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     httpAdapter.reply(
       ctx.getResponse(),
-      Exception.UNKNOWN_ERROR.data,
+      HttpExceptionMessage.ISE,
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

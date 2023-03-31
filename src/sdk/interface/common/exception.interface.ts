@@ -77,10 +77,5 @@ export namespace IFailure {
      * 요청자가 권한이 없는 경우
      */
     export type Forbidden = Business<'Forbidden'>;
-
-    /**
-     * 요청이 실패함
-     */
-    export type Fail = Business<'Fail'>;
   }
 }

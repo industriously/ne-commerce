@@ -1,4 +1,9 @@
-import { ifSuccess, isBusiness, isInternal, pipeAsync } from '@UTIL';
+import {
+  ifSuccess,
+  isBusinessNotFound,
+  isInternalInvalid,
+  pipeAsync,
+} from '@UTIL';
 import { IAuthentication, IUser } from '@INTERFACE/user';
 import { UserRepository } from '../core';
 import { AuthenticationService } from './auth.service';
@@ -8,9 +13,7 @@ import { Failure } from '@COMMON/exception';
 export namespace UserService {
   export const findOneByToken: (
     token: string,
-  ) => Promise<
-    TryCatch<IUser, IFailure.Business.Invalid | IFailure.Business.Fail>
-  > = pipeAsync(
+  ) => Promise<TryCatch<IUser, IFailure.Business.Invalid>> = pipeAsync(
     AuthenticationService.getAccessTokenPayload,
 
     ifSuccess((payload: IAuthentication.AccessTokenPayload) =>
@@ -18,10 +21,8 @@ export namespace UserService {
     ),
 
     (result) =>
-      isBusiness(result) && result.event === 'NotFound'
+      isBusinessNotFound(result) || isInternalInvalid(result)
         ? Failure.Business.InvalidToken
         : result,
-
-    (result) => (isInternal(result) ? Failure.Business.FailUnknown : result),
   );
 }

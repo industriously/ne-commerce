@@ -9,7 +9,7 @@ import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
 import type { IAuthentication } from "./../../interface/user/auth.interface";
-import type { TryCatch } from "./../../interface/common/exception.interface";
+import type { TryCatch, IFailure } from "./../../interface/common/exception.interface";
 
 export * as google from "./google";
 
@@ -87,7 +87,7 @@ export function signIn
 export namespace signIn
 {
     export type Input = IAuthentication.SignInBody;
-    export type Output = TryCatch<IAuthentication.Credentials, Invalid | Fail>;
+    export type Output = TryCatch<IAuthentication.Credentials, IFailure.Business.Invalid>;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/sign-in";

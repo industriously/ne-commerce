@@ -4,8 +4,9 @@ import { prisma } from '@INFRA/DB';
 import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { Product } from '@PRISMA';
-import { getISOString, isNumber, isString } from '@UTIL';
+import { getISOString } from '@UTIL';
 import typia from 'typia';
+import { NotFoundProduct } from './exception';
 
 export namespace ProductRepository {
   export const toProduct = (
@@ -31,20 +32,22 @@ export namespace ProductRepository {
       updated_at: getISOString(updated_at),
       is_deleted,
     };
-    if (!typia.is<IProduct>(product)) return Failure.Internal.InvalidValue;
-    return getTry(product);
+    return typia.is<IProduct>(product)
+      ? getTry(product)
+      : Failure.Internal.InvalidValue;
   };
 
-  export const findOne = _findOne(
-    isString,
-    (id: string) =>
-      prisma.product.findFirst({ where: { id, is_deleted: false } }),
+  export const findOne: (
+    product_id: string,
+  ) => Promise<
+    TryCatch<IProduct, IFailure.Internal.Invalid | IFailure.Business.NotFound>
+  > = _findOne(
+    (id) => prisma.product.findFirst({ where: { id, is_deleted: false } }),
     toProduct,
-    Exception.PRODUCT_NOT_FOUND,
+    NotFoundProduct,
   );
 
-  export const findMany = _findMany(
-    isNumber,
+  export const findMany: (page: number) => Promise<Try<IProduct[]>> = _findMany(
     (page) =>
       prisma.product.findMany({
         take: 30,
@@ -55,17 +58,19 @@ export namespace ProductRepository {
   );
 
   export const count = async (): Promise<Try<number>> =>
-    getSuccessReturn(await prisma.product.count());
+    getTry(await prisma.product.count());
 
   export const add = async (
     input: IProduct,
-  ): Promise<TryCatch<IProduct, typeof Exception.INVALID_VALUE>> => {
+  ): Promise<TryCatch<IProduct, IFailure.Internal.Invalid>> => {
     const model = await prisma.product.create({ data: input });
     return toProduct(model);
   };
 
-  export const update = _update(
-    (product: IProduct) =>
+  export const update: (
+    input: IProduct,
+  ) => Promise<TryCatch<IProduct, IFailure.Business.NotFound>> = _update(
+    (product) =>
       prisma.product.updateMany({
         where: { id: product.id, is_deleted: false },
         data: {
@@ -76,6 +81,6 @@ export namespace ProductRepository {
           updated_at: product.updated_at,
         },
       }),
-    Exception.PRODUCT_NOT_FOUND,
+    NotFoundProduct,
   );
 }

@@ -1,25 +1,42 @@
-import { Exception, getSuccessReturn } from '@COMMON/exception';
-import { PaginatedResponse, Try, TryCatch } from '@INTERFACE/common';
+import { getTry, HttpExceptionFactory } from '@COMMON/exception';
+import { PaginatedResponse, Try, TryCatch, IFailure } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import { VenderService } from '@USER/service';
-import { flatten, ifSuccess, pipeAsync, isUndefined, is_success } from '@UTIL';
+import {
+  flatten,
+  ifSuccess,
+  pipeAsync,
+  isUndefined,
+  throwError,
+  isInternalInvalid,
+  isBusinessNotFound,
+  isBusiness,
+  isBusinessInvalid,
+  isBusinessForbidden,
+} from '@UTIL';
 import { Product } from '../core';
 import { ProductRepository } from '../core';
 import { ProductService } from '../service';
 
 export namespace ProductUsecase {
-  export const findOne = pipeAsync(
-    ProductRepository.findOne,
+  export const findOne: (
+    id: string,
+  ) => Promise<TryCatch<IProduct.Detail, IFailure.Business.NotFound>> =
+    pipeAsync(
+      ProductRepository.findOne,
 
-    ifSuccess(async (product: IProduct) => {
-      const vender = await VenderService.findVender(product.vender_id);
-      return ifSuccess((user: IProduct.Vender) =>
-        Product.toDetail(product, user),
-      )(vender);
-    }),
+      ifSuccess(async (product: IProduct) => {
+        const result = await VenderService.findVender(product.vender_id);
+        if (isBusinessNotFound(result))
+          throw HttpExceptionFactory('Unprocessable Entity');
+        return getTry(Product.toDetail(product, flatten(result)));
+      }),
 
-    (result) => (result.code === '4006' ? Exception.PRODUCT_NOT_FOUND : result),
-  );
+      (result) =>
+        isInternalInvalid(result)
+          ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+          : result,
+    );
 
   export const findMany = async (
     page: number,
@@ -37,16 +54,13 @@ export namespace ProductUsecase {
     const data = product_list
       .map((product) => {
         const vender = vender_list.find((v) => v.id === product.vender_id);
-        return isUndefined(vender)
-          ? Exception.PRODUCT_NOT_FOUND
-          : Product.toSummary(product, vender);
+        return isUndefined(vender) ? null : Product.toSummary(product, vender);
       })
-      .filter(is_success)
-      .map(flatten);
+      .filter((item): item is IProduct.Summary => item !== null);
 
-    return getSuccessReturn<PaginatedResponse<IProduct.Summary>>({
+    return getTry<PaginatedResponse<IProduct.Summary>>({
       data,
-      page: 1,
+      page,
       total_count,
     });
   };
@@ -57,24 +71,27 @@ export namespace ProductUsecase {
   ): Promise<
     TryCatch<
       IProduct.Detail,
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.FORBIDDEN_VENDER
-      | typeof Exception.PRODUCT_CREATE_FAIL
+      IFailure.Business.Invalid | IFailure.Business.Forbidden
     >
   > => {
     const vender = await VenderService.getVenderByToken(token);
-    if (vender.code !== '1000') return vender;
+    if (isBusiness(vender)) return vender;
+
     return pipeAsync(
-      (data: IProduct.Vender) =>
-        Product.create({ ...input, vender_id: data.id }),
+      flatten<IProduct.Vender>,
 
-      ifSuccess(ProductRepository.add),
+      (data) =>
+        ProductRepository.add(Product.create({ ...input, vender_id: data.id })),
 
-      ifSuccess((product: IProduct) => Product.toDetail(product, vender.data)),
+      ifSuccess((product: IProduct) =>
+        getTry(Product.toDetail(product, flatten(vender))),
+      ),
 
       (result) =>
-        result.code === '4000' ? Exception.PRODUCT_CREATE_FAIL : result,
-    )(vender.data);
+        isInternalInvalid(result)
+          ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+          : result,
+    )(vender);
   };
 
   export const update = async (
@@ -84,28 +101,34 @@ export namespace ProductUsecase {
   ): Promise<
     TryCatch<
       IProduct.Detail,
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.PRODUCT_NOT_FOUND
-      | typeof Exception.FORBIDDEN_PRODUCT_UPDATE
-      | typeof Exception.PRODUCT_UPDATE_FAIL
+      | IFailure.Business.NotFound
+      | IFailure.Business.Forbidden
+      | IFailure.Business.Invalid
     >
   > => {
     const result = await ProductRepository.findOne(product_id);
-    if (result.code === '4009') return result;
+
+    if (isBusinessNotFound(result)) return result;
+    if (isInternalInvalid(result))
+      throw HttpExceptionFactory('Unprocessable Entity');
+
     const product = flatten(result);
     const vender = await ProductService.getAuthorizedVender(token, product);
 
-    if (vender.code !== '1000') return vender;
+    if (isBusinessInvalid(vender) || isBusinessForbidden(vender)) return vender;
 
     return pipeAsync(
-      (data: IProduct.UpdateInput) => Product.update(product, data),
+      (data: IProduct.UpdateInput) =>
+        ProductRepository.update(Product.update(product, data)),
 
-      ifSuccess(ProductRepository.update),
-
-      ifSuccess((product: IProduct) => Product.toDetail(product, vender.data)),
+      ifSuccess((product: IProduct) =>
+        getTry(Product.toDetail(product, flatten(vender))),
+      ),
 
       (result) =>
-        result.code === '4000' ? Exception.PRODUCT_UPDATE_FAIL : result,
+        isBusinessNotFound(result)
+          ? throwError(HttpExceptionFactory('ISE'))
+          : result,
     )(input);
   };
 
@@ -115,30 +138,29 @@ export namespace ProductUsecase {
   ): Promise<
     TryCatch<
       true,
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.FORBIDDEN_PRODUCT_UPDATE
-      | typeof Exception.PRODUCT_NOT_FOUND
-      | typeof Exception.PRODUCT_UPDATE_FAIL
+      | IFailure.Business.NotFound
+      | IFailure.Business.Forbidden
+      | IFailure.Business.Invalid
     >
   > => {
     const result = await ProductRepository.findOne(product_id);
-    if (result.code === '4009') return result;
+
+    if (isBusinessNotFound(result)) return result;
+    if (isInternalInvalid(result))
+      throw HttpExceptionFactory('Unprocessable Entity');
+
     const authorized = await ProductService.getAuthorizedVender(
       token,
       result.data,
     );
-    if (authorized.code !== '1000') return authorized;
-    return pipeAsync(
-      Product.inActivate,
+    if (isBusiness(authorized)) return authorized;
 
-      flatten,
+    const product = await ProductRepository.update(
+      Product.inActivate(flatten(result)),
+    );
 
-      ProductRepository.update,
+    if (isBusinessNotFound(product)) throw HttpExceptionFactory('ISE');
 
-      (result) =>
-        result.code === '4009' ? Exception.PRODUCT_UPDATE_FAIL : result,
-
-      ifSuccess(() => getSuccessReturn(true as const)),
-    )(result.data);
+    return getTry(true);
   };
 }

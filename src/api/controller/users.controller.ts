@@ -21,9 +21,7 @@ export class UsersController {
   ): Promise<
     TryCatch<
       IUser.Public,
-      | IFailure.Business.NotFound
-      | IFailure.Business.Invalid
-      | IFailure.Business.Fail
+      IFailure.Business.NotFound | IFailure.Business.Invalid
     >
   > {
     if (typia.is(id)) return Failure.Business.InvalidParam;

@@ -3,8 +3,8 @@ import { IUser } from '@INTERFACE/user';
 import { prisma } from '@INFRA/DB';
 import { User } from '@PRISMA';
 import typia from 'typia';
-import { getISOString, isStringArray } from '@UTIL';
-import { IFailure, TryCatch } from '@INTERFACE/common';
+import { getISOString } from '@UTIL';
+import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 import { _findMany, _findOne, _update } from '@COMMON/repository';
 import { Failure, getTry } from '@COMMON/exception';
 import { NotFoundUser } from './exception';
@@ -16,34 +16,30 @@ export namespace UserRepository {
       created_at: getISOString(user.created_at),
       updated_at: getISOString(user.updated_at),
     };
-    if (!typia.equals<IUser>(props)) {
-      return Failure.Internal.InvalidValue;
-    }
-    return getTry(props);
+
+    return typia.equals<IUser>(props)
+      ? getTry(props)
+      : Failure.Internal.InvalidValue;
   };
 
   export const add = async (
     input: IUser,
-  ): Promise<
-    TryCatch<IUser, IFailure.Internal.Fail | IFailure.Internal.Invalid>
-  > => {
-    try {
-      const model = await prisma.user.create({ data: input });
-      return toUser(model);
-    } catch (error) {
-      return Failure.Internal.FailDB;
-    }
+  ): Promise<TryCatch<IUser, IFailure.Internal.Invalid>> => {
+    const model = await prisma.user.create({ data: input });
+    return toUser(model);
   };
 
   export const findOne = _findOne(
-    (id: string): id is string => typeof id === 'string',
     (id: string) => prisma.user.findFirst({ where: { id, is_deleted: false } }),
     toUser,
     NotFoundUser,
   );
 
-  export const findOneByOauthProfile = _findOne(
-    typia.createIs<IAuthentication.OauthProfile>(),
+  export const findOneByOauthProfile: (
+    profile: IAuthentication.OauthProfile,
+  ) => Promise<
+    TryCatch<IUser, IFailure.Business.NotFound | IFailure.Internal.Invalid>
+  > = _findOne(
     ({ email, sub, oauth_type }) =>
       prisma.user.findFirst({
         where: { OR: [{ email }, { sub, oauth_type }] },
@@ -52,15 +48,17 @@ export namespace UserRepository {
     NotFoundUser,
   );
 
-  export const findManyByIds = _findMany(
-    isStringArray,
-    (ids: string[]) =>
-      prisma.user.findMany({ where: { id: { in: ids }, is_deleted: false } }),
-    toUser,
-  );
+  export const findManyByIds: (input: string[]) => Promise<Try<IUser[]>> =
+    _findMany(
+      (ids) =>
+        prisma.user.findMany({ where: { id: { in: ids }, is_deleted: false } }),
+      toUser,
+    );
 
-  export const update = _update(
-    (user: IUser) =>
+  export const update: (
+    user: IUser,
+  ) => Promise<TryCatch<IUser, IFailure.Business.NotFound>> = _update(
+    (user) =>
       prisma.user.updateMany({
         where: { id: user.id, is_deleted: false },
         data: {

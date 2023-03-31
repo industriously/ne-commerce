@@ -5,4 +5,5 @@ export const HttpExceptionMessage = {
   NF: '일치하는 대상을 찾지 못했습니다.',
   BR: '잘못된 요청입니다.',
   BI: '잘못된 입력입니다.',
+  UPE: '해당 자원에 문제가 있습니다.',
 };

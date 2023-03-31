@@ -1,13 +1,12 @@
 import { Configuration } from '@INFRA/config';
 import { IAuthentication } from '@INTERFACE/user';
 import { IUser } from '@INTERFACE/user';
-import { FailLogin, User } from '@USER/core';
+import { InvalidOauthProfile, User } from '@USER/core';
 import jwt from 'jsonwebtoken';
 import typia from 'typia';
 import { GithubStrategy, GoogleStrategy } from '@USER/_oauth_';
 import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 import { Failure, getTry } from '@COMMON/exception';
-import { ifSuccess, pipeAsync, tryCatch } from '@UTIL';
 
 export namespace AuthenticationService {
   const {
@@ -46,28 +45,18 @@ export namespace AuthenticationService {
 
   export const getOauthProfile: (
     body: IAuthentication.SignInBody,
-  ) => Promise<TryCatch<IAuthentication.OauthProfile, IFailure.Business.Fail>> =
-    pipeAsync(
-      tryCatch(
-        (input: IAuthentication.SignInBody) =>
-          input.oauth_type === 'google'
-            ? _getGoogleProfile(input.code)
-            : _getGithubProfile(input.code),
-        FailLogin,
-      ),
+  ) => Promise<
+    TryCatch<IAuthentication.OauthProfile, IFailure.Business.Invalid>
+  > = async (body) => {
+    const { code, oauth_type } = body;
+    const profile = await (oauth_type === 'google'
+      ? _getGoogleProfile(code)
+      : _getGithubProfile(code));
 
-      ifSuccess(
-        (data: {
-          sub: string;
-          oauth_type: string;
-          email: string | null;
-          name: string;
-        }) =>
-          typia.isPrune<IAuthentication.OauthProfile>(data)
-            ? getTry(data)
-            : FailLogin,
-      ),
-    );
+    return typia.isPrune<IAuthentication.OauthProfile>(profile)
+      ? getTry(profile)
+      : InvalidOauthProfile;
+  };
 
   export const getAccessToken = (user: IUser): Try<string> => {
     const payload = {
@@ -129,7 +118,7 @@ export namespace AuthenticationService {
   export const getIdToken = (user: IUser): Try<string> => {
     const payload = User.toDetail(user);
     return getTry(
-      jwt.sign(payload.data, ACCESS_TOKEN_PRIVATE_KEY, {
+      jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: '1d',
         algorithm: 'RS256',
       }),

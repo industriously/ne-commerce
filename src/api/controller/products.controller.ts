@@ -1,6 +1,6 @@
 import { Authorization } from '@COMMON/decorator/http';
-import { Exception } from '@COMMON/exception';
-import { Page, PaginatedResponse, TryCatch } from '@INTERFACE/common';
+import { Failure } from '@COMMON/exception';
+import { IFailure, Page, PaginatedResponse, TryCatch } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
 import {
   Body,
@@ -24,20 +24,16 @@ export class ProductsController {
    * @tag products
    * @param page 페이지 정보 1이상의 정수, default 1
    * @returns 상품 목록
-   * @throw 4002 유효하지 않은 query입니다.
    */
   @Get()
   async findMany(
     @Query('page') page?: string,
   ): Promise<
-    TryCatch<
-      PaginatedResponse<IProduct.Summary>,
-      typeof Exception.INVALID_QUERY
-    >
+    TryCatch<PaginatedResponse<IProduct.Summary>, IFailure.Business.Invalid>
   > {
     const npage = Number(page ?? 1);
     if (isNaN(npage) || !typia.is<Page>({ page: npage }))
-      return Exception.INVALID_QUERY;
+      return Failure.Business.InvalidQuery;
     return ProductUsecase.findMany(npage);
   }
 
@@ -46,12 +42,17 @@ export class ProductsController {
    * @tag products
    * @param product_id 대상 상품 고유 번호
    * @returns 상품 상세 정보
-   * @throw 4009 상품을 찾을 수 없습니다.
    */
   @Get(':product_id')
-  findOne(
+  async findOne(
     @Param('product_id') product_id: string,
-  ): Promise<TryCatch<IProduct.Detail, typeof Exception.PRODUCT_NOT_FOUND>> {
+  ): Promise<
+    TryCatch<
+      IProduct.Detail,
+      IFailure.Business.Invalid | IFailure.Business.NotFound
+    >
+  > {
+    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
     return ProductUsecase.findOne(product_id);
   }
 
@@ -60,10 +61,6 @@ export class ProductsController {
    * @tag products
    * @param body 상품 생성 정보
    * @returns 생성한 상품 상세 정보
-   * @throw 4001 유효하지 않은 body입니다.
-   * @throw 4007 잘못된 토큰입니다.
-   * @throw 4008 판매자 권한이 없습니다.
-   * @throw 4011 상품 생성에 실패했습니다.
    */
   @Post()
   async create(
@@ -72,13 +69,10 @@ export class ProductsController {
   ): Promise<
     TryCatch<
       IProduct.Detail,
-      | typeof Exception.INVALID_BODY
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.FORBIDDEN_VENDER
-      | typeof Exception.PRODUCT_CREATE_FAIL
+      IFailure.Business.Invalid | IFailure.Business.Forbidden
     >
   > {
-    if (!typia.isPrune(body)) return Exception.INVALID_BODY;
+    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
     return ProductUsecase.create(token, body);
   }
 
@@ -88,11 +82,6 @@ export class ProductsController {
    * @param product_id 대상 상품 고유 번호
    * @param body 변경할 상품 정보
    * @returns 변경된 상품 상세 정보
-   * @throw 4001 유효하지 않은 body입니다.
-   * @throw 4007 잘못된 토큰입니다.
-   * @throw 4009 상품을 찾을 수 없습니다.
-   * @throw 4010 해당 상품의 수정 권한이 없습니다.
-   * @throw 4012 상품 수정에 실패했습니다.
    */
   @Patch(':product_id')
   async update(
@@ -102,14 +91,13 @@ export class ProductsController {
   ): Promise<
     TryCatch<
       IProduct.Detail,
-      | typeof Exception.INVALID_BODY
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.PRODUCT_NOT_FOUND
-      | typeof Exception.FORBIDDEN_PRODUCT_UPDATE
-      | typeof Exception.PRODUCT_UPDATE_FAIL
+      | IFailure.Business.Forbidden
+      | IFailure.Business.NotFound
+      | IFailure.Business.Invalid
     >
   > {
-    if (!typia.isPrune(body)) return Exception.INVALID_BODY;
+    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
     return ProductUsecase.update(token, product_id, body);
   }
 
@@ -118,24 +106,20 @@ export class ProductsController {
    * @tag products
    * @param product_id 대상 상품 고유 번호
    * @returns true
-   * @throw 4007 잘못된 토큰입니다.
-   * @throw 4009 상품을 찾을 수 없습니다.
-   * @throw 4010 해당 상품의 수정 권한이 없습니다.
-   * @throw 4012 상품 수정에 실패했습니다.
    */
   @Delete(':product_id')
-  inActivate(
+  async inActivate(
     @Authorization('bearer') token: string,
     @Param('product_id') product_id: string,
   ): Promise<
     TryCatch<
       true,
-      | typeof Exception.INVALID_TOKEN
-      | typeof Exception.PRODUCT_NOT_FOUND
-      | typeof Exception.FORBIDDEN_PRODUCT_UPDATE
-      | typeof Exception.PRODUCT_UPDATE_FAIL
+      | IFailure.Business.Forbidden
+      | IFailure.Business.NotFound
+      | IFailure.Business.Invalid
     >
   > {
+    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
     return ProductUsecase.inActivate(token, product_id);
   }
 }

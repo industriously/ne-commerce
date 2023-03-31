@@ -1,24 +1,27 @@
 import { ifSuccess, pipeAsync } from '@UTIL';
-import { Exception, getSuccessReturn } from '@COMMON/exception';
 import { IProduct } from '@INTERFACE/product';
 import { VenderService } from '@USER/service';
+import { ForbiddenUpdateProduct } from '@PRODUCT/core';
+import { getTry } from '@COMMON/exception';
+import { IFailure, TryCatch } from '@INTERFACE/common';
 
 export namespace ProductService {
-  export const getAuthorizedVender = (token: string, product: IProduct) =>
+  export const getAuthorizedVender: (
+    token: string,
+    product: IProduct,
+  ) => Promise<
+    TryCatch<
+      IProduct.Vender,
+      IFailure.Business.Forbidden | IFailure.Business.Invalid
+    >
+  > = (token, product) =>
     pipeAsync(
       VenderService.getVenderByToken,
 
-      (result) =>
-        result.code === '4008' ? Exception.FORBIDDEN_PRODUCT_UPDATE : result,
-
-      ifSuccess<
-        IProduct.Vender,
-        IProduct.Vender,
-        typeof Exception.FORBIDDEN_PRODUCT_UPDATE
-      >((vender) =>
+      ifSuccess((vender: IProduct.Vender) =>
         product.vender_id !== vender.id
-          ? Exception.FORBIDDEN_PRODUCT_UPDATE
-          : getSuccessReturn(vender),
+          ? ForbiddenUpdateProduct
+          : getTry(vender),
       ),
     )(token);
 }

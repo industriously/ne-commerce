@@ -1,8 +1,6 @@
-import { IFailure, Mutable, Try, TryCatch } from '@INTERFACE/common';
+import { Mutable } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
-import { getTry, Failure } from '@COMMON/exception';
 import { Predicate, getISOString } from '@UTIL';
-import typia from 'typia';
 
 export namespace Product {
   const ABC = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -19,11 +17,10 @@ export namespace Product {
 
   export const create = (
     input: IProduct.CreateInput & Pick<IProduct, 'vender_id'>,
-  ): TryCatch<IProduct, IFailure.Internal.Invalid> => {
-    if (!typia.is(input)) return Failure.Internal.InvalidValue;
+  ): IProduct => {
     const { vender_id, name, description, price } = input;
-    const now = new Date().toISOString();
-    return getTry<IProduct>({
+    const now = getISOString();
+    return {
       id: randomId(10),
       name,
       description,
@@ -32,31 +29,30 @@ export namespace Product {
       is_deleted: false,
       created_at: now,
       updated_at: now,
-    });
+    };
   };
 
   export const update = (
     target: Mutable<IProduct>,
     input: IProduct.UpdateInput,
-  ): TryCatch<IProduct, IFailure.Internal.Invalid> => {
-    if (!typia.is(input)) return Failure.Internal.InvalidValue;
+  ): IProduct => {
     target.name = input.name ?? target.name;
     target.description = input.description ?? target.description;
     target.price = input.price ?? target.price;
     target.updated_at = getISOString();
-    return getTry<IProduct>(target);
+    return target;
   };
 
-  export const activate = (target: Mutable<IProduct>): Try<IProduct> => {
+  export const activate = (target: Mutable<IProduct>): IProduct => {
     target.is_deleted = false;
     target.updated_at = getISOString();
-    return getTry<IProduct>(target);
+    return target;
   };
 
-  export const inActivate = (target: Mutable<IProduct>): Try<IProduct> => {
+  export const inActivate = (target: Mutable<IProduct>): IProduct => {
     target.is_deleted = true;
     target.updated_at = getISOString();
-    return getTry<IProduct>(target);
+    return target;
   };
 
   export const isInActive = (target: IProduct): boolean => {
@@ -68,25 +64,25 @@ export namespace Product {
   export const toSummary = (
     product: IProduct,
     vender: IProduct.Vender,
-  ): Try<IProduct.Summary> => {
+  ): IProduct.Summary => {
     const { id, name, price, description, created_at } = product;
-    return getTry<IProduct.Summary>({
+    return {
       id,
       name,
       price,
       vender,
       description,
       created_at,
-    });
+    };
   };
 
   export const toDetail = (
     product: IProduct,
     vender: IProduct.Vender,
-  ): Try<IProduct.Detail> => {
+  ): IProduct.Detail => {
     const { id, name, price, description, is_deleted, created_at, updated_at } =
       product;
-    return getTry<IProduct.Detail>({
+    return {
       id,
       name,
       price,
@@ -95,6 +91,6 @@ export namespace Product {
       is_deleted,
       created_at,
       updated_at,
-    });
+    };
   };
 }

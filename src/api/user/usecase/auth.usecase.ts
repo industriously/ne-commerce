@@ -1,15 +1,16 @@
-import { Failure, getTry } from '@COMMON/exception';
+import { Failure, getTry, HttpExceptionFactory } from '@COMMON/exception';
 import { IFailure, Try, TryCatch } from '@INTERFACE/common';
 import { IAuthentication, IUser } from '@INTERFACE/user';
-import { FailLogin, User, UserRepository } from '@USER/core';
+import { User, UserRepository } from '@USER/core';
 import { AuthenticationService } from '@USER/service';
 import {
   ifSuccess,
   pipeAsync,
   flatten,
-  isBusiness,
-  isFail,
-  isInternal,
+  throwError,
+  isBusinessNotFound,
+  isInternalInvalid,
+  isBusinessInvalid,
 } from '@UTIL';
 
 export namespace AuthenticationUsecase {
@@ -21,47 +22,46 @@ export namespace AuthenticationUsecase {
     });
   };
 
-  export const signIn = async (
+  export const signIn: (
     body: IAuthentication.SignInBody,
-  ): Promise<TryCatch<IAuthentication.Credentials, IFailure.Business.Fail>> => {
+  ) => Promise<
+    Try<IAuthentication.Credentials> | IFailure.Business.Invalid
+  > = async (body) => {
     const profile = await AuthenticationService.getOauthProfile(body);
-    if (isBusiness(profile)) return profile;
+    if (isBusinessInvalid(profile)) return profile;
 
     return pipeAsync(
       UserRepository.findOneByOauthProfile,
 
+      // 사용자 생성
       (result) =>
-        isBusiness(result) && result.event === 'NotFound'
-          ? pipeAsync(
-              User.create,
-
-              ifSuccess(UserRepository.add),
-            )(profile.data)
+        isBusinessNotFound(result)
+          ? UserRepository.add(User.create(flatten(profile)))
           : result,
 
       ifSuccess((user: IUser) =>
         User.isInActive(user)
-          ? pipeAsync(
-              User.activate,
-
-              flatten,
-
-              UserRepository.update,
-            )(user)
+          ? UserRepository.update(User.activate(user))
           : getTry(user),
       ),
 
       ifSuccess((user: IUser) => _getCredentials(user)),
 
-      (result) => (isFail(result) ? FailLogin : result),
+      (result) =>
+        isInternalInvalid(result)
+          ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+          : result,
+
+      (result) =>
+        isBusinessNotFound(result)
+          ? throwError(HttpExceptionFactory('ISE'))
+          : result,
     )(profile.data);
   };
 
   export const refresh: (
     refresh_token: string,
-  ) => Promise<
-    TryCatch<string, IFailure.Business.Invalid | IFailure.Business.Fail>
-  > = pipeAsync(
+  ) => Promise<TryCatch<string, IFailure.Business.Invalid>> = pipeAsync(
     AuthenticationService.getRefreshTokenPayload,
 
     ifSuccess((data: IAuthentication.RefreshTokenPayload) =>
@@ -71,10 +71,11 @@ export namespace AuthenticationUsecase {
     ifSuccess(AuthenticationService.getAccessToken),
 
     (result) =>
-      isBusiness(result) && result.event === 'NotFound'
-        ? Failure.Business.InvalidToken
-        : result,
+      isBusinessNotFound(result) ? Failure.Business.InvalidToken : result,
 
-    (result) => (isInternal(result) ? Failure.Business.FailUnknown : result),
+    (result) =>
+      isInternalInvalid(result)
+        ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+        : result,
   );
 }

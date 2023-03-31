@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { TryCatch } from "./../../../interface/common/exception.interface";
+import type { TryCatch, IFailure } from "./../../../interface/common/exception.interface";
 
 /**
  * Authorization header로 refresh_token을 전달헤야 합니다.
@@ -35,7 +35,7 @@ export function refreshToken
 }
 export namespace refreshToken
 {
-    export type Output = TryCatch<string, Invalid | Fail>;
+    export type Output = TryCatch<string, IFailure.Business.Invalid>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/token/refresh";

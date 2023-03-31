@@ -10,3 +10,5 @@ export * from './provider.builder';
 export * from './get_iso_string';
 export * from './try_catch/if_success';
 export * from './try_catch';
+
+export * from './throw';
