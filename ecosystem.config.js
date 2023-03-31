@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'Nest Application',
-      script: './dist/main.js',
+      script: './build/main.js',
       env_production: {
         NODE_ENV: 'production',
       },

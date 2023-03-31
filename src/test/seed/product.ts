@@ -1,8 +1,8 @@
 import { SeedUser } from './user';
 import { prisma } from '@INFRA/DB';
 import { Product as ProductModel } from '@PRISMA';
-import { Product } from '@PRODUCT/domain';
 import typia from 'typia';
+import { Product } from '@PRODUCT/core';
 
 interface SeedProductRandom
   extends Omit<
@@ -18,9 +18,9 @@ interface SeedProductRandom
 }
 
 export namespace SeedProduct {
-  export const product1 = Product.randomId(10);
-  export const product2 = Product.randomId(10);
-  export const product3 = Product.randomId(10);
+  export const product1 = Product.randomId();
+  export const product2 = Product.randomId();
+  export const product3 = Product.randomId();
   export const seed = async () => {
     const result = await prisma.product.createMany({
       data: [

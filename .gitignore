@@ -1,5 +1,9 @@
 # compiled output
 /dist
+/build
+/production
+/test
+/tbuild
 /node_modules
 
 # Logs
