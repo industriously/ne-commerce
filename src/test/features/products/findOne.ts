@@ -11,7 +11,7 @@ import typia from 'typia';
 const api = (connection: IConnection) => (product_id: string) =>
   products.findOne(connection, product_id);
 
-console.log();
+console.log('  - --');
 
 export const test_products_findOne_success = async (
   connection: IConnection,

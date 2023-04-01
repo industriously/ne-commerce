@@ -25,7 +25,7 @@ const api =
 
 const getBody = typia.createRandom<IUser.UpdateInput>();
 
-console.log();
+console.log('  - --');
 
 /**
  * 내 프로필 정보 수정 - 성공

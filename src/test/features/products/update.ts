@@ -27,7 +27,7 @@ const api =
 
 const getBody = typia.createRandom<IProduct.UpdateInput>();
 
-console.log();
+console.log('  - --');
 
 export const test_products_update_success = (connection: IConnection) =>
   ArrayUtil.asyncRepeat(10, async () => {

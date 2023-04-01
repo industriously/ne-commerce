@@ -16,7 +16,7 @@ const api = (connection: IConnection) => (token: string) =>
     },
   });
 
-console.log();
+console.log('  - --');
 
 export const test_user_inActivate_success = async (connection: IConnection) => {
   const received = await ArrayUtil.asyncMap(

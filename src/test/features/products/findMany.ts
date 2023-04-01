@@ -7,7 +7,7 @@ import typia from 'typia';
 const api = (connection: IConnection) => (page?: number) =>
   products.findMany(connection, page);
 
-console.log();
+console.log('  - --');
 
 export const test_products_findMany_success = async (
   connection: IConnection,

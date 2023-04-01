@@ -12,7 +12,7 @@ import typia from 'typia';
 const api = (connection: IConnection) => (id: string) =>
   users.findOne(connection, id);
 
-console.log();
+console.log('  - --');
 
 export const test_users_findOne_success = async (connection: IConnection) => {
   const received = await ArrayUtil.asyncMap(

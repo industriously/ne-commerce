@@ -23,7 +23,7 @@ process.on('exit', () => {
 });
 
 console.log('# Test Report');
-testStream.write('\n<details open>\n<summary>detail test case</summary>\n');
+testStream.write('\n<details open>\n<summary>detail test case</summary>\n\n');
 
 async function run(): Promise<void> {
   const app = await bootstrap({ logger: false });

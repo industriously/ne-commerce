@@ -17,7 +17,7 @@ const api =
 
 const randomBody = typia.createRandom<IProduct.CreateInput>();
 
-console.log();
+console.log('  - --');
 
 export const test_products_create_success = async (connection: IConnection) => {
   const received = await api(randomBody())(connection)(AccessToken.vender);

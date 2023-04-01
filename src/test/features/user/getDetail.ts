@@ -17,7 +17,7 @@ const api = (connection: IConnection) => (token: string) =>
     },
   });
 
-console.log();
+console.log('  - --');
 
 /**
  * 내 정보 요청 - 성공

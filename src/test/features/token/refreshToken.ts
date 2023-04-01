@@ -18,7 +18,7 @@ const api = (connection: IConnection) => (token: string) =>
     },
   });
 
-console.log();
+console.log('  - --');
 
 // success case
 export const test_token_refresh_refreshToken_success = (

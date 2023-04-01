@@ -17,7 +17,7 @@ const api =
   (product_id: string) => (connection: IConnection) => (token: string) =>
     products.inActivate(getConnectionWithToken(connection, token), product_id);
 
-console.log();
+console.log('  - --');
 
 export const test_products_inActivate_success = async (
   connection: IConnection,
