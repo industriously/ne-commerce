@@ -64,7 +64,7 @@ const query_type_cast =
     const value = ctx.switchToHttp().getRequest<Request>().query[key];
     const exception = HttpExceptionFactory(
       'BadRequest',
-      `Value of the URL query '${key}' is invalid.`,
+      `Value of the URL query '${key}' is not a valid format.`,
     );
     const _validator = (input: unknown) => validator(key, input, is, exception);
     const type_cast: (input: string) => boolean | number | string =
@@ -74,7 +74,6 @@ const query_type_cast =
       return _validator(List.map(type_cast)(value));
     }
     if (isString(value)) {
-      if (value === 'undefined') console.log('check');
       const casted = value === '' ? undefined : type_cast(value);
       return _validator(array ? [casted] : casted);
     }

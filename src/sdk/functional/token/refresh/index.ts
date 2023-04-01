@@ -7,7 +7,7 @@
 import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 
-import type { IAuthUsecase } from "./../../../interface/user/auth.usecase.interface";
+import type { TryCatch, IFailure } from "./../../../interface/common/exception.interface";
 
 /**
  * Authorization header로 refresh_token을 전달헤야 합니다.
@@ -15,8 +15,6 @@ import type { IAuthUsecase } from "./../../../interface/user/auth.usecase.interf
  * @summary 인증 토큰 재발행 API
  * @tag authentication
  * @returns 재발행된 access_token을 응답합니다.
- * @throw 400 잘못된 토큰입니다.
- * @throw 404 일치하는 대상을 찾지 못했습니다.
  * 
  * @controller AuthController.refreshToken()
  * @path GET /token/refresh
@@ -37,7 +35,7 @@ export function refreshToken
 }
 export namespace refreshToken
 {
-    export type Output = IAuthUsecase.RefreshResponse;
+    export type Output = TryCatch<string, IFailure.Business.Invalid>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/token/refresh";

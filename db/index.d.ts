@@ -9,6 +9,8 @@ type UnwrapTuple<Tuple extends readonly unknown[]> = {
   [K in keyof Tuple]: K extends `${number}` ? Tuple[K] extends Prisma.PrismaPromise<infer X> ? X : UnwrapPromise<Tuple[K]> : UnwrapPromise<Tuple[K]>
 };
 
+export type PrismaPromise<T> = runtime.Types.Public.PrismaPromise<T>
+
 
 /**
  * Model Product
@@ -40,10 +42,7 @@ export type User = {
    * @format email
    */
   email: string
-  /**
-   * @pattern ^[\w\d]{8,16}$
-   */
-  username: string
+  name: string
   address: string | null
   /**
    * @pattern ^010-[0-9]{4}-[0-9]{4}$
@@ -235,8 +234,8 @@ export namespace Prisma {
 
 
   /**
-   * Prisma Client JS version: 4.11.0
-   * Query Engine version: 8fde8fef4033376662cad983758335009d522acb
+   * Prisma Client JS version: 4.12.0
+   * Query Engine version: 659ef412370fa3b41cd7bf6e94587c1dfb7f67e7
    */
   export type PrismaVersion = {
     client: string
@@ -1875,7 +1874,7 @@ export namespace Prisma {
     sub: string | null
     oauth_type: string | null
     email: string | null
-    username: string | null
+    name: string | null
     address: string | null
     phone: string | null
     created_at: Date | null
@@ -1889,7 +1888,7 @@ export namespace Prisma {
     sub: string | null
     oauth_type: string | null
     email: string | null
-    username: string | null
+    name: string | null
     address: string | null
     phone: string | null
     created_at: Date | null
@@ -1903,7 +1902,7 @@ export namespace Prisma {
     sub: number
     oauth_type: number
     email: number
-    username: number
+    name: number
     address: number
     phone: number
     created_at: number
@@ -1919,7 +1918,7 @@ export namespace Prisma {
     sub?: true
     oauth_type?: true
     email?: true
-    username?: true
+    name?: true
     address?: true
     phone?: true
     created_at?: true
@@ -1933,7 +1932,7 @@ export namespace Prisma {
     sub?: true
     oauth_type?: true
     email?: true
-    username?: true
+    name?: true
     address?: true
     phone?: true
     created_at?: true
@@ -1947,7 +1946,7 @@ export namespace Prisma {
     sub?: true
     oauth_type?: true
     email?: true
-    username?: true
+    name?: true
     address?: true
     phone?: true
     created_at?: true
@@ -2035,7 +2034,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address: string | null
     phone: string | null
     created_at: Date
@@ -2066,7 +2065,7 @@ export namespace Prisma {
     sub?: boolean
     oauth_type?: boolean
     email?: boolean
-    username?: boolean
+    name?: boolean
     address?: boolean
     phone?: boolean
     created_at?: boolean
@@ -2907,7 +2906,7 @@ export namespace Prisma {
     sub: 'sub',
     oauth_type: 'oauth_type',
     email: 'email',
-    username: 'username',
+    name: 'name',
     address: 'address',
     phone: 'phone',
     created_at: 'created_at',
@@ -2993,7 +2992,7 @@ export namespace Prisma {
     sub?: StringFilter | string
     oauth_type?: StringFilter | string
     email?: StringFilter | string
-    username?: StringFilter | string
+    name?: StringFilter | string
     address?: StringNullableFilter | string | null
     phone?: StringNullableFilter | string | null
     created_at?: DateTimeFilter | Date | string
@@ -3008,7 +3007,7 @@ export namespace Prisma {
     sub?: SortOrder
     oauth_type?: SortOrder
     email?: SortOrder
-    username?: SortOrder
+    name?: SortOrder
     address?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
@@ -3029,7 +3028,7 @@ export namespace Prisma {
     sub?: SortOrder
     oauth_type?: SortOrder
     email?: SortOrder
-    username?: SortOrder
+    name?: SortOrder
     address?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
@@ -3049,7 +3048,7 @@ export namespace Prisma {
     sub?: StringWithAggregatesFilter | string
     oauth_type?: StringWithAggregatesFilter | string
     email?: StringWithAggregatesFilter | string
-    username?: StringWithAggregatesFilter | string
+    name?: StringWithAggregatesFilter | string
     address?: StringNullableWithAggregatesFilter | string | null
     phone?: StringNullableWithAggregatesFilter | string | null
     created_at?: DateTimeWithAggregatesFilter | Date | string
@@ -3139,7 +3138,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address?: string | null
     phone?: string | null
     created_at?: Date | string
@@ -3154,7 +3153,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address?: string | null
     phone?: string | null
     created_at?: Date | string
@@ -3169,7 +3168,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3184,7 +3183,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3199,7 +3198,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address?: string | null
     phone?: string | null
     created_at?: Date | string
@@ -3213,7 +3212,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3227,7 +3226,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3412,7 +3411,7 @@ export namespace Prisma {
     sub?: SortOrder
     oauth_type?: SortOrder
     email?: SortOrder
-    username?: SortOrder
+    name?: SortOrder
     address?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
@@ -3426,7 +3425,7 @@ export namespace Prisma {
     sub?: SortOrder
     oauth_type?: SortOrder
     email?: SortOrder
-    username?: SortOrder
+    name?: SortOrder
     address?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
@@ -3440,7 +3439,7 @@ export namespace Prisma {
     sub?: SortOrder
     oauth_type?: SortOrder
     email?: SortOrder
-    username?: SortOrder
+    name?: SortOrder
     address?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
@@ -3700,7 +3699,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address?: string | null
     phone?: string | null
     created_at?: Date | string
@@ -3714,7 +3713,7 @@ export namespace Prisma {
     sub: string
     oauth_type: string
     email: string
-    username: string
+    name: string
     address?: string | null
     phone?: string | null
     created_at?: Date | string
@@ -3738,7 +3737,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3752,7 +3751,7 @@ export namespace Prisma {
     sub?: StringFieldUpdateOperationsInput | string
     oauth_type?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string

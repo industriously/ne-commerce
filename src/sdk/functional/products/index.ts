@@ -8,18 +8,19 @@ import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
+import type { Try, TryCatch, IFailure } from "./../../interface/common/exception.interface";
 import type { PaginatedResponse } from "./../../interface/common/pagination.interface";
-import type { IProduct } from "./../../interface/product/schema.interface";
+import type { IProduct } from "./../../interface/product/product.interface";
 
 /**
  * 전체 상품 목록 조회
  * 
  * @summary 상품 목록 조회 API
- * @tag product
+ * @tag products
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param page 페이지 정보 1이상의 정수, default 1
- * @returns 페이지 정보와 함께 요청한 상품 목록
- * @throw 400 Value of the URL query 'page' is invalid.
+ * @returns 상품 목록
+ * @throw 400 Value of the URL query 'page' is not a valid format.
  * 
  * @controller ProductsController.findMany()
  * @path GET /products
@@ -28,7 +29,7 @@ import type { IProduct } from "./../../interface/product/schema.interface";
 export function findMany
     (
         connection: IConnection,
-        page?: number | undefined
+        page?: undefined | number
     ): Promise<findMany.Output>
 {
     return Fetcher.fetch
@@ -41,7 +42,7 @@ export function findMany
 }
 export namespace findMany
 {
-    export type Output = PaginatedResponse<IProduct.Summary>;
+    export type Output = Try<PaginatedResponse<IProduct.Summary>>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/products";
@@ -50,7 +51,7 @@ export namespace findMany
         response: false,
     };
 
-    export function path(page: number | undefined): string
+    export function path(page: undefined | number): string
     {
         const variables: Record<any, any> = 
         {
@@ -65,11 +66,10 @@ export namespace findMany
 
 /**
  * @summary 상품 상세 조회 API
- * @tag product
+ * @tag products
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
  * @returns 상품 상세 정보
- * @throw 404 일치하는 대상을 찾지 못했습니다.
  * 
  * @controller ProductsController.findOne()
  * @path GET /products/:product_id
@@ -91,7 +91,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = IProduct.Detail;
+    export type Output = TryCatch<IProduct.Detail, IFailure.Business.NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/products/:product_id";
@@ -108,13 +108,11 @@ export namespace findOne
 
 /**
  * @summary 상품 생성 요청 API
- * @tag product
+ * @tag products
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 상품 생성 정보
  * @returns 생성한 상품 상세 정보
- * @throw 400 잘못된 토큰입니다.
- * @throw 400 {property} type is invalid.
- * @throw 403 권한이 없습니다.
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller ProductsController.create()
  * @path POST /products
@@ -123,7 +121,7 @@ export namespace findOne
 export function create
     (
         connection: IConnection,
-        body: IProduct.CreateBody
+        body: IProduct.CreateInput
     ): Promise<create.Output>
 {
     return Fetcher.fetch
@@ -138,8 +136,8 @@ export function create
 }
 export namespace create
 {
-    export type Input = IProduct.CreateBody;
-    export type Output = IProduct.Detail;
+    export type Input = IProduct.CreateInput;
+    export type Output = TryCatch<IProduct.Detail, IFailure.Business.Invalid | IFailure.Business.Forbidden>;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/products";
@@ -157,14 +155,12 @@ export namespace create
 
 /**
  * @summary 상품 수정 요청 API
- * @tag product
+ * @tag products
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
  * @param body 변경할 상품 정보
- * @throw 400 잘못된 토큰입니다.
- * @throw 400 {property} type is invalid.
- * @throw 403 권한이 없습니다.
- * @throw 404 일치하는 대상을 찾지 못했습니다.
+ * @returns 변경된 상품 상세 정보
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller ProductsController.update()
  * @path PATCH /products/:product_id
@@ -175,7 +171,7 @@ export function update
         connection: IConnection,
         product_id: string,
         body: IProduct.UpdateInput
-    ): Promise<void>
+    ): Promise<update.Output>
 {
     return Fetcher.fetch
     (
@@ -190,6 +186,7 @@ export function update
 export namespace update
 {
     export type Input = IProduct.UpdateInput;
+    export type Output = TryCatch<IProduct.Detail, IFailure.Business.Invalid | IFailure.Business.NotFound | IFailure.Business.Forbidden>;
 
     export const METHOD = "PATCH" as const;
     export const PATH: string = "/products/:product_id";
@@ -207,12 +204,10 @@ export namespace update
 
 /**
  * @summary 상품 삭제(비활성화) 요청 API
- * @tag product
+ * @tag products
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param product_id 대상 상품 고유 번호
- * @throw 400 잘못된 토큰입니다.
- * @throw 403 권한이 없습니다.
- * @throw 404 일치하는 대상을 찾지 못했습니다.
+ * @returns true
  * 
  * @controller ProductsController.inActivate()
  * @path DELETE /products/:product_id
@@ -222,7 +217,7 @@ export function inActivate
     (
         connection: IConnection,
         product_id: string
-    ): Promise<void>
+    ): Promise<inActivate.Output>
 {
     return Fetcher.fetch
     (
@@ -234,6 +229,7 @@ export function inActivate
 }
 export namespace inActivate
 {
+    export type Output = TryCatch<true, IFailure.Business.Invalid | IFailure.Business.NotFound | IFailure.Business.Forbidden>;
 
     export const METHOD = "DELETE" as const;
     export const PATH: string = "/products/:product_id";

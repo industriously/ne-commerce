@@ -5,8 +5,7 @@ model User {
   oauth_type String
   /// @format email
   email      String    @unique
-  /// @pattern ^[\w\d]{8,16}$
-  username   String
+  name       String
   address    String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
   phone      String?

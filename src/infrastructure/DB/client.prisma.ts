@@ -1,4 +1,5 @@
-import { DBClient } from '@INTERFACE/common';
+/** 
+import { Prisma } from '@PRISMA';
 import { ProviderBuilder } from '@UTIL';
 import { getNamespace } from 'cls-hooked';
 import { prisma } from './prisma.service';
@@ -16,3 +17,8 @@ export const ClientFactory = async (): Promise<DBClient> => {
     },
   }).build();
 };
+
+export interface DBClient {
+  readonly get: () => Prisma.TransactionClient;
+}
+*/

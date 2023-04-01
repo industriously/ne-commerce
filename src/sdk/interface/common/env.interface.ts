@@ -15,11 +15,3 @@ export interface IEnv {
   readonly REFRESH_TOKEN_PRIVATE_KEY: string;
   readonly REFRESH_TOKEN_PUBLIC_KEY: string;
 }
-
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends IEnv {
-      [key: string]: string | undefined;
-    }
-  }
-}

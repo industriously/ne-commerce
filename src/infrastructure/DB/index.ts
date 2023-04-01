@@ -1,3 +1,2 @@
-export * from './client.prisma';
-export * from './prisma.service';
+export * from './prisma.client';
 export * from './constants';

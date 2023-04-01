@@ -1,3 +1,4 @@
+/**
 import { getNamespace } from 'cls-hooked';
 import { TransactionLevel } from '@COMMON/decorator/lazy';
 import { Aspect, LazyDecorator, WrapParams } from '@toss/nestjs-aop';
@@ -41,3 +42,5 @@ const TransactionLevel: {
   'REPEATABLE READ': 'RepeatableRead',
   SERIALIZABLE: 'Serializable',
 };
+
+*/
