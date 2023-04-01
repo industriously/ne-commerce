@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@main
 
       - name: Install
         run: npm ci
@@ -52,17 +52,19 @@ jobs:
       - name: Test 🧪
         run: npm run test
 
-      - name: PR Comment 💬
-        uses: actions/github-script@v6
+      - name: Create or Update PR Comment 💬
+        uses: actions/github-script@main
         if: github.event.pull_request
         with:
           script: |
+            const { owner, repo, issue: { number: issue_number } } = context.repo;
+            const cmts = await github.rest.issues.listComments({ issue_number, owner, repo });
+
+            const comment = cmts.data.find(cmt => cmt.user.login === 'github-actions[bot]');
+
             const fs = require('fs');
             const path = './test_log.md';
             const body = fs.readFileSync(path, 'utf8');
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body
-            });
+            comment
+                ? github.rest.issues.updateComment({ comment_id: comment.id, owner, repo, body })
+                : github.rest.issues.createComment({ issue_number, owner, repo, body });
