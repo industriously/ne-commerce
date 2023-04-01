@@ -63,6 +63,7 @@ export namespace signInTest
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body token 요청 권한을 가진 code를 포함한다.
  * @returns 사용자 인증 토큰
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller AuthController.signIn()
  * @path POST /sign-in

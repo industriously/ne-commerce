@@ -1,9 +1,8 @@
-import { Failure } from '@COMMON/exception';
 import { TryCatch, IFailure } from '@INTERFACE/common';
 import { IUser } from '@INTERFACE/user';
-import { Controller, Get, Param } from '@nestjs/common';
+import { TypedParam } from '@nestia/core';
+import { Controller, Get } from '@nestjs/common';
 import { UsersUsecase } from '@USER/usecase';
-import typia from 'typia';
 
 @Controller('users')
 export class UsersController {
@@ -14,17 +13,12 @@ export class UsersController {
    * @tag users
    * @param user_id 조회 대상의 id 입니다.
    * @returns 사용자 공개 정보
+   * @throw 400 Value of the URL parameter "user_id" is not a valid UUID.
    */
   @Get(':user_id')
   async findOne(
-    @Param('user_id') id: string,
-  ): Promise<
-    TryCatch<
-      IUser.Public,
-      IFailure.Business.NotFound | IFailure.Business.Invalid
-    >
-  > {
-    if (typia.is(id)) return Failure.Business.InvalidParam;
-    return UsersUsecase.findOne(id);
+    @TypedParam('user_id', 'uuid') user_id: string,
+  ): Promise<TryCatch<IUser.Public, IFailure.Business.NotFound>> {
+    return UsersUsecase.findOne(user_id);
   }
 }

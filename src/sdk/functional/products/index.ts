@@ -8,7 +8,7 @@ import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
-import type { TryCatch, IFailure } from "./../../interface/common/exception.interface";
+import type { Try, TryCatch, IFailure } from "./../../interface/common/exception.interface";
 import type { PaginatedResponse } from "./../../interface/common/pagination.interface";
 import type { IProduct } from "./../../interface/product/product.interface";
 
@@ -20,6 +20,7 @@ import type { IProduct } from "./../../interface/product/product.interface";
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param page 페이지 정보 1이상의 정수, default 1
  * @returns 상품 목록
+ * @throw 400 Value of the URL query 'page' is not a valid format.
  * 
  * @controller ProductsController.findMany()
  * @path GET /products
@@ -28,7 +29,7 @@ import type { IProduct } from "./../../interface/product/product.interface";
 export function findMany
     (
         connection: IConnection,
-        page?: undefined | string
+        page?: undefined | number
     ): Promise<findMany.Output>
 {
     return Fetcher.fetch
@@ -41,7 +42,7 @@ export function findMany
 }
 export namespace findMany
 {
-    export type Output = TryCatch<PaginatedResponse<IProduct.Summary>, IFailure.Business.Invalid>;
+    export type Output = Try<PaginatedResponse<IProduct.Summary>>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/products";
@@ -50,7 +51,7 @@ export namespace findMany
         response: false,
     };
 
-    export function path(page: undefined | string): string
+    export function path(page: undefined | number): string
     {
         const variables: Record<any, any> = 
         {
@@ -90,7 +91,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = TryCatch<IProduct.Detail, IFailure.Business.Invalid | IFailure.Business.NotFound>;
+    export type Output = TryCatch<IProduct.Detail, IFailure.Business.NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/products/:product_id";
@@ -111,6 +112,7 @@ export namespace findOne
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 상품 생성 정보
  * @returns 생성한 상품 상세 정보
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller ProductsController.create()
  * @path POST /products
@@ -158,6 +160,7 @@ export namespace create
  * @param product_id 대상 상품 고유 번호
  * @param body 변경할 상품 정보
  * @returns 변경된 상품 상세 정보
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller ProductsController.update()
  * @path PATCH /products/:product_id

@@ -50,8 +50,12 @@ export namespace UserRepository {
 
   export const findManyByIds: (input: string[]) => Promise<Try<IUser[]>> =
     _findMany(
-      (ids) =>
-        prisma.user.findMany({ where: { id: { in: ids }, is_deleted: false } }),
+      async (ids) =>
+        ids.length > 0
+          ? prisma.user.findMany({
+              where: { id: { in: ids }, is_deleted: false },
+            })
+          : [],
       toUser,
     );
 

@@ -47,11 +47,6 @@ export namespace Failure {
   }
 
   export namespace Business {
-    export const InvalidBody = getBusinessInvalid('유효하지 않은 body입니다.');
-    export const InvalidQuery =
-      getBusinessInvalid('유효하지 않은 query입니다.');
-    export const InvalidParam =
-      getBusinessInvalid('유효하지 않은 param입니다.');
     export const InvalidToken = getBusinessInvalid('유효하지 않은 토큰입니다.');
   }
 }

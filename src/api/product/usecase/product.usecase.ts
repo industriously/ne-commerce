@@ -14,7 +14,11 @@ import {
   isBusinessInvalid,
   isBusinessForbidden,
 } from '@UTIL';
-import { Product } from '../core';
+import {
+  ForbiddenCreateProduct,
+  ForbiddenUpdateProduct,
+  Product,
+} from '../core';
 import { ProductRepository } from '../core';
 import { ProductService } from '../service';
 
@@ -75,7 +79,8 @@ export namespace ProductUsecase {
     >
   > => {
     const vender = await VenderService.getVenderByToken(token);
-    if (isBusiness(vender)) return vender;
+    if (isBusiness(vender))
+      return isBusinessForbidden(vender) ? ForbiddenCreateProduct : vender;
 
     return pipeAsync(
       flatten<IProduct.Vender>,
@@ -115,7 +120,8 @@ export namespace ProductUsecase {
     const product = flatten(result);
     const vender = await ProductService.getAuthorizedVender(token, product);
 
-    if (isBusinessInvalid(vender) || isBusinessForbidden(vender)) return vender;
+    if (isBusinessForbidden(vender)) return ForbiddenUpdateProduct;
+    if (isBusinessInvalid(vender)) return vender;
 
     return pipeAsync(
       (data: IProduct.UpdateInput) =>
@@ -153,7 +159,11 @@ export namespace ProductUsecase {
       token,
       result.data,
     );
-    if (isBusiness(authorized)) return authorized;
+
+    if (isBusiness(authorized))
+      return isBusinessForbidden(authorized)
+        ? ForbiddenUpdateProduct
+        : authorized;
 
     const product = await ProductRepository.update(
       Product.inActivate(flatten(result)),

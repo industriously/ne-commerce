@@ -1,11 +1,11 @@
 import { GoogleStrategy } from '../user/_oauth_/google.strategy';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { Authorization, TypedQuery } from '@COMMON/decorator/http';
 import typia from 'typia';
 import { IAuthentication } from '@INTERFACE/user';
 import { TryCatch, IFailure } from '@INTERFACE/common';
 import { AuthenticationUsecase } from '@USER/usecase';
-import { Failure } from '@COMMON/exception';
+import { TypedBody } from '@nestia/core';
 
 @Controller()
 export class AuthController {
@@ -43,12 +43,13 @@ export class AuthController {
    * @tag authentication
    * @param body token 요청 권한을 가진 code를 포함한다.
    * @returns 사용자 인증 토큰
+   * @throw 400 Request body data is not following the promised type.
    */
   @Post('sign-in')
   async signIn(
-    @Body() body: IAuthentication.SignInBody,
+    @TypedBody() body: IAuthentication.SignInBody,
   ): Promise<TryCatch<IAuthentication.Credentials, IFailure.Business.Invalid>> {
-    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    typia.prune(body);
     return AuthenticationUsecase.signIn(body);
   }
 

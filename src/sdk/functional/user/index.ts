@@ -56,6 +56,7 @@ export namespace getDetail
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param body 수정할 정보를 포함합니다.
  * @returns 수정된 상세 정보
+ * @throw 400 Request body data is not following the promised type.
  * 
  * @controller UserController.update()
  * @path PATCH /user

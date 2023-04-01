@@ -52,8 +52,11 @@ export namespace User {
   };
 
   export const toDetail = (user: IUser): IUser.Detail => {
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { sub, oauth_type, ...detail } = user;
+    return detail;
   };
+
   export const toPublic = (user: IUser): IUser.Public => {
     const { id, name, email } = user;
     return { id, name, email };

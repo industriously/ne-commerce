@@ -21,6 +21,7 @@ export namespace SeedProduct {
   export const product1 = Product.randomId();
   export const product2 = Product.randomId();
   export const product3 = Product.randomId();
+  export const inActive_product = Product.randomId();
   export const seed = async () => {
     const result = await prisma.product.createMany({
       data: [
@@ -39,9 +40,15 @@ export namespace SeedProduct {
           id: product3,
           vender_id: SeedUser.vender_id,
         },
+        {
+          ...typia.random<SeedProductRandom>(),
+          id: inActive_product,
+          vender_id: SeedUser.vender_id,
+          is_deleted: true,
+        },
       ],
     });
-    if (result.count < 3) {
+    if (result.count < 4) {
       throw Error('fail to seed products');
     }
   };

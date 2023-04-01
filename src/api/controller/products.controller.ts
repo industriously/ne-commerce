@@ -1,17 +1,14 @@
-import { Authorization } from '@COMMON/decorator/http';
-import { Failure } from '@COMMON/exception';
-import { IFailure, Page, PaginatedResponse, TryCatch } from '@INTERFACE/common';
-import { IProduct } from '@INTERFACE/product';
+import { Authorization, TypedQuery } from '@COMMON/decorator/http';
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+  IFailure,
+  Page,
+  PaginatedResponse,
+  Try,
+  TryCatch,
+} from '@INTERFACE/common';
+import { IProduct } from '@INTERFACE/product';
+import { TypedBody, TypedParam } from '@nestia/core';
+import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { ProductUsecase } from '@PRODUCT/usecase';
 import typia from 'typia';
 
@@ -24,17 +21,14 @@ export class ProductsController {
    * @tag products
    * @param page 페이지 정보 1이상의 정수, default 1
    * @returns 상품 목록
+   * @throw 400 Value of the URL query 'page' is not a valid format.
    */
   @Get()
   async findMany(
-    @Query('page') page?: string,
-  ): Promise<
-    TryCatch<PaginatedResponse<IProduct.Summary>, IFailure.Business.Invalid>
-  > {
-    const npage = Number(page ?? 1);
-    if (isNaN(npage) || !typia.is<Page>({ page: npage }))
-      return Failure.Business.InvalidQuery;
-    return ProductUsecase.findMany(npage);
+    @TypedQuery('page', typia.createIs<Page>(), { type: 'number' })
+    page?: number,
+  ): Promise<Try<PaginatedResponse<IProduct.Summary>>> {
+    return ProductUsecase.findMany(page ?? 1);
   }
 
   /**
@@ -45,14 +39,8 @@ export class ProductsController {
    */
   @Get(':product_id')
   async findOne(
-    @Param('product_id') product_id: string,
-  ): Promise<
-    TryCatch<
-      IProduct.Detail,
-      IFailure.Business.Invalid | IFailure.Business.NotFound
-    >
-  > {
-    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
+    @TypedParam('product_id') product_id: string,
+  ): Promise<TryCatch<IProduct.Detail, IFailure.Business.NotFound>> {
     return ProductUsecase.findOne(product_id);
   }
 
@@ -61,18 +49,19 @@ export class ProductsController {
    * @tag products
    * @param body 상품 생성 정보
    * @returns 생성한 상품 상세 정보
+   * @throw 400 Request body data is not following the promised type.
    */
   @Post()
   async create(
     @Authorization('bearer') token: string,
-    @Body() body: IProduct.CreateInput,
+    @TypedBody() body: IProduct.CreateInput,
   ): Promise<
     TryCatch<
       IProduct.Detail,
       IFailure.Business.Invalid | IFailure.Business.Forbidden
     >
   > {
-    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    typia.prune(body);
     return ProductUsecase.create(token, body);
   }
 
@@ -82,12 +71,13 @@ export class ProductsController {
    * @param product_id 대상 상품 고유 번호
    * @param body 변경할 상품 정보
    * @returns 변경된 상품 상세 정보
+   * @throw 400 Request body data is not following the promised type.
    */
   @Patch(':product_id')
   async update(
     @Authorization('bearer') token: string,
-    @Param('product_id') product_id: string,
-    @Body() body: IProduct.UpdateInput,
+    @TypedParam('product_id') product_id: string,
+    @TypedBody() body: IProduct.UpdateInput,
   ): Promise<
     TryCatch<
       IProduct.Detail,
@@ -96,8 +86,7 @@ export class ProductsController {
       | IFailure.Business.Invalid
     >
   > {
-    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
-    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
+    typia.prune(body);
     return ProductUsecase.update(token, product_id, body);
   }
 
@@ -110,7 +99,7 @@ export class ProductsController {
   @Delete(':product_id')
   async inActivate(
     @Authorization('bearer') token: string,
-    @Param('product_id') product_id: string,
+    @TypedParam('product_id') product_id: string,
   ): Promise<
     TryCatch<
       true,
@@ -119,7 +108,6 @@ export class ProductsController {
       | IFailure.Business.Invalid
     >
   > {
-    if (!typia.is(product_id)) return Failure.Business.InvalidParam;
     return ProductUsecase.inActivate(token, product_id);
   }
 }

@@ -38,7 +38,7 @@ export namespace IUser {
   export type OauthType = 'google' | 'github';
   export type Role = 'normal' | 'vender' | 'admin';
   export type Public = Pick<IUser, 'id' | 'name' | 'email'>;
-  export interface Detail extends Omit<IUser, 'sub' | 'oauth_type'> {}
+  export type Detail = Omit<IUser, 'sub' | 'oauth_type'>;
 
   export interface CreateInput extends IAuthentication.OauthProfile {}
 

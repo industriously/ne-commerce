@@ -11,15 +11,15 @@ export namespace AccessToken {
   export const vender = AuthenticationService.getAccessToken({
     id: SeedUser.vender_id,
     role: 'vender',
-  } as IUser);
+  } as IUser).data;
 
   export const vender2 = AuthenticationService.getAccessToken({
     id: SeedUser.vender2_id,
     role: 'vender',
-  } as IUser);
+  } as IUser).data;
 
   export const normal = AuthenticationService.getAccessToken({
     id: SeedUser.normal_id,
     role: 'normal',
-  } as IUser);
+  } as IUser).data;
 }

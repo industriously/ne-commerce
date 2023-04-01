@@ -18,6 +18,7 @@ import type { IUser } from "./../../interface/user/user.interface";
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param user_id 조회 대상의 id 입니다.
  * @returns 사용자 공개 정보
+ * @throw 400 Value of the URL parameter "user_id" is not a valid UUID.
  * 
  * @controller UsersController.findOne()
  * @path GET /users/:user_id
@@ -26,7 +27,7 @@ import type { IUser } from "./../../interface/user/user.interface";
 export function findOne
     (
         connection: IConnection,
-        id: string
+        user_id: string
     ): Promise<findOne.Output>
 {
     return Fetcher.fetch
@@ -34,12 +35,12 @@ export function findOne
         connection,
         findOne.ENCRYPTED,
         findOne.METHOD,
-        findOne.path(id)
+        findOne.path(user_id)
     );
 }
 export namespace findOne
 {
-    export type Output = TryCatch<IUser.Public, IFailure.Business.Invalid | IFailure.Business.NotFound>;
+    export type Output = TryCatch<IUser.Public, IFailure.Business.NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/users/:user_id";
@@ -48,8 +49,8 @@ export namespace findOne
         response: false,
     };
 
-    export function path(id: string): string
+    export function path(user_id: string): string
     {
-        return `/users/${encodeURIComponent(id)}`;
+        return `/users/${encodeURIComponent(user_id)}`;
     }
 }

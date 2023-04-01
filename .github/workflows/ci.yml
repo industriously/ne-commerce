@@ -1,32 +1,31 @@
 name: Test
 on:
   push:
-    branches: [ main, refactoring ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-    
+    branches: [main]
+
 env:
   PORT: 4000
   ACCESS_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
   ACCESS_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
-  REFRESH_TOKEN_PRIVATE_KEY: ${{ vars.ACCESS_TOKEN_PRIVATE_KEY }}
-  REFRESH_TOKEN_PUBLIC_KEY: ${{ vars.ACCESS_TOKEN_PUBLIC_KEY }}
+  REFRESH_TOKEN_PRIVATE_KEY: ${{ vars.REFRESH_TOKEN_PRIVATE_KEY }}
+  REFRESH_TOKEN_PUBLIC_KEY: ${{ vars.REFRESH_TOKEN_PUBLIC_KEY }}
   DATABASE_URL: mysql://test:test@localhost:3306/test
 
-permissions: 
+permissions:
   pull-requests: write
-  
+
 jobs:
-  coverage_comment:
+  Test_Report:
     runs-on: ubuntu-latest
 
     services:
       mysql:
         image: mysql:8
         ports:
-         - 3306:3306
-        options:
-          --health-cmd="mysqladmin ping"
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
@@ -47,13 +46,13 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Setup database schema
+      - name: Setup DB
         run: npm run db:deploy
 
       - name: Test 🧪
         run: npm run test
 
-      - name: PR Comment
+      - name: PR Comment 💬
         uses: actions/github-script@v6
         if: github.event.pull_request
         with:

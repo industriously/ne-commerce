@@ -1,4 +1,4 @@
-import { LoggerService } from '@nestjs/common';
+import { HttpException, LoggerService } from '@nestjs/common';
 import {
   CallHandler,
   ExecutionContext,
@@ -19,7 +19,8 @@ export class LoggerInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       catchError((err) => {
-        this.logger.error(err, context.getClass().name);
+        if (!(err instanceof HttpException))
+          this.logger.error(err, context.getClass().name);
         return throwError(() => err);
       }),
     );

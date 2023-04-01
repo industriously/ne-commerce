@@ -1,8 +1,8 @@
 import { Authorization } from '@COMMON/decorator/http';
-import { Failure } from '@COMMON/exception';
 import { IFailure, TryCatch } from '@INTERFACE/common';
 import { IUser } from '@INTERFACE/user';
-import { Body, Controller, Delete, Get, Patch } from '@nestjs/common';
+import { TypedBody } from '@nestia/core';
+import { Controller, Delete, Get, Patch } from '@nestjs/common';
 import { UserUsecase } from '@USER/usecase';
 import typia from 'typia';
 
@@ -25,13 +25,14 @@ export class UserController {
    * @tag user
    * @param body 수정할 정보를 포함합니다.
    * @returns 수정된 상세 정보
+   * @throw 400 Request body data is not following the promised type.
    */
   @Patch()
   async update(
     @Authorization('bearer') token: string,
-    @Body() body: IUser.UpdateInput,
+    @TypedBody() body: IUser.UpdateInput,
   ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> {
-    if (!typia.isPrune(body)) return Failure.Business.InvalidBody;
+    typia.prune(body);
     return UserUsecase.update(token, body);
   }
 

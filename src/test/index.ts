@@ -6,6 +6,7 @@ import { bootstrap, close, listen } from '@APP';
 import path from 'path';
 import { createWriteStream } from 'fs';
 import stripAnsi from 'strip-ansi';
+import { SeedProduct, SeedUser } from './seed';
 
 const testStream = createWriteStream(
   path.join(__dirname, './../../test_log.md'),
@@ -21,7 +22,8 @@ process.on('exit', () => {
   testStream.end();
 });
 
-console.log('# Test Report\n');
+console.log('# Test Report');
+testStream.write('\n<details open>\n<summary>detail test case</summary>\n');
 
 async function run(): Promise<void> {
   const app = await bootstrap({ logger: false });
@@ -30,6 +32,9 @@ async function run(): Promise<void> {
   const connection: IConnection = {
     host: `http://localhost:${Configuration.PORT}`,
   };
+
+  await SeedUser.seed();
+  await SeedProduct.seed();
 
   const report = await DynamicExecutor.validate({
     prefix: 'test',
@@ -45,6 +50,8 @@ async function run(): Promise<void> {
     .filter((line) => line.error !== null)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     .map<Error>((result) => result.error!);
+
+  testStream.write('\n</details>\n');
 
   if (errors.length === 0) {
     console.log('\n\x1b[32mAll Tests Passed\x1b[0m');
