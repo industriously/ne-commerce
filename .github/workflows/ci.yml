@@ -57,7 +57,8 @@ jobs:
         if: github.event.pull_request
         with:
           script: |
-            const { owner, repo, issue: { number: issue_number } } = context.repo;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
             const cmts = await github.rest.issues.listComments({ issue_number, owner, repo });
 
             const comment = cmts.data.find(cmt => cmt.user.login === 'github-actions[bot]');
