@@ -4,11 +4,11 @@ import {
   isInternalInvalid,
   pipeAsync,
 } from '@UTIL';
-import { IAuthentication, IUser } from '@INTERFACE/user';
-import { UserRepository } from '../core';
+import { ICredentials, IUser } from '@INTERFACE/user';
 import { AuthenticationService } from './auth.service';
 import { TryCatch, IFailure } from '@INTERFACE/common';
 import { Failure } from '@COMMON/exception';
+import { UserRepository } from '@USER/core';
 
 export namespace UserService {
   export const findOneByToken: (
@@ -16,8 +16,12 @@ export namespace UserService {
   ) => Promise<TryCatch<IUser, IFailure.Business.Invalid>> = pipeAsync(
     AuthenticationService.getAccessTokenPayload,
 
-    ifSuccess((payload: IAuthentication.AccessTokenPayload) =>
-      UserRepository.findOne(payload.id),
+    ifSuccess(
+      ({
+        id,
+      }: ICredentials.IAccessTokenPayload): Promise<
+        TryCatch<IUser, IFailure.Internal.Invalid | IFailure.Business.NotFound>
+      > => UserRepository.findOne(id),
     ),
 
     (result) =>

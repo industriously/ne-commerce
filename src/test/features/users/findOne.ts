@@ -16,11 +16,11 @@ console.log('  - --');
 
 export const test_users_findOne_success = async (connection: IConnection) => {
   const received = await ArrayUtil.asyncMap(
-    [SeedUser.normal_id, SeedUser.vender_id, SeedUser.vender2_id],
+    [SeedUser.customer_id, SeedUser.vender_id, SeedUser.vender2_id],
     api(connection),
   );
 
-  typia.assertEquals<Try<IUser.Public>[]>(received);
+  typia.assertEquals<Try<IUser.ISummary>[]>(received);
 };
 export const test_users_findOne_not_found = async (connection: IConnection) => {
   // inActivated user

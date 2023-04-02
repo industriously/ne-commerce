@@ -7,14 +7,15 @@ import { IUser } from '@INTERFACE/user';
 export namespace UsersUsecase {
   export const findOne: (
     id: string,
-  ) => Promise<TryCatch<IUser.Public, IFailure.Business.NotFound>> = pipeAsync(
-    UserRepository.findOne,
+  ) => Promise<TryCatch<IUser.ISummary, IFailure.Business.NotFound>> =
+    pipeAsync(
+      UserRepository.findOne,
 
-    ifSuccess((user: IUser) => getTry(User.toPublic(user))),
+      ifSuccess((user: IUser) => getTry(User.toSummary(user))),
 
-    (result) =>
-      isInternalInvalid(result)
-        ? throwError(HttpExceptionFactory('Unprocessable Entity'))
-        : result,
-  );
+      (result) =>
+        isInternalInvalid(result)
+          ? throwError(HttpExceptionFactory('Unprocessable Entity'))
+          : result,
+    );
 }

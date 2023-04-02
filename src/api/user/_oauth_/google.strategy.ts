@@ -1,5 +1,5 @@
 import { OAUTH_PROFILE } from './oauth-profile.request-key';
-import { IAuthentication } from '@INTERFACE/user';
+import { IUser } from '@INTERFACE/user';
 import { Google, Request, StrategyException } from '@devts/nestjs-auth';
 import { Configuration } from '@INFRA/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -9,7 +9,7 @@ import typia from 'typia';
 export class GoogleStrategy extends Google.AbstractStrategy<
   typeof OAUTH_PROFILE,
   'email' | 'profile',
-  IAuthentication.OauthProfile
+  IUser.ICreate
 > {
   constructor() {
     super({
@@ -44,15 +44,13 @@ export class GoogleStrategy extends Google.AbstractStrategy<
     return true;
   }
 
-  transform(
-    identity: Google.IdToken<'email' | 'profile'>,
-  ): IAuthentication.OauthProfile {
+  transform(identity: Google.IdToken<'email' | 'profile'>): IUser.ICreate {
     const { name, email, sub } = identity;
     return {
       name,
       email,
       sub,
       oauth_type: 'google',
-    } satisfies IAuthentication.OauthProfile;
+    } satisfies IUser.ICreate;
   }
 }

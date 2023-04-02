@@ -1,5 +1,5 @@
 import { IConnection } from '@nestia/fetcher';
-import { getAuthorization } from '../util/get_authorization';
+import { getAuthorization } from '../../internal/get_authorization';
 import { AccessToken } from '../../../test/seed';
 import typia from 'typia';
 import { Try } from '@INTERFACE/common';
@@ -22,15 +22,15 @@ console.log('  - --');
 /**
  * 내 정보 요청 - 성공
  */
-export const test_user_get_detail_success = async (connection: IConnection) => {
+export const test_user_getDetail_success = async (connection: IConnection) => {
   const received = await ArrayUtil.asyncMap(
-    [AccessToken.normal, AccessToken.vender, AccessToken.vender2],
+    [AccessToken.customer, AccessToken.vender, AccessToken.vender2],
     api(connection),
   );
-  typia.assertEquals<Try<IUser.Detail>[]>(received);
+  typia.assertEquals<Try<IUser>[]>(received);
 };
 
 /**
  * 내 정보 요청 - 유효하지 않은 토큰 사용
  */
-export const test_user_get_detail_invalid_token = invalid_token(api);
+export const test_user_getDetail_invalid_token = invalid_token(api);

@@ -20,6 +20,10 @@ export type Product = {
   id: string
   name: string
   description: string
+  /**
+   * @type uint
+   * @minimum 0
+   */
   price: number
   created_at: Date
   updated_at: Date
@@ -51,7 +55,7 @@ export type User = {
   created_at: Date
   updated_at: Date
   is_deleted: boolean
-  role: string
+  type: string
 }
 
 
@@ -1880,7 +1884,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     is_deleted: boolean | null
-    role: string | null
+    type: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1894,7 +1898,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     is_deleted: boolean | null
-    role: string | null
+    type: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1908,7 +1912,7 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     is_deleted: number
-    role: number
+    type: number
     _all: number
   }
 
@@ -1924,7 +1928,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     is_deleted?: true
-    role?: true
+    type?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1938,7 +1942,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     is_deleted?: true
-    role?: true
+    type?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1952,7 +1956,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     is_deleted?: true
-    role?: true
+    type?: true
     _all?: true
   }
 
@@ -2040,7 +2044,7 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     is_deleted: boolean
-    role: string
+    type: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2071,7 +2075,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     is_deleted?: boolean
-    role?: boolean
+    type?: boolean
     product?: boolean | User$productArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
@@ -2912,7 +2916,7 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     is_deleted: 'is_deleted',
-    role: 'role'
+    type: 'type'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -2998,7 +3002,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter | Date | string
     updated_at?: DateTimeFilter | Date | string
     is_deleted?: BoolFilter | boolean
-    role?: StringFilter | string
+    type?: StringFilter | string
     product?: ProductListRelationFilter
   }
 
@@ -3013,7 +3017,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-    role?: SortOrder
+    type?: SortOrder
     product?: ProductOrderByRelationAggregateInput
   }
 
@@ -3034,7 +3038,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-    role?: SortOrder
+    type?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -3054,7 +3058,7 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter | Date | string
     updated_at?: DateTimeWithAggregatesFilter | Date | string
     is_deleted?: BoolWithAggregatesFilter | boolean
-    role?: StringWithAggregatesFilter | string
+    type?: StringWithAggregatesFilter | string
   }
 
   export type ProductCreateInput = {
@@ -3062,9 +3066,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
     vender: UserCreateNestedOneWithoutProductInput
   }
 
@@ -3073,9 +3077,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
     vender_id: string
   }
 
@@ -3106,9 +3110,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
     vender_id: string
   }
 
@@ -3134,32 +3138,32 @@ export namespace Prisma {
   }
 
   export type UserCreateInput = {
-    id?: string
+    id: string
     sub: string
     oauth_type: string
     email: string
     name: string
     address?: string | null
     phone?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    role?: string
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
+    type: string
     product?: ProductCreateNestedManyWithoutVenderInput
   }
 
   export type UserUncheckedCreateInput = {
-    id?: string
+    id: string
     sub: string
     oauth_type: string
     email: string
     name: string
     address?: string | null
     phone?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    role?: string
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
+    type: string
     product?: ProductUncheckedCreateNestedManyWithoutVenderInput
   }
 
@@ -3174,7 +3178,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     product?: ProductUpdateManyWithoutVenderNestedInput
   }
 
@@ -3189,22 +3193,22 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     product?: ProductUncheckedUpdateManyWithoutVenderNestedInput
   }
 
   export type UserCreateManyInput = {
-    id?: string
+    id: string
     sub: string
     oauth_type: string
     email: string
     name: string
     address?: string | null
     phone?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    role?: string
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
+    type: string
   }
 
   export type UserUpdateManyMutationInput = {
@@ -3218,7 +3222,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -3232,7 +3236,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter = {
@@ -3417,7 +3421,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-    role?: SortOrder
+    type?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -3431,7 +3435,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-    role?: SortOrder
+    type?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -3445,7 +3449,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     is_deleted?: SortOrder
-    role?: SortOrder
+    type?: SortOrder
   }
 
   export type StringNullableWithAggregatesFilter = {
@@ -3695,31 +3699,31 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutProductInput = {
-    id?: string
+    id: string
     sub: string
     oauth_type: string
     email: string
     name: string
     address?: string | null
     phone?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    role?: string
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
+    type: string
   }
 
   export type UserUncheckedCreateWithoutProductInput = {
-    id?: string
+    id: string
     sub: string
     oauth_type: string
     email: string
     name: string
     address?: string | null
     phone?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
-    role?: string
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
+    type: string
   }
 
   export type UserCreateOrConnectWithoutProductInput = {
@@ -3743,7 +3747,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateWithoutProductInput = {
@@ -3757,7 +3761,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     is_deleted?: BoolFieldUpdateOperationsInput | boolean
-    role?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProductCreateWithoutVenderInput = {
@@ -3765,9 +3769,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
   }
 
   export type ProductUncheckedCreateWithoutVenderInput = {
@@ -3775,9 +3779,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
   }
 
   export type ProductCreateOrConnectWithoutVenderInput = {
@@ -3825,9 +3829,9 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    created_at?: Date | string
-    updated_at?: Date | string
-    is_deleted?: boolean
+    created_at: Date | string
+    updated_at: Date | string
+    is_deleted: boolean
   }
 
   export type ProductUpdateWithoutVenderInput = {

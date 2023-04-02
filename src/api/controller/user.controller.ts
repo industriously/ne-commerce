@@ -16,7 +16,7 @@ export class UserController {
   @Get()
   getDetail(
     @Authorization('bearer') token: string,
-  ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> {
+  ): Promise<TryCatch<IUser, IFailure.Business.Invalid>> {
     return UserUsecase.findOne(token);
   }
 
@@ -30,8 +30,8 @@ export class UserController {
   @Patch()
   async update(
     @Authorization('bearer') token: string,
-    @TypedBody() body: IUser.UpdateInput,
-  ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> {
+    @TypedBody() body: IUser.IUpdate,
+  ): Promise<TryCatch<IUser, IFailure.Business.Invalid>> {
     typia.prune(body);
     return UserUsecase.update(token, body);
   }

@@ -8,7 +8,7 @@ import { Fetcher } from "@nestia/fetcher";
 import type { IConnection } from "@nestia/fetcher";
 import typia from "typia";
 
-import type { IAuthentication } from "./../../interface/user/auth.interface";
+import type { ICredentials } from "./../../interface/user/credentials.interface";
 import type { TryCatch, IFailure } from "./../../interface/common/exception.interface";
 
 export * as google from "./google";
@@ -72,7 +72,7 @@ export namespace signInTest
 export function signIn
     (
         connection: IConnection,
-        body: IAuthentication.SignInBody
+        body: ICredentials.SignInBody
     ): Promise<signIn.Output>
 {
     return Fetcher.fetch
@@ -87,8 +87,8 @@ export function signIn
 }
 export namespace signIn
 {
-    export type Input = IAuthentication.SignInBody;
-    export type Output = TryCatch<IAuthentication.Credentials, IFailure.Business.Invalid>;
+    export type Input = ICredentials.SignInBody;
+    export type Output = TryCatch<ICredentials, IFailure.Business.Invalid>;
 
     export const METHOD = "POST" as const;
     export const PATH: string = "/sign-in";

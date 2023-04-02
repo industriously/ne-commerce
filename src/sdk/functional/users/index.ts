@@ -13,7 +13,7 @@ import type { IUser } from "./../../interface/user/user.interface";
 /**
  * 활성화된 사용자의 정보만 조회합니다.
  * 
- * @summary 사용자 프로필 조회 API
+ * @summary 사용자 정보 조회 API
  * @tag users
  * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
  * @param user_id 조회 대상의 id 입니다.
@@ -40,7 +40,7 @@ export function findOne
 }
 export namespace findOne
 {
-    export type Output = TryCatch<IUser.Public, IFailure.Business.NotFound>;
+    export type Output = TryCatch<IUser.ISummary, IFailure.Business.NotFound>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/users/:user_id";

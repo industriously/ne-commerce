@@ -123,7 +123,7 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   created_at: 'created_at',
   updated_at: 'updated_at',
   is_deleted: 'is_deleted',
-  role: 'role'
+  type: 'type'
 });
 
 

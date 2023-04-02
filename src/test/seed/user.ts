@@ -1,49 +1,27 @@
 import { prisma } from '@INFRA/DB';
-import { IUser } from '@INTERFACE/user';
-import { User } from '@PRISMA';
+import { ICustomer, IVender } from '@INTERFACE/user';
 import { randomUUID } from 'crypto';
 import typia from 'typia';
 
-interface SeedUserRandom
-  extends Omit<
-    User,
-    'created_at' | 'updated_at' | 'id' | 'role' | 'is_deleted' | 'oauth_type'
-  > {
-  readonly oauth_type: IUser.OauthType;
-}
+interface CreateVender extends Omit<IVender, 'is_deleted' | 'id'> {}
+
+interface CreateCustomer extends Omit<ICustomer, 'is_deleted' | 'id'> {}
 
 export namespace SeedUser {
   export const vender_id = randomUUID();
   export const vender2_id = randomUUID();
-  export const normal_id = randomUUID();
+  export const customer_id = randomUUID();
   export const inActive_id = randomUUID();
+
+  const inputV = typia.createRandom<CreateVender>();
+  const inputC = typia.createRandom<CreateCustomer>();
   export const seed = async () => {
     const result = await prisma.user.createMany({
       data: [
-        {
-          ...typia.random<SeedUserRandom>(),
-          id: vender_id,
-          role: 'vender',
-          is_deleted: false,
-        },
-        {
-          ...typia.random<SeedUserRandom>(),
-          id: vender2_id,
-          role: 'vender',
-          is_deleted: false,
-        },
-        {
-          ...typia.random<SeedUserRandom>(),
-          id: normal_id,
-          role: 'normal',
-          is_deleted: false,
-        },
-        {
-          ...typia.random<SeedUserRandom>(),
-          id: inActive_id,
-          role: 'normal',
-          is_deleted: true,
-        },
+        { ...inputV(), id: vender_id, is_deleted: false },
+        { ...inputV(), id: vender2_id, is_deleted: false },
+        { ...inputC(), id: customer_id, is_deleted: false },
+        { ...inputC(), id: inActive_id, is_deleted: true },
       ],
     });
     if (result.count < 4) {

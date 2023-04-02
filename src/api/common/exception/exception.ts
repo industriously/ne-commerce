@@ -38,7 +38,7 @@ export namespace Failure {
 
   export namespace Internal {
     export const InvalidValue = getInternalInvalid(
-      '유요하지 않은 값이 포함되었습니다.',
+      '유효하지 않은 값이 포함되었습니다.',
     );
     export const FailDB = getInternalFail('데이터베이스 요청이 실패했습니다.');
     export const UnknownError = getInternalFail(
