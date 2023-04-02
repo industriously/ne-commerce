@@ -1,0 +1,41 @@
+model Order {
+  id              String   @id
+  /// @type uint
+  /// @minimum 0
+  total_price     Int
+  status          String
+  payment_status  String
+  payment_id      String?
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  orderer_name    String
+  orderer_address String
+  orderer_phone   String
+  orderer_id      String
+
+  orderer         User        @relation(fields: [orderer_id], references: [id])
+  order_item_list OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String @id
+  /// @type uint
+  /// @minimum 0
+  product_price Int
+  product_name  String
+  /// @type uint
+  /// @minimum 1
+  quantity      Int
+  product_id    String
+  vender_id     String
+  order_id      String
+
+  product Product @relation(fields: [product_id], references: [id])
+  vender  User    @relation(fields: [vender_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
+
+  @@map("order_items")
+}

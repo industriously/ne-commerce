@@ -1,15 +1,16 @@
 model Product {
-  id          String   @id
-  name        String
-  description String
+  id              String      @id
+  name            String
+  description     String
   /// @type uint
   /// @minimum 0
-  price       Int
-  created_at  DateTime
-  updated_at  DateTime
-  is_deleted  Boolean
-  vender_id   String
-  vender      User     @relation(fields: [vender_id], references: [id])
+  price           Int
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  vender_id       String
+  vender          User        @relation(fields: [vender_id], references: [id])
+  order_item_list OrderItem[]
 
   @@map("products")
 }

@@ -7,37 +7,81 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-model Product {
-  id          String   @id
-  name        String
-  description String
+model Order {
+  id              String   @id
   /// @type uint
   /// @minimum 0
-  price       Int
-  created_at  DateTime
-  updated_at  DateTime
-  is_deleted  Boolean
-  vender_id   String
-  vender      User     @relation(fields: [vender_id], references: [id])
+  total_price     Int
+  status          String
+  payment_status  String
+  payment_id      String?
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  orderer_name    String
+  orderer_address String
+  orderer_phone   String
+  orderer_id      String
+
+  orderer         User        @relation(fields: [orderer_id], references: [id])
+  order_item_list OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String @id
+  /// @type uint
+  /// @minimum 0
+  product_price Int
+  product_name  String
+  /// @type uint
+  /// @minimum 1
+  quantity      Int
+  product_id    String
+  vender_id     String
+  order_id      String
+
+  product Product @relation(fields: [product_id], references: [id])
+  vender  User    @relation(fields: [vender_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
+
+  @@map("order_items")
+}
+model Product {
+  id              String      @id
+  name            String
+  description     String
+  /// @type uint
+  /// @minimum 0
+  price           Int
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  vender_id       String
+  vender          User        @relation(fields: [vender_id], references: [id])
+  order_item_list OrderItem[]
 
   @@map("products")
 }
 model User {
   /// @format uuid
-  id         String    @id
-  sub        String
-  oauth_type String
+  id              String      @id
+  sub             String
+  oauth_type      String
   /// @format email
-  email      String    @unique
-  name       String
-  address    String?
+  email           String      @unique
+  name            String
+  address         String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
-  phone      String?
-  created_at DateTime
-  updated_at DateTime
-  is_deleted Boolean
-  type       String
-  product    Product[]
+  phone           String?
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  type            String
+  product         Product[]
+  order           Order[]
+  order_item_list OrderItem[]
 
   @@unique([sub, oauth_type])
   @@map("users")

@@ -1,19 +1,21 @@
 model User {
   /// @format uuid
-  id         String    @id
-  sub        String
-  oauth_type String
+  id              String      @id
+  sub             String
+  oauth_type      String
   /// @format email
-  email      String    @unique
-  name       String
-  address    String?
+  email           String      @unique
+  name            String
+  address         String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
-  phone      String?
-  created_at DateTime
-  updated_at DateTime
-  is_deleted Boolean
-  type       String
-  product    Product[]
+  phone           String?
+  created_at      DateTime
+  updated_at      DateTime
+  is_deleted      Boolean
+  type            String
+  product         Product[]
+  order           Order[]
+  order_item_list OrderItem[]
 
   @@unique([sub, oauth_type])
   @@map("users")
