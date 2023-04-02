@@ -1,7 +1,6 @@
 import { Configuration } from '@INFRA/config';
-import { IAuthentication } from '@INTERFACE/user';
-import { IUser } from '@INTERFACE/user';
-import { InvalidOauthProfile, User } from '@USER/core';
+import { ICredentials, IUser } from '@INTERFACE/user';
+import { InvalidOauthProfile } from '@USER/core';
 import jwt from 'jsonwebtoken';
 import typia from 'typia';
 import { GithubStrategy, GoogleStrategy } from '@USER/_oauth_';
@@ -44,16 +43,16 @@ export namespace AuthenticationService {
   };
 
   export const getOauthProfile: (
-    body: IAuthentication.SignInBody,
-  ) => Promise<
-    TryCatch<IAuthentication.OauthProfile, IFailure.Business.Invalid>
-  > = async (body) => {
+    body: ICredentials.SignInBody,
+  ) => Promise<TryCatch<IUser.ICreate, IFailure.Business.Invalid>> = async (
+    body,
+  ) => {
     const { code, oauth_type } = body;
     const profile = await (oauth_type === 'google'
       ? _getGoogleProfile(code)
       : _getGithubProfile(code));
 
-    return typia.isPrune<IAuthentication.OauthProfile>(profile)
+    return typia.isPrune<IUser.ICreate>(profile)
       ? getTry(profile)
       : InvalidOauthProfile;
   };
@@ -61,8 +60,8 @@ export namespace AuthenticationService {
   export const getAccessToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
-      role: user.role,
-    } satisfies IAuthentication.AccessTokenPayload;
+      type: user.type,
+    } satisfies ICredentials.IAccessTokenPayload;
     return getTry(
       jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: '8h',
@@ -73,15 +72,12 @@ export namespace AuthenticationService {
 
   export const getAccessTokenPayload = (
     token: string,
-  ): TryCatch<
-    IAuthentication.AccessTokenPayload,
-    IFailure.Business.Invalid
-  > => {
+  ): TryCatch<ICredentials.IAccessTokenPayload, IFailure.Business.Invalid> => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.AccessTokenPayload>(payload))
+      if (typia.isPrune<ICredentials.IAccessTokenPayload>(payload))
         return getTry(payload);
     } catch (error) {}
     return Failure.Business.InvalidToken;
@@ -90,7 +86,8 @@ export namespace AuthenticationService {
   export const getRefreshToken = (user: IUser): Try<string> => {
     const payload = {
       id: user.id,
-    } satisfies IAuthentication.RefreshTokenPayload;
+      type: user.type,
+    } satisfies ICredentials.IRefreshTokenPayload;
     return getTry(
       jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, {
         expiresIn: '30w',
@@ -101,22 +98,19 @@ export namespace AuthenticationService {
 
   export const getRefreshTokenPayload = (
     token: string,
-  ): TryCatch<
-    IAuthentication.RefreshTokenPayload,
-    IFailure.Business.Invalid
-  > => {
+  ): TryCatch<ICredentials.IRefreshTokenPayload, IFailure.Business.Invalid> => {
     try {
       const payload = jwt.verify(token, REFRESH_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.RefreshTokenPayload>(payload))
+      if (typia.isPrune<ICredentials.IRefreshTokenPayload>(payload))
         return getTry(payload);
     } catch (error) {}
     return Failure.Business.InvalidToken;
   };
 
   export const getIdToken = (user: IUser): Try<string> => {
-    const payload = User.toDetail(user);
+    const payload = user;
     return getTry(
       jwt.sign(payload, ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: '1d',
@@ -127,12 +121,12 @@ export namespace AuthenticationService {
 
   export const getIdTokenPayload = (
     token: string,
-  ): TryCatch<IAuthentication.IdTokenPayload, IFailure.Business.Invalid> => {
+  ): TryCatch<ICredentials.IIdTokenPayload, IFailure.Business.Invalid> => {
     try {
       const payload = jwt.verify(token, ACCESS_TOKEN_PUBLIC_KEY, {
         complete: false,
       });
-      if (typia.isPrune<IAuthentication.IdTokenPayload>(payload))
+      if (typia.isPrune<ICredentials.IIdTokenPayload>(payload))
         return getTry(payload);
     } catch (error) {}
     return Failure.Business.InvalidToken;

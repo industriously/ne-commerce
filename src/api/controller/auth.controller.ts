@@ -1,11 +1,11 @@
 import { GoogleStrategy } from '../user/_oauth_/google.strategy';
-import { Controller, Get, Post } from '@nestjs/common';
-import { Authorization, TypedQuery } from '@COMMON/decorator/http';
+import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Authorization } from '@COMMON/decorator/http';
 import typia from 'typia';
-import { IAuthentication } from '@INTERFACE/user';
 import { TryCatch, IFailure } from '@INTERFACE/common';
 import { AuthenticationUsecase } from '@USER/usecase';
 import { TypedBody } from '@nestia/core';
+import { ICredentials } from '@INTERFACE/user';
 
 @Controller()
 export class AuthController {
@@ -26,10 +26,7 @@ export class AuthController {
    * @internal
    */
   @Get('sign-in/google')
-  signInTestCb(
-    @TypedQuery('code', typia.createIs<IAuthentication.SignInBody>())
-    code: string,
-  ) {
+  signInTestCb(@Query('code') code: string) {
     return code;
   }
 
@@ -47,8 +44,8 @@ export class AuthController {
    */
   @Post('sign-in')
   async signIn(
-    @TypedBody() body: IAuthentication.SignInBody,
-  ): Promise<TryCatch<IAuthentication.Credentials, IFailure.Business.Invalid>> {
+    @TypedBody() body: ICredentials.SignInBody,
+  ): Promise<TryCatch<ICredentials, IFailure.Business.Invalid>> {
     typia.prune(body);
     return AuthenticationUsecase.signIn(body);
   }

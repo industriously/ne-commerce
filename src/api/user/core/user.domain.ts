@@ -1,10 +1,10 @@
 import { getISOString, isUndefined, Predicate } from '@UTIL';
-import { IUser } from '@INTERFACE/user';
+import { ICustomer, IUser, IVender } from '@INTERFACE/user';
 import { randomUUID } from 'crypto';
 import { Mutable } from '@INTERFACE/common';
 
 export namespace User {
-  export const create = (input: IUser.CreateInput): IUser => {
+  export const createCustomer = (input: IUser.ICreate): ICustomer => {
     const { name, email, oauth_type, sub } = input;
     const date = getISOString();
     return {
@@ -13,7 +13,7 @@ export namespace User {
       oauth_type,
       email,
       name,
-      role: 'normal',
+      type: 'customer',
       address: null,
       phone: null,
       is_deleted: false,
@@ -22,14 +22,16 @@ export namespace User {
     };
   };
 
-  export const update = (
-    user: Mutable<IUser>,
-    input: IUser.UpdateInput,
-  ): IUser => {
+  export const update = (user: Mutable<IUser>, input: IUser.IUpdate): IUser => {
     const { name, address, phone } = input;
     user.name = !isUndefined(name) ? name : user.name;
-    user.address = !isUndefined(address) ? address : user.address;
-    user.phone = !isUndefined(phone) ? phone : user.phone;
+    if (User.isVender(user)) {
+      (user as Mutable<IVender>).address = address ? address : user.address;
+      (user as Mutable<IVender>).phone = phone ? phone : user.phone;
+    } else {
+      user.address = !isUndefined(address) ? address : user.address;
+      user.phone = !isUndefined(phone) ? phone : user.phone;
+    }
     return user;
   };
 
@@ -51,16 +53,14 @@ export namespace User {
     return user;
   };
 
-  export const toDetail = (user: IUser): IUser.Detail => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { sub, oauth_type, ...detail } = user;
-    return detail;
+  export const toSummary = (user: IUser): IUser.ISummary => {
+    const { id, name, type } = user;
+    return { id, name, type };
   };
 
-  export const toPublic = (user: IUser): IUser.Public => {
-    const { id, name, email } = user;
-    return { id, name, email };
-  };
+  export const isCustomer = (user: IUser): user is ICustomer =>
+    user.type === 'customer';
 
-  export const isVender = (user: IUser): boolean => user.role === 'vender';
+  export const isVender = (user: IUser): user is IVender =>
+    user.type === 'vender';
 }

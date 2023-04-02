@@ -11,10 +11,12 @@ model Product {
   id          String   @id
   name        String
   description String
+  /// @type uint
+  /// @minimum 0
   price       Int
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  is_deleted  Boolean  @default(false)
+  created_at  DateTime
+  updated_at  DateTime
+  is_deleted  Boolean
   vender_id   String
   vender      User     @relation(fields: [vender_id], references: [id])
 
@@ -22,7 +24,7 @@ model Product {
 }
 model User {
   /// @format uuid
-  id         String    @id @default(uuid())
+  id         String    @id
   sub        String
   oauth_type String
   /// @format email
@@ -31,10 +33,10 @@ model User {
   address    String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
   phone      String?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  is_deleted Boolean   @default(false)
-  role       String    @default("normal")
+  created_at DateTime
+  updated_at DateTime
+  is_deleted Boolean
+  type       String
   product    Product[]
 
   @@unique([sub, oauth_type])

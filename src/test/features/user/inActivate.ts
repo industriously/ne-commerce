@@ -1,6 +1,6 @@
 import { user } from '@SDK/index';
 import { IConnection } from '@nestia/fetcher';
-import { getAuthorization } from '../util/get_authorization';
+import { getAuthorization } from '../../internal/get_authorization';
 import { ArrayUtil } from '@nestia/e2e';
 import { AccessToken, SeedUser } from '@test/seed';
 import assert from 'assert';
@@ -20,7 +20,7 @@ console.log('  - --');
 
 export const test_user_inActivate_success = async (connection: IConnection) => {
   const received = await ArrayUtil.asyncMap(
-    [AccessToken.normal, AccessToken.vender, AccessToken.vender2],
+    [AccessToken.customer, AccessToken.vender, AccessToken.vender2],
     api(connection),
   );
   received.forEach((result) =>
@@ -30,7 +30,9 @@ export const test_user_inActivate_success = async (connection: IConnection) => {
   // reset
   await prisma.user.updateMany({
     where: {
-      id: { in: [SeedUser.normal_id, SeedUser.vender_id, SeedUser.vender2_id] },
+      id: {
+        in: [SeedUser.customer_id, SeedUser.vender_id, SeedUser.vender2_id],
+      },
     },
     data: { is_deleted: false },
   });

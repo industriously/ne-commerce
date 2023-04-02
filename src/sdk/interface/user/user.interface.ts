@@ -1,47 +1,76 @@
-import { IAuthentication } from './auth.interface';
+export type IUser = ICustomer | IVender;
 
-export interface IUser {
-  /**
-   * @format uuid
-   */
-  readonly id: string;
-  /**
-   * oauth server's user id
-   */
-  readonly sub: string;
-  readonly oauth_type: IUser.OauthType;
-  /**
-   * @format email
-   */
-  readonly email: string;
-  readonly name: string;
-  readonly address: string | null;
+export type ICustomer = IUser.IBase<'customer'>;
+
+export interface IVender extends IUser.IBase<'vender'> {
+  readonly address: string;
   /**
    * @pattern ^010-[0-9]{4}-[0-9]{4}$
    */
-  readonly phone: string | null;
-  readonly role: IUser.Role;
-  readonly is_deleted: boolean;
-  /**
-   * ISO 8601 type
-   * @pattern ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$
-   */
-  readonly created_at: string;
-  /**
-   * ISO 8601 type
-   * @pattern ^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$
-   */
-  readonly updated_at: string;
+  readonly phone: string;
 }
 
 export namespace IUser {
+  export type UserType = 'vender' | 'customer' | 'admin';
+
   export type OauthType = 'google' | 'github';
-  export type Role = 'normal' | 'vender' | 'admin';
-  export type Public = Pick<IUser, 'id' | 'name' | 'email'>;
-  export type Detail = Omit<IUser, 'sub' | 'oauth_type'>;
 
-  export interface CreateInput extends IAuthentication.OauthProfile {}
+  export interface IAuthentication {
+    /**
+     * oauth server's user id
+     */
+    readonly sub: string;
+    /**
+     * oauth server type
+     */
+    readonly oauth_type: OauthType;
+    /**
+     * @format email
+     */
+    readonly email: string;
+  }
 
-  export interface UpdateInput
-    extends Partial<Pick<IUser, 'name' | 'address' | 'phone'>> {}
+  export interface IBase<Type extends UserType = UserType>
+    extends IAuthentication {
+    /**
+     * 사용자 종류
+     */
+    readonly type: Type;
+
+    /**
+     * @format uuid
+     */
+    readonly id: string;
+
+    readonly name: string;
+
+    readonly is_deleted: boolean;
+
+    readonly address: string | null;
+    /**
+     * @pattern ^010-[0-9]{4}-[0-9]{4}$
+     */
+    readonly phone: string | null;
+    /**
+     * ISO 8601 type
+     *
+     * @pattern ^(19[6-9][0-9]|2[0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\.[0-9]{3}Z$
+     */
+    readonly created_at: string;
+    /**
+     * ISO 8601 type
+     *
+     * @pattern ^(19[6-9][0-9]|2[0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\.[0-9]{3}Z$
+     */
+    readonly updated_at: string;
+  }
+
+  export type ISummary = Pick<IBase<UserType>, 'id' | 'name' | 'type'>;
+
+  export interface ICreate extends IAuthentication {
+    readonly name: string;
+  }
+
+  export interface IUpdate
+    extends Partial<Pick<IBase, 'name' | 'address' | 'phone'>> {}
 }

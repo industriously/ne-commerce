@@ -35,7 +35,7 @@ export function getDetail
 }
 export namespace getDetail
 {
-    export type Output = TryCatch<IUser.Detail, IFailure.Business.Invalid>;
+    export type Output = TryCatch<IUser, IFailure.Business.Invalid>;
 
     export const METHOD = "GET" as const;
     export const PATH: string = "/user";
@@ -65,7 +65,7 @@ export namespace getDetail
 export function update
     (
         connection: IConnection,
-        body: IUser.UpdateInput
+        body: IUser.IUpdate
     ): Promise<update.Output>
 {
     return Fetcher.fetch
@@ -80,8 +80,8 @@ export function update
 }
 export namespace update
 {
-    export type Input = IUser.UpdateInput;
-    export type Output = TryCatch<IUser.Detail, IFailure.Business.Invalid>;
+    export type Input = IUser.IUpdate;
+    export type Output = TryCatch<IUser, IFailure.Business.Invalid>;
 
     export const METHOD = "PATCH" as const;
     export const PATH: string = "/user";

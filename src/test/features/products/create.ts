@@ -36,7 +36,7 @@ export const test_products_create_invalid_token = invalid_token(
 export const test_products_create_forbidden_create_product = async (
   connection: IConnection,
 ) => {
-  const received = await api(randomBody())(connection)(AccessToken.normal);
+  const received = await api(randomBody())(connection)(AccessToken.customer);
 
   assert.deepStrictEqual(received, ForbiddenCreateProduct);
 };

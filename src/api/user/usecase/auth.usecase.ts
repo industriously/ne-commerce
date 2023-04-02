@@ -1,6 +1,6 @@
 import { Failure, getTry, HttpExceptionFactory } from '@COMMON/exception';
 import { IFailure, Try, TryCatch } from '@INTERFACE/common';
-import { IAuthentication, IUser } from '@INTERFACE/user';
+import { ICredentials, IUser } from '@INTERFACE/user';
 import { User, UserRepository } from '@USER/core';
 import { AuthenticationService } from '@USER/service';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@UTIL';
 
 export namespace AuthenticationUsecase {
-  const _getCredentials = (user: IUser): Try<IAuthentication.Credentials> => {
+  const _getCredentials = (user: IUser): Try<ICredentials> => {
     return getTry({
       access_token: flatten(AuthenticationService.getAccessToken(user)),
       refresh_token: flatten(AuthenticationService.getRefreshToken(user)),
@@ -23,20 +23,20 @@ export namespace AuthenticationUsecase {
   };
 
   export const signIn: (
-    body: IAuthentication.SignInBody,
-  ) => Promise<
-    Try<IAuthentication.Credentials> | IFailure.Business.Invalid
-  > = async (body) => {
+    body: ICredentials.SignInBody,
+  ) => Promise<Try<ICredentials> | IFailure.Business.Invalid> = async (
+    body,
+  ) => {
     const profile = await AuthenticationService.getOauthProfile(body);
     if (isBusinessInvalid(profile)) return profile;
 
     return pipeAsync(
-      UserRepository.findOneByOauthProfile,
+      UserRepository.findOneByAuthentication,
 
       // 사용자 생성
       (result) =>
         isBusinessNotFound(result)
-          ? UserRepository.add(User.create(flatten(profile)))
+          ? UserRepository.add(User.createCustomer(flatten(profile)))
           : result,
 
       ifSuccess((user: IUser) =>
@@ -64,8 +64,8 @@ export namespace AuthenticationUsecase {
   ) => Promise<TryCatch<string, IFailure.Business.Invalid>> = pipeAsync(
     AuthenticationService.getRefreshTokenPayload,
 
-    ifSuccess((data: IAuthentication.RefreshTokenPayload) =>
-      UserRepository.findOne(data.id),
+    ifSuccess(({ id }: ICredentials.IRefreshTokenPayload) =>
+      UserRepository.findOne(id),
     ),
 
     ifSuccess(AuthenticationService.getAccessToken),

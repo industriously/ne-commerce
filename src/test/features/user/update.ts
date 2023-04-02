@@ -1,7 +1,7 @@
 import { IUser } from '@INTERFACE/user';
 import { user } from '@SDK/index';
 import { IConnection } from '@nestia/fetcher';
-import { getAuthorization } from '../util/get_authorization';
+import { getAuthorization } from '../../internal/get_authorization';
 import { ArrayUtil } from '@nestia/e2e';
 import typia from 'typia';
 import { AccessToken } from '@test/seed';
@@ -11,7 +11,7 @@ import assert from 'node:assert';
 import { invalid_token } from '@test/internal';
 
 const api =
-  (body: IUser.UpdateInput) => (connection: IConnection) => (token: string) =>
+  (body: IUser.IUpdate) => (connection: IConnection) => (token: string) =>
     user.update(
       {
         host: connection.host,
@@ -23,7 +23,7 @@ const api =
       body,
     );
 
-const getBody = typia.createRandom<IUser.UpdateInput>();
+const getBody = typia.createRandom<IUser.IUpdate>();
 
 console.log('  - --');
 
@@ -33,12 +33,12 @@ console.log('  - --');
 export const test_user_update_success = (connection: IConnection) =>
   ArrayUtil.asyncRepeat(10, async () => {
     const body = getBody();
-    const received = await api(body)(connection)(AccessToken.normal);
+    const received = await api(body)(connection)(AccessToken.customer);
 
-    const { data: user } = typia.assertEquals<Try<IUser.Detail>>(received);
+    const { data: user } = typia.assertEquals<Try<IUser>>(received);
     for (const [key, value] of Object.entries(body)) {
       if (!isUndefined(value))
-        assert.deepStrictEqual(user[key as keyof IUser.UpdateInput], value);
+        assert.deepStrictEqual(user[key as keyof IUser.IUpdate], value);
     }
   });
 

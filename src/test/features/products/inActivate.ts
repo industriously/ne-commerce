@@ -65,7 +65,7 @@ export const test_products_inActivate_forbidden_update_product = async (
     api(id)(connection)(AccessToken.vender2),
   );
   const received2 = await ArrayUtil.asyncMap(ids, (id) =>
-    api(id)(connection)(AccessToken.normal),
+    api(id)(connection)(AccessToken.customer),
   );
 
   received1.forEach((ex) => assert.deepStrictEqual(ex, ForbiddenUpdateProduct));

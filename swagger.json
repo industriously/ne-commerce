@@ -22,7 +22,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IAuthentication.SignInBody"
+                "$ref": "#/components/schemas/ICredentials.SignInBody"
               }
             }
           },
@@ -40,7 +40,7 @@
                       "$ref": "#/components/schemas/IFailure.Business.Invalid"
                     },
                     {
-                      "$ref": "#/components/schemas/ISuccess_lt_IAuthentication.Credentials_gt_"
+                      "$ref": "#/components/schemas/ISuccess_lt_ICredentials_gt_"
                     }
                   ]
                 }
@@ -697,7 +697,7 @@
                       "$ref": "#/components/schemas/IFailure.Business.Invalid"
                     },
                     {
-                      "$ref": "#/components/schemas/ISuccess_lt_IUser.Detail_gt_"
+                      "$ref": "#/components/schemas/ISuccess_lt_IUser_gt_"
                     }
                   ]
                 }
@@ -749,7 +749,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IUser.UpdateInput"
+                "$ref": "#/components/schemas/IUser.IUpdate"
               }
             }
           },
@@ -767,7 +767,7 @@
                       "$ref": "#/components/schemas/IFailure.Business.Invalid"
                     },
                     {
-                      "$ref": "#/components/schemas/ISuccess_lt_IUser.Detail_gt_"
+                      "$ref": "#/components/schemas/ISuccess_lt_IUser_gt_"
                     }
                   ]
                 }
@@ -925,7 +925,7 @@
                       "$ref": "#/components/schemas/IFailure.Business.NotFound"
                     },
                     {
-                      "$ref": "#/components/schemas/ISuccess_lt_IUser.Public_gt_"
+                      "$ref": "#/components/schemas/ISuccess_lt_IUser.ISummary_gt_"
                     }
                   ]
                 }
@@ -937,7 +937,7 @@
             "description": "Value of the URL parameter \"user_id\" is not a valid UUID."
           }
         },
-        "summary": "사용자 프로필 조회 API",
+        "summary": "사용자 정보 조회 API",
         "description": "활성화된 사용자의 정보만 조회합니다.",
         "x-nestia-namespace": "users.findOne",
         "x-nestia-jsDocTags": [
@@ -945,7 +945,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "사용자 프로필 조회 API",
+                "text": "사용자 정보 조회 API",
                 "kind": "text"
               }
             ]
@@ -1000,7 +1000,7 @@
   },
   "components": {
     "schemas": {
-      "IAuthentication.SignInBody": {
+      "ICredentials.SignInBody": {
         "type": "object",
         "properties": {
           "oauth_type": {
@@ -1058,7 +1058,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "ISuccess_lt_IAuthentication.Credentials_gt_": {
+      "ISuccess_lt_ICredentials_gt_": {
         "type": "object",
         "properties": {
           "type": {
@@ -1070,7 +1070,7 @@
             "x-typia-required": true
           },
           "data": {
-            "$ref": "#/components/schemas/IAuthentication.Credentials",
+            "$ref": "#/components/schemas/ICredentials",
             "x-typia-required": true
           }
         },
@@ -1081,7 +1081,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IAuthentication.Credentials": {
+      "ICredentials": {
         "type": "object",
         "properties": {
           "access_token": {
@@ -1735,7 +1735,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "ISuccess_lt_IUser.Detail_gt_": {
+      "ISuccess_lt_IUser_gt_": {
         "type": "object",
         "properties": {
           "type": {
@@ -1747,7 +1747,16 @@
             "x-typia-required": true
           },
           "data": {
-            "$ref": "#/components/schemas/IUser.Detail",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ICustomer",
+                "x-typia-required": true
+              },
+              {
+                "$ref": "#/components/schemas/IVender",
+                "x-typia-required": true
+              }
+            ],
             "x-typia-required": true
           }
         },
@@ -1758,65 +1767,17 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IUser.Detail": {
+      "ICustomer": {
         "type": "object",
         "properties": {
-          "email": {
+          "type": {
             "type": "string",
-            "nullable": false,
-            "x-typia-metaTags": [
-              {
-                "kind": "format",
-                "value": "email"
-              }
+            "enum": [
+              "customer"
             ],
-            "x-typia-jsDocTags": [
-              {
-                "name": "format",
-                "text": [
-                  {
-                    "text": "email",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "format": "email"
-          },
-          "name": {
-            "type": "string",
             "nullable": false,
+            "description": "사용자 종류",
             "x-typia-required": true
-          },
-          "is_deleted": {
-            "type": "boolean",
-            "nullable": false,
-            "x-typia-required": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": false,
-            "description": "ISO 8601 type",
-            "x-typia-metaTags": [
-              {
-                "kind": "pattern",
-                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
-              }
-            ],
-            "x-typia-jsDocTags": [
-              {
-                "name": "pattern",
-                "text": [
-                  {
-                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
           },
           "id": {
             "type": "string",
@@ -1840,6 +1801,16 @@
             ],
             "x-typia-required": true,
             "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "nullable": false,
+            "x-typia-required": true
           },
           "address": {
             "type": "string",
@@ -1869,13 +1840,180 @@
             "x-typia-required": true,
             "pattern": "^010-[0-9]{4}-[0-9]{4}$"
           },
-          "role": {
+          "created_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "sub": {
+            "type": "string",
+            "nullable": false,
+            "description": "oauth server's user id",
+            "x-typia-required": true
+          },
+          "oauth_type": {
             "type": "string",
             "enum": [
-              "normal",
-              "vender",
-              "admin"
+              "google",
+              "github"
             ],
+            "nullable": false,
+            "description": "oauth server type",
+            "x-typia-required": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "type",
+          "id",
+          "name",
+          "is_deleted",
+          "address",
+          "phone",
+          "created_at",
+          "updated_at",
+          "sub",
+          "oauth_type",
+          "email"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IVender": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^010-[0-9]{4}-[0-9]{4}$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^010-[0-9]{4}-[0-9]{4}$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^010-[0-9]{4}-[0-9]{4}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "vender"
+            ],
+            "nullable": false,
+            "description": "사용자 종류",
+            "x-typia-required": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "uuid"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "uuid",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-required": true
+          },
+          "is_deleted": {
+            "type": "boolean",
             "nullable": false,
             "x-typia-required": true
           },
@@ -1902,23 +2040,88 @@
             ],
             "x-typia-required": true,
             "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": false,
+            "description": "ISO 8601 type",
+            "x-typia-metaTags": [
+              {
+                "kind": "pattern",
+                "value": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "pattern",
+                "text": [
+                  {
+                    "text": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "pattern": "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]).[0-9]{3}Z$"
+          },
+          "sub": {
+            "type": "string",
+            "nullable": false,
+            "description": "oauth server's user id",
+            "x-typia-required": true
+          },
+          "oauth_type": {
+            "type": "string",
+            "enum": [
+              "google",
+              "github"
+            ],
+            "nullable": false,
+            "description": "oauth server type",
+            "x-typia-required": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": false,
+            "x-typia-metaTags": [
+              {
+                "kind": "format",
+                "value": "email"
+              }
+            ],
+            "x-typia-jsDocTags": [
+              {
+                "name": "format",
+                "text": [
+                  {
+                    "text": "email",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "format": "email"
           }
         },
         "nullable": false,
         "required": [
-          "email",
-          "name",
-          "is_deleted",
-          "updated_at",
-          "id",
           "address",
           "phone",
-          "role",
-          "created_at"
+          "type",
+          "id",
+          "name",
+          "is_deleted",
+          "created_at",
+          "updated_at",
+          "sub",
+          "oauth_type",
+          "email"
         ],
         "x-typia-jsDocTags": []
       },
-      "IUser.UpdateInput": {
+      "IUser.IUpdate": {
         "type": "object",
         "properties": {
           "name": {
@@ -1958,7 +2161,7 @@
         "nullable": false,
         "x-typia-jsDocTags": []
       },
-      "ISuccess_lt_IUser.Public_gt_": {
+      "ISuccess_lt_IUser.ISummary_gt_": {
         "type": "object",
         "properties": {
           "type": {
@@ -1970,7 +2173,7 @@
             "x-typia-required": true
           },
           "data": {
-            "$ref": "#/components/schemas/IUser.Public",
+            "$ref": "#/components/schemas/IUser.ISummary",
             "x-typia-required": true
           }
         },
@@ -1981,32 +2184,9 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IUser.Public": {
+      "IUser.ISummary": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "nullable": false,
-            "x-typia-metaTags": [
-              {
-                "kind": "format",
-                "value": "email"
-              }
-            ],
-            "x-typia-jsDocTags": [
-              {
-                "name": "format",
-                "text": [
-                  {
-                    "text": "email",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "format": "email"
-          },
           "name": {
             "type": "string",
             "nullable": false,
@@ -2034,13 +2214,24 @@
             ],
             "x-typia-required": true,
             "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "vender",
+              "admin"
+            ],
+            "nullable": false,
+            "description": "사용자 종류",
+            "x-typia-required": true
           }
         },
         "nullable": false,
         "required": [
-          "email",
           "name",
-          "id"
+          "id",
+          "type"
         ],
         "x-typia-jsDocTags": []
       }

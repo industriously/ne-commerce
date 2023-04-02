@@ -4,9 +4,9 @@ CREATE TABLE `products` (
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `price` INTEGER NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
+    `created_at` DATETIME(3) NOT NULL,
+    `updated_at` DATETIME(3) NOT NULL,
+    `is_deleted` BOOLEAN NOT NULL,
     `vender_id` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -21,10 +21,10 @@ CREATE TABLE `users` (
     `name` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NULL,
     `phone` VARCHAR(191) NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `is_deleted` BOOLEAN NOT NULL DEFAULT false,
-    `role` VARCHAR(191) NOT NULL DEFAULT 'normal',
+    `created_at` DATETIME(3) NOT NULL,
+    `updated_at` DATETIME(3) NOT NULL,
+    `is_deleted` BOOLEAN NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `users_email_key`(`email`),
     UNIQUE INDEX `users_sub_oauth_type_key`(`sub`, `oauth_type`),

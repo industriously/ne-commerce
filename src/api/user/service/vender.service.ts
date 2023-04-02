@@ -1,13 +1,13 @@
 import { getTry } from '@COMMON/exception';
 import { Try, TryCatch, IFailure } from '@INTERFACE/common';
 import { IProduct } from '@INTERFACE/product';
-import { IUser } from '@INTERFACE/user';
+import { IUser, IVender } from '@INTERFACE/user';
 import { List, pipeAsync, flatten, ifSuccess, isInternal } from '@UTIL';
 import { ForbiddenVender, NotFoundUser, User, UserRepository } from '../core';
 import { UserService } from './user.service';
 
 export namespace VenderService {
-  const _toVender = (user: IUser): IProduct.Vender => ({
+  const _toVender = (user: IVender): IProduct.Vender => ({
     id: user.id,
     name: user.name,
   });
@@ -47,7 +47,7 @@ export namespace VenderService {
 
     flatten,
 
-    List.filter(User.isVender),
+    (result) => result.filter(User.isVender),
 
     List.map(_toVender),
 

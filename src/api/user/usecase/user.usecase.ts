@@ -6,26 +6,18 @@ import { User, UserRepository } from '../core';
 import { UserService } from '../service';
 
 export namespace UserUsecase {
-  export const findOne: (
-    token: string,
-  ) => Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> = pipeAsync(
-    UserService.findOneByToken,
-
-    ifSuccess((user: IUser) => getTry(User.toDetail(user))),
-  );
+  export const findOne = UserService.findOneByToken;
 
   export const update = (
     token: string,
-    input: IUser.UpdateInput,
-  ): Promise<TryCatch<IUser.Detail, IFailure.Business.Invalid>> => {
+    input: IUser.IUpdate,
+  ): Promise<TryCatch<IUser, IFailure.Business.Invalid>> => {
     return pipeAsync(
       UserService.findOneByToken,
 
       ifSuccess((user: IUser) =>
         UserRepository.update(User.update(user, input)),
       ),
-
-      ifSuccess((user: IUser) => getTry(User.toDetail(user))),
 
       (result) =>
         isBusinessNotFound(result) ? Failure.Business.InvalidToken : result,

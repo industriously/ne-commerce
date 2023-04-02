@@ -1,5 +1,5 @@
 import { IConnection } from '@nestia/fetcher';
-import { getAuthorization } from '@test/features/util/get_authorization';
+import { getAuthorization } from '@test/internal/get_authorization';
 
 export const getConnectionWithToken = (
   connection: IConnection,
