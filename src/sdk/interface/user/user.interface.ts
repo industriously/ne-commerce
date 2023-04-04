@@ -52,15 +52,11 @@ export namespace IUser {
      */
     readonly phone: string | null;
     /**
-     * ISO 8601 type
-     *
-     * @pattern ^(19[6-9][0-9]|2[0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\.[0-9]{3}Z$
+     * @format datetime
      */
     readonly created_at: string;
     /**
-     * ISO 8601 type
-     *
-     * @pattern ^(19[6-9][0-9]|2[0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])\.[0-9]{3}Z$
+     * @format datetime
      */
     readonly updated_at: string;
   }
