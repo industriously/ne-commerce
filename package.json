@@ -45,6 +45,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "helmet": "^6.0.1",
+    "iamport-server-api": "^1.1.5",
     "jsonwebtoken": "^9.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",

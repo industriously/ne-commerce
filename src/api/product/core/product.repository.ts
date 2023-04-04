@@ -57,6 +57,12 @@ export namespace ProductRepository {
     toProduct,
   );
 
+  export const findManyByIds: (ids: string[]) => Promise<Try<IProduct[]>> =
+    _findMany(
+      (ids) => prisma.product.findMany({ where: { id: { in: ids } } }),
+      toProduct,
+    );
+
   export const count = async (): Promise<Try<number>> =>
     getTry(await prisma.product.count());
 

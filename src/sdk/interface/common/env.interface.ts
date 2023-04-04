@@ -14,4 +14,8 @@ export interface IEnv {
   readonly ACCESS_TOKEN_PUBLIC_KEY: string;
   readonly REFRESH_TOKEN_PRIVATE_KEY: string;
   readonly REFRESH_TOKEN_PUBLIC_KEY: string;
+
+  readonly PORTONE_HOST: string;
+  readonly PORTONE_KEY: string;
+  readonly PORTONE_SECRET: string;
 }

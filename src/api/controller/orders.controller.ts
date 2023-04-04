@@ -3,6 +3,7 @@ import { IFailure, PaginatedResponse, Try, TryCatch } from '@INTERFACE/common';
 import { IOrder, IPaidOrder, IUnpaidOrder } from '@INTERFACE/order';
 import { TypedBody, TypedParam } from '@nestia/core';
 import { Controller, Get, Post } from '@nestjs/common';
+import { OrderUsecase } from '../order/usecase';
 
 @Controller('orders')
 export class OrdersController {
@@ -29,7 +30,7 @@ export class OrdersController {
     @Authorization('bearer') token: string,
     @TypedBody() body: IOrder.ICreateBody,
   ): Promise<TryCatch<IUnpaidOrder, IFailure.Business.Invalid>> {
-    throw Error();
+    return OrderUsecase.create(token, body);
   }
 
   /**

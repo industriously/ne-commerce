@@ -54,7 +54,7 @@ export namespace IOrder {
   >;
   export interface ICreateBody {
     readonly recipient: IRecipient;
-    readonly order_item_list: ICreateOrderItem;
+    readonly order_item_list: ICreateOrderItem[];
   }
   export interface IPaymentConfirmBody {
     readonly transaction_id: string;
