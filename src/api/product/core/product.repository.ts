@@ -59,7 +59,10 @@ export namespace ProductRepository {
 
   export const findManyByIds: (ids: string[]) => Promise<Try<IProduct[]>> =
     _findMany(
-      (ids) => prisma.product.findMany({ where: { id: { in: ids } } }),
+      (ids) =>
+        prisma.product.findMany({
+          where: { id: { in: ids }, is_deleted: false },
+        }),
       toProduct,
     );
 

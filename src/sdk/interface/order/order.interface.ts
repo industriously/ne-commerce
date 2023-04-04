@@ -47,14 +47,14 @@ export namespace IOrder {
     readonly phone: string;
   }
 
-  export type ICreateOrderItem = Pick<IOrderItem, 'product_id' | 'quantity'>;
+  export type ICreateOrderItem = Pick<IOrderItem, 'quantity' | 'product_id'>;
   export type ICreate = Pick<
     IBase,
     'orderer_id' | 'recipient' | 'order_item_list'
   >;
   export interface ICreateBody {
     readonly recipient: IRecipient;
-    readonly order_item_list: ICreateOrderItem[];
+    readonly order_item_list: Pick<IOrderItem, 'product_id' | 'quantity'>[];
   }
   export interface IPaymentConfirmBody {
     readonly transaction_id: string;

@@ -8,8 +8,8 @@ export namespace Product {
     const temp = Math.floor(Math.random() * end);
     return temp === end ? temp - 1 : temp;
   };
-  export const randomId = (len: number = 10) => {
-    return new Array<number>(len)
+  export const randomId = () => {
+    return new Array<number>(10)
       .fill(ABC.length)
       .map((end) => ABC[integer(end)])
       .join('');
@@ -21,7 +21,7 @@ export namespace Product {
     const { vender_id, name, description, price } = input;
     const now = getISOString();
     return {
-      id: randomId(10),
+      id: randomId(),
       name,
       description,
       price,
