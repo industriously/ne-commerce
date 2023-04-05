@@ -1,4 +1,6 @@
 export const isPromise = <T>(input: T | Promise<T>): input is Promise<T> => {
+  if (input instanceof Promise) return true;
+
   if (typeof input !== 'object' || input == undefined) {
     return false;
   }

@@ -41,6 +41,8 @@ async function run(): Promise<void> {
     parameters: () => [connection],
   })(__dirname + '/features');
 
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
 

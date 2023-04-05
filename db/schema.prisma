@@ -8,20 +8,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model Order {
-  id              String   @id
-  /// @type uint
-  /// @minimum 0
-  total_price     Int
-  status          String
-  payment_status  String
-  payment_id      String?
-  created_at      DateTime
-  updated_at      DateTime
-  is_deleted      Boolean
-  orderer_name    String
-  orderer_address String
-  orderer_phone   String
-  orderer_id      String
+  id                String   @id
+  status            String
+  created_at        DateTime
+  updated_at        DateTime
+  is_deleted        Boolean
+  orderer_id        String
+  recipient_name    String
+  recipient_address String
+  recipient_phone   String
 
   orderer         User        @relation(fields: [orderer_id], references: [id])
   order_item_list OrderItem[]
@@ -39,11 +34,9 @@ model OrderItem {
   /// @minimum 1
   quantity      Int
   product_id    String
-  vender_id     String
   order_id      String
 
   product Product @relation(fields: [product_id], references: [id])
-  vender  User    @relation(fields: [vender_id], references: [id])
   order   Order   @relation(fields: [order_id], references: [id])
 
   @@map("order_items")
@@ -66,22 +59,21 @@ model Product {
 }
 model User {
   /// @format uuid
-  id              String      @id
-  sub             String
-  oauth_type      String
+  id         String    @id
+  sub        String
+  oauth_type String
   /// @format email
-  email           String      @unique
-  name            String
-  address         String?
+  email      String    @unique
+  name       String
+  address    String?
   /// @pattern ^010-[0-9]{4}-[0-9]{4}$
-  phone           String?
-  created_at      DateTime
-  updated_at      DateTime
-  is_deleted      Boolean
-  type            String
-  product         Product[]
-  order           Order[]
-  order_item_list OrderItem[]
+  phone      String?
+  created_at DateTime
+  updated_at DateTime
+  is_deleted Boolean
+  type       String
+  product    Product[]
+  order      Order[]
 
   @@unique([sub, oauth_type])
   @@map("users")

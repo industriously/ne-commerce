@@ -25,6 +25,7 @@ export namespace Order {
       order_item_list: input.order_item_list,
       recipient: input.recipient,
       payment: null,
+      is_deleted: false,
       created_at: getISOString(),
       updated_at: getISOString(),
     };

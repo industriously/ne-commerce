@@ -16,6 +16,7 @@ export namespace IOrder {
     readonly order_item_list: IOrderItem[];
     readonly orderer_id: string;
     readonly recipient: IRecipient;
+    readonly is_deleted: boolean;
     /**
      * @format datetime
      */

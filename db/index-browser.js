@@ -95,23 +95,19 @@ exports.Prisma.OrderItemScalarFieldEnum = makeEnum({
   product_name: 'product_name',
   quantity: 'quantity',
   product_id: 'product_id',
-  vender_id: 'vender_id',
   order_id: 'order_id'
 });
 
 exports.Prisma.OrderScalarFieldEnum = makeEnum({
   id: 'id',
-  total_price: 'total_price',
   status: 'status',
-  payment_status: 'payment_status',
-  payment_id: 'payment_id',
   created_at: 'created_at',
   updated_at: 'updated_at',
   is_deleted: 'is_deleted',
-  orderer_name: 'orderer_name',
-  orderer_address: 'orderer_address',
-  orderer_phone: 'orderer_phone',
-  orderer_id: 'orderer_id'
+  orderer_id: 'orderer_id',
+  recipient_name: 'recipient_name',
+  recipient_address: 'recipient_address',
+  recipient_phone: 'recipient_phone'
 });
 
 exports.Prisma.ProductScalarFieldEnum = makeEnum({

@@ -5,7 +5,7 @@ import { IProduct } from '@INTERFACE/product';
 import { ProductRepository } from '@PRODUCT/core';
 import { AuthenticationService } from '@USER/service';
 import { isBusinessInvalid, isNull, isUndefined } from '@UTIL';
-import { InvalidOrderItem, Order } from '../core';
+import { InvalidOrderItem, Order, OrderRepository } from '../core';
 
 export namespace OrderUsecase {
   const createOrderItemList = (
@@ -26,6 +26,7 @@ export namespace OrderUsecase {
     if (include_null) return InvalidOrderItem;
     return getTry(order_item_list as IOrder.IOrderItem[]);
   };
+
   export const create = async (
     token: string,
     input: IOrder.ICreateBody,
@@ -47,7 +48,7 @@ export namespace OrderUsecase {
       recipient: input.recipient,
       order_item_list: list.data,
     });
-
+    await OrderRepository.add(order);
     return getTry(order);
   };
 }
