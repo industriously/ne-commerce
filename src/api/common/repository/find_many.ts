@@ -1,6 +1,6 @@
 import { getTry } from '@COMMON/exception';
 import { IFailure, Try, TryCatch } from '@INTERFACE/common';
-import { is_success, flatten } from '@UTIL';
+import { isSuccess, flatten } from '@UTIL';
 
 export const _findMany =
   <T, M, A>(
@@ -10,6 +10,6 @@ export const _findMany =
   async (input: T): Promise<Try<A[]>> => {
     const model = await findMany(input);
 
-    const data = model.map(mapper).filter(is_success).map(flatten);
+    const data = model.map(mapper).filter(isSuccess).map(flatten);
     return getTry(data);
   };

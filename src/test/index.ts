@@ -6,7 +6,7 @@ import { bootstrap, close, listen } from '@APP';
 import path from 'path';
 import { createWriteStream } from 'fs';
 import stripAnsi from 'strip-ansi';
-import { SeedProduct, SeedUser } from './seed';
+import { SeedOrder, SeedProduct, SeedUser } from './seed';
 
 const testStream = createWriteStream(
   path.join(__dirname, './../../test_log.md'),
@@ -35,6 +35,7 @@ async function run(): Promise<void> {
 
   await SeedUser.seed();
   await SeedProduct.seed();
+  await SeedOrder.seed();
 
   const report = await DynamicExecutor.validate({
     prefix: 'test',
