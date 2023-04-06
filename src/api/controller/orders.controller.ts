@@ -76,6 +76,6 @@ export class OrdersController {
       | IFailure.Business.Forbidden
     >
   > {
-    throw Error();
+    return OrderUsecase.confirm(token, order_id, body);
   }
 }

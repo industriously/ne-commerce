@@ -11,7 +11,8 @@ export namespace Order {
   export const randomId = () => {
     const code = new Array<number>(6)
       .fill(ABC.length)
-      .map((end) => ABC[integer(end)]);
+      .map((end) => ABC[integer(end)])
+      .join('');
 
     const YYMMDD = getISOString().slice(2, 10).replace(/-/g, '');
     return YYMMDD + code;

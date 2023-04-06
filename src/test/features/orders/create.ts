@@ -1,3 +1,4 @@
+import { prisma } from '@INFRA/DB';
 import { IFailure, Try } from '@INTERFACE/common';
 import { IOrder, IUnpaidOrder } from '@INTERFACE/order';
 import { ArrayUtil } from '@nestia/e2e';
@@ -16,7 +17,7 @@ const api =
 
 const randomRecipient = typia.createRandom<IOrder.IRecipient>();
 
-console.log();
+console.log('  - --');
 
 export const test_orders_create_success = async (connection: IConnection) => {
   const body = {
@@ -36,9 +37,14 @@ export const test_orders_create_success = async (connection: IConnection) => {
       },
     ],
   } satisfies IOrder.ICreateBody;
-  const received = await api(body)(connection)(AccessToken.customer);
+  const received = typia.assertEquals<Try<IUnpaidOrder>>(
+    await api(body)(connection)(AccessToken.customer),
+  );
 
-  typia.assertEquals<Try<IUnpaidOrder>>(received);
+  await prisma.orderItem.deleteMany({
+    where: { order_id: received.data.id },
+  });
+  await prisma.order.delete({ where: { id: received.data.id } });
 };
 
 export const test_orders_create_invalid_token = invalid_token(

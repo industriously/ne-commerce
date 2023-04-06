@@ -1,11 +1,11 @@
 import { Configuration } from '@INFRA/config';
 import imp from 'iamport-server-api';
 
-export namespace PortOne {
+export namespace PaymentService {
   const { PORTONE_HOST, PORTONE_KEY, PORTONE_SECRET } = Configuration;
-  const connector = new imp.IamportConnector(PORTONE_HOST, {
-    imp_key: PORTONE_KEY,
-    imp_secret: PORTONE_SECRET,
+  export const connector = new imp.IamportConnector(PORTONE_HOST, {
+    imp_key: 'test_imp_key',
+    imp_secret: 'test_imp_secret',
   });
 
   /**
@@ -15,5 +15,7 @@ export namespace PortOne {
    * @returns 결제 기록
    */
   export const findOne = async (imp_uid: string) =>
-    imp.functional.payments.at(await connector.get(), imp_uid);
+    imp.functional.payments
+      .at(await connector.get(), imp_uid)
+      .then(({ response }) => response);
 }
